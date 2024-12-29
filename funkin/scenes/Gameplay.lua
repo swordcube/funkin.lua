@@ -304,12 +304,12 @@ end
 function Gameplay:updateIconPositions()
     local iconOffset, healthBar, iconP2, iconP1 = 26.0, self.healthBar, self.iconP2, self.iconP1
     iconP2:setPosition(
-        (healthBar:getX() + (healthBar:getWidth() * (1 - healthBar:getProgress())) - ((iconP2:getWidth() - (iconP2:getFrameWidth() * iconP2.size.x)) * 0.5)) - (HealthIcon.HEALTH_ICON_SIZE - iconOffset),
-        healthBar:getY() - ((iconP2:getFrameHeight() * iconP2.size.y) * 0.5)
+        (healthBar:getX() + (healthBar:getWidth() * (1 - healthBar:getProgress())) - ((iconP2:getWidth() - HealthIcon.HEALTH_ICON_SIZE) * 0.5)) - (HealthIcon.HEALTH_ICON_SIZE - iconOffset),
+        healthBar:getY() - (HealthIcon.HEALTH_ICON_SIZE * 0.5)
     )
     iconP1:setPosition(
-        (healthBar:getX() + (healthBar:getWidth() * (1 - healthBar:getProgress())) + ((iconP1:getWidth() - (iconP1:getFrameWidth() * iconP1.size.x)) * 0.5)) - iconOffset,
-        healthBar:getY() - ((iconP1:getFrameHeight() * iconP1.size.y) * 0.5)
+        (healthBar:getX() + (healthBar:getWidth() * (1 - healthBar:getProgress())) + ((iconP1:getWidth() - HealthIcon.HEALTH_ICON_SIZE) * 0.5)) - iconOffset,
+        healthBar:getY() - (HealthIcon.HEALTH_ICON_SIZE * 0.5)
     )
 end
 

@@ -173,7 +173,7 @@ end
 ---
 function PBotSystem:getHealthGainMultiplier(judgement)
     if judgement == "shit" or judgement == "bad" then
-        return -2.15
+        return -3.15
     end
     return 1.0
 end
