@@ -139,7 +139,8 @@ end
 function Character:beatHit(beat)
     local danceFrequency = self._config.danceFrequency or 2
     if beat % danceFrequency == 0 and not self.animation:getCurrentAnimationName():startsWith("sing") then
-        self:dance()
+        local danceSteps = self._config.danceSteps and #self._config.danceSteps or 1
+        self:dance(danceSteps == 1 and danceFrequency == 1)
     end
 end
 
