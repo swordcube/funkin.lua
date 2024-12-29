@@ -158,7 +158,7 @@ end
 --- @return boolean
 ---
 function PBotSystem:breaksCombo(judgement)
-    if judgement == "shit" or judgement == "bad" then
+    if judgement == "shit" then
         return true
     end
     return false
