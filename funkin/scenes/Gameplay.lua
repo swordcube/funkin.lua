@@ -259,16 +259,27 @@ function Gameplay:update(dt)
             Engine.switchScene(require("funkin.scenes.FreeplayMenu"):new())
         end
     end
-    if Input.wasKeyJustPressed(KeyCode.HOME) then
-        if self.startingSong then
-            self:startSong()
+    if Engine.debugMode then
+        -- if we're in debug mode, press HOME
+        -- to instantly skip to the first note
+        if Input.wasKeyJustPressed(KeyCode.HOME) then
+            if self.startingSong then
+                self:startSong()
+            end
+            local time = self.currentChart.notes[1].time
+            self.mainConductor:setTime(time)
+    
+            BGM.audioPlayer:seek(time / 1000.0)
+            for _, value in pairs(self.vocalTracks) do
+                value:seek(time / 1000.0)
+            end
         end
-        local time = self.currentChart.notes[1].time
-        self.mainConductor:setTime(time)
-
-        BGM.audioPlayer:seek(time / 1000.0)
-        for _, value in pairs(self.vocalTracks) do
-            value:seek(time / 1000.0)
+        -- if we're in debug mode, press END
+        -- to instantly end the song
+        if Input.wasKeyJustPressed(KeyCode.END) then
+            if not self.endingSong then
+                self:endSong()
+            end
         end
     end
     local healthBar = self.healthBar

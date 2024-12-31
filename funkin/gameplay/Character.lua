@@ -90,6 +90,11 @@ function Character:constructor(x, y, characterID, isPlayer)
     ---
     --- @protected
     ---
+    self._baseFlipped = self.flipX
+
+    ---
+    --- @protected
+    ---
     self._playerOffsets = json.isPlayer
 
     ---
@@ -168,9 +173,9 @@ end
 --- @protected
 ---
 function Character:_fixOffsets()
-    if self._isPlayer ~= self._playerOffsets then
-        self.scale.x = -self.scale.x
+    if (self._isPlayer ~= self._playerOffsets) ~= (self.flipX ~= self._baseFlipped) then
         self.flipX = not self.flipX
+        self.scale.x = -self.scale.x
     end
 end
 
