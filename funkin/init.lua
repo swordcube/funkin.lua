@@ -27,6 +27,8 @@ Options = require("funkin.backend.Options")
 Highscore = require("funkin.backend.Highscore")
 Conductor = require("funkin.backend.Conductor")
 
+ModLoader = require("funkin.backend.ModLoader")
+
 AtlasText = require("funkin.ui.AtlasText")
 SoundTray = require("funkin.ui.SoundTray")
 

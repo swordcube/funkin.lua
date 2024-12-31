@@ -1,0 +1,20 @@
+{
+    "title": "Testing Mod",
+    "description": "What do you think this is?",
+
+    "authors": [
+        {
+            "name": "swordcube",
+            "roles": ["Creator", "Programmer"],
+            
+            "icon": "swordcube",
+            "url": "https://github.com/swordcube"
+        }
+    ],
+    "dependencies": [],
+
+    "versions": {
+        "api": "0.1.0",
+        "mod": "1.0.0"
+    }
+}

@@ -14,6 +14,7 @@ mkdir "../../export/%1" > nul
 echo Copying assets to export
 
 Xcopy ..\..\assets ..\..\export\%1\assets /E /H /C /I /Y > nul
+Xcopy ..\..\mods ..\..\export\%1\mods /E /H /C /I /Y > nul
 copy ..\..\alsoft.ini ..\..\export\%1\alsoft.ini
 
 @REM Create new Flora.love file

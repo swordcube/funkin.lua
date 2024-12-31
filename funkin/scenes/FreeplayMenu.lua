@@ -45,55 +45,68 @@ function FreeplayMenu:init()
     self.songList = {} --- @type table<string>
     self.songMetas = {} --- @type table<string, table<string, funkin.backend.song.SongMetadata>>
 
-    -- TODO: modding support for levelList
     local failedSongs = {} --- @type table<string, boolean>
-    local levelList = Json.parse(File.read(Paths.json("levelList")))
+    local levelLists = {}
+    tblInsert(levelLists, Json.parse(File.read("assets/data/levelList.json")))
 
-    for i = 1, #levelList.levels do
-        -- go through each level
-        local levelID = levelList.levels[i] --- @type string
-        if not File.exists(Paths.json(levelID, "data/levels")) then
-            -- if it doesn't exist, skip
-            goto levelContinue
+    for i = 1, #ModLoader.ADDON_LIST do
+        local addonLevelListPath = ModLoader.ADDON_DIRECTORY .. "/" .. ModLoader.ADDON_LIST[i] .. "/data/levelList.json"
+        if File.fileExists(addonLevelListPath) then
+            tblInsert(levelLists, Json.parse(File.read(addonLevelListPath)))
         end
-        local levelData = Json.parse(File.read(Paths.json(levelID, "data/levels")))
-        for j = 1, #levelData.songs do
-            -- go through each song in this level
-            local songID = levelData.songs[j] --- @type string
-
-            local songMeta = SongMetadata.get(songID) --- @type funkin.backend.song.SongMetadata?
-            if not songMeta then
+    end
+    local modLevelListPath = ModLoader.MOD_DIRECTORY .. "/" .. ModLoader.CURRENT_MOD .. "/data/levelList.json"
+    if File.fileExists(modLevelListPath) then
+        tblInsert(levelLists, Json.parse(File.read(modLevelListPath)))
+    end
+    for a = 1, #levelLists do
+        local levelList = levelLists[a]
+        for i = 1, #levelList.levels do
+            -- go through each level
+            local levelID = levelList.levels[i] --- @type string
+            if not File.exists(Paths.json(levelID, "data/levels")) then
                 -- if it doesn't exist, skip
-                tblInsert(failedSongs, songID)
-                goto songContinue
+                goto levelContinue
             end
-            songMeta._parsedColor = Color:new(songMeta.color)
-            
-            local data = {
-                default = songMeta
-            }
-            Log.info({text = "[FREEPLAY] ", fgColor = Native.ConsoleColor.CYAN}, nil, nil, "Metadata found for " .. songID)
-
-            for k = 1, #songMeta.variants do
-                -- go through each variant
-                local variant = songMeta.variants[k] --- @type string
-                local variantMeta = SongMetadata.get(songID .. "-" .. variant) --- @type funkin.backend.song.SongMetadata?
-                
-                if variantMeta then
-                    variantMeta._parsedColor = Color:new(variantMeta.color)
-
-                    -- if it exists, add it
-                    data[variant] = variantMeta
-                    Log.info({text = "[FREEPLAY] ", fgColor = Native.ConsoleColor.CYAN}, nil, nil, "Metadata found for " .. songID .. " [" .. variant .. "]")
+            local levelData = Json.parse(File.read(Paths.json(levelID, "data/levels")))
+            for j = 1, #levelData.songs do
+                -- go through each song in this level
+                local songID = levelData.songs[j] --- @type string
+    
+                local songMeta = SongMetadata.get(songID) --- @type funkin.backend.song.SongMetadata?
+                if not songMeta then
+                    -- if it doesn't exist, skip
+                    tblInsert(failedSongs, songID)
+                    goto songContinue
                 end
+                songMeta._parsedColor = Color:new(songMeta.color)
+                
+                local data = {
+                    default = songMeta
+                }
+                Log.info({text = "[FREEPLAY] ", fgColor = Native.ConsoleColor.CYAN}, nil, nil, "Metadata found for " .. songID)
+    
+                for k = 1, #songMeta.variants do
+                    -- go through each variant
+                    local variant = songMeta.variants[k] --- @type string
+                    local variantMeta = SongMetadata.get(songID .. "-" .. variant) --- @type funkin.backend.song.SongMetadata?
+                    
+                    if variantMeta then
+                        variantMeta._parsedColor = Color:new(variantMeta.color)
+    
+                        -- if it exists, add it
+                        data[variant] = variantMeta
+                        Log.info({text = "[FREEPLAY] ", fgColor = Native.ConsoleColor.CYAN}, nil, nil, "Metadata found for " .. songID .. " [" .. variant .. "]")
+                    end
+                end
+                tblInsert(songMeta.variants, "default")
+                self.songMetas[songID] = data
+    
+                tblInsert(self.songList, songID)
+                ::songContinue::
             end
-            tblInsert(songMeta.variants, "default")
-            self.songMetas[songID] = data
-
-            tblInsert(self.songList, songID)
-            ::songContinue::
+            ::levelContinue::
         end
-        ::levelContinue::
     end
     if #failedSongs ~= 0 then
         print("============================================================")

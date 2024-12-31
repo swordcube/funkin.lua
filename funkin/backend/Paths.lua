@@ -22,6 +22,17 @@ local AtlasFrames = crequire("animation.frames.AtlasFrames") --- @type chip.anim
 local Paths = {}
 
 function Paths.getPath(key)
+    local addons = ModLoader.ADDON_LIST
+    for i = 1, #addons do
+        local addonAsset = ModLoader.ADDON_DIRECTORY .. "/" .. addons[i] .. "/" .. key
+        if File.exists(addonAsset) then
+            return addonAsset
+        end
+    end
+    local modAsset = ModLoader.MOD_DIRECTORY .. "/" .. ModLoader.CURRENT_MOD .. "/" .. key
+    if File.exists(modAsset) then
+        return modAsset
+    end
     return "assets/" .. key
 end
 
