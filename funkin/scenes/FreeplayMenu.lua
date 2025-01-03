@@ -32,9 +32,9 @@ local tblContains = table.contains
 local _disabled_, _inherit_ = "disabled", "inherit"
 local thread = love.thread
 
-local SongMetadata = require("funkin.backend.song.SongMetadata") --- @type funkin.backend.song.SongMetadata
 local HealthIcon = require("funkin.ui.HealthIcon") --- @type funkin.ui.HealthIcon
 local MainMenu = require("funkin.scenes.MainMenu") --- @type funkin.scenes.MainMenu
+local FreeplaySongList = require("funkin.backend.utils.FreeplaySongList") --- @type funkin.backend.utils.FreeplaySongList
 
 ---
 --- @class funkin.scenes.FreeplayMenu : chip.core.Scene
@@ -43,74 +43,14 @@ local FreeplayMenu = Scene:extend("FreeplayMenu", ...)
 
 function FreeplayMenu:init()
     self.songList = {} --- @type table<string>
+    self.songMods = {} --- @type table<string>
     self.songMetas = {} --- @type table<string, table<string, funkin.backend.song.SongMetadata>>
-
-    local failedSongs = {} --- @type table<string, boolean>
-    local levelLists = {}
-    tblInsert(levelLists, Json.parse(File.read("assets/data/levelList.json")))
-
-    for i = 1, #ModLoader.ADDON_LIST do
-        local addonLevelListPath = ModLoader.ADDON_DIRECTORY .. "/" .. ModLoader.ADDON_LIST[i] .. "/data/levelList.json"
-        if File.fileExists(addonLevelListPath) then
-            tblInsert(levelLists, Json.parse(File.read(addonLevelListPath)))
-        end
-    end
-    local modLevelListPath = ModLoader.MOD_DIRECTORY .. "/" .. ModLoader.CURRENT_MOD .. "/data/levelList.json"
-    if File.fileExists(modLevelListPath) then
-        tblInsert(levelLists, Json.parse(File.read(modLevelListPath)))
-    end
-    for a = 1, #levelLists do
-        local levelList = levelLists[a]
-        for i = 1, #levelList.levels do
-            -- go through each level
-            local levelID = levelList.levels[i] --- @type string
-            if not File.exists(Paths.json(levelID, "data/levels")) then
-                -- if it doesn't exist, skip
-                goto levelContinue
-            end
-            local levelData = Json.parse(File.read(Paths.json(levelID, "data/levels")))
-            for j = 1, #levelData.songs do
-                -- go through each song in this level
-                local songID = levelData.songs[j] --- @type string
     
-                local songMeta = SongMetadata.get(songID) --- @type funkin.backend.song.SongMetadata?
-                if not songMeta then
-                    -- if it doesn't exist, skip
-                    tblInsert(failedSongs, songID)
-                    goto songContinue
-                end
-                songMeta._parsedColor = Color:new(songMeta.color)
-                
-                local data = {
-                    default = songMeta
-                }
-                Log.info({text = "[FREEPLAY] ", fgColor = Native.ConsoleColor.CYAN}, nil, nil, "Metadata found for " .. songID)
-    
-                for k = 1, #songMeta.variants do
-                    -- go through each variant
-                    local variant = songMeta.variants[k] --- @type string
-                    local variantMeta = SongMetadata.get(songID .. "-" .. variant) --- @type funkin.backend.song.SongMetadata?
-                    
-                    if variantMeta then
-                        variantMeta._parsedColor = Color:new(variantMeta.color)
-    
-                        -- if it exists, add it
-                        data[variant] = variantMeta
-                        Log.info({text = "[FREEPLAY] ", fgColor = Native.ConsoleColor.CYAN}, nil, nil, "Metadata found for " .. songID .. " [" .. variant .. "]")
-                    end
-                end
-                tblInsert(songMeta.variants, "default")
-                self.songMetas[songID] = data
-    
-                tblInsert(self.songList, songID)
-                ::songContinue::
-            end
-            ::levelContinue::
-        end
-    end
-    if #failedSongs ~= 0 then
-        print("============================================================")
-        Log.info({text = "[FREEPLAY] ", fgColor = Native.ConsoleColor.CYAN}, nil, nil, "Non-existent songs: " .. table.join(failedSongs, ", "))
+    local songShit = FreeplaySongList.get()
+    for i = 1, #songShit do
+        tblInsert(self.songList, songShit[i].id)
+        tblInsert(self.songMods, songShit[i].mod)
+        self.songMetas[songShit[i].id] = songShit[i].metas
     end
     self.curSelected = 1
     self.curDifficulty = "normal"
@@ -279,7 +219,7 @@ function FreeplayMenu:update(dt)
     local bgColor = self.bg:getTint() --- @type chip.utils.Color
     self.bg:setTint(bgColor:interpolate(songMetas[self.curVariant]._parsedColor, dt * 2.7))
 
-    local scoreData = Highscore.getScoreData(self.songList[self.curSelected], self.curDifficulty) --- @type funkin.backend.data.HighscoreData
+    local scoreData = Highscore.getScoreData(self.songList[self.curSelected], self.curDifficulty, self.songMods[self.curSelected]) --- @type funkin.backend.data.HighscoreData
     self.lerpScore = lerp(self.lerpScore, scoreData.score, dt * 24.0)
     
     if abs(self.lerpScore - scoreData.score) < 10 then
@@ -340,7 +280,8 @@ function FreeplayMenu:update(dt)
         Engine.switchScene(Gameplay:new({
             song = self.songList[self.curSelected] .. (self.curVariant ~= "default" and ("-" .. self.curVariant) or ""),
             difficulty = self.curDifficulty,
-            gameMode = "freeplay"
+            gameMode = "freeplay",
+            currentMod = self.songMods[self.curSelected]
         }))
     end
     FreeplayMenu.super.update(self, dt)

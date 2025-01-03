@@ -116,6 +116,22 @@ local Options = {
     ---
     lowPowerMode = nil,
     _default_lowPowerMode = false, --- @protected
+
+    ---
+    --- Controls the ordering of your mods.
+    ---
+    --- @type table<string>
+    ---
+    savedMods = nil,
+    _default_savedMods = {}, --- @protected
+
+    ---
+    --- Controls whether or not some of your mods are enabled.
+    ---
+    --- @type table<string>
+    ---
+    enabledMods = nil,
+    _default_enabledMods = {}, --- @protected
 }
 
 function Options.init()

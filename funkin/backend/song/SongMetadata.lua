@@ -49,12 +49,13 @@ local SongMetadata = {
 ---
 --- Retrieves the metadata for a song.
 --- 
---- @param  song  string  ID of the song to get the metadata of.
+--- @param  song  string   ID of the song to get the metadata of.
+--- @param  mod   string?  ID of the mod to get the song metadata from.
 ---
 --- @return funkin.backend.song.SongMetadata?
 ---
-function SongMetadata.get(song)
-    local metaPath = Paths.songMeta(song)
+function SongMetadata.get(song, mod)
+    local metaPath = Paths.songMeta(song, nil, mod)
     if not File.exists(metaPath) then
         return nil
     end

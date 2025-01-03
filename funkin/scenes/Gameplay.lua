@@ -37,6 +37,15 @@ local Character = require("funkin.gameplay.Character") --- @type funkin.gameplay
 ---
 local Gameplay = Scene:extend("Gameplay", ...)
 
+---
+--- @type funkin.backend.data.GameplayParams
+---
+Gameplay.lastParams = {
+    song = "test",
+    difficulty = "normal",
+    gameMode = "freeplay",
+    currentMod = nil
+}
 Gameplay.instance = nil --- @type funkin.scenes.Gameplay
 
 function Gameplay:constructor(params)
@@ -46,15 +55,13 @@ function Gameplay:constructor(params)
     --- @protected
     --- @type funkin.backend.data.GameplayParams
     ---
-    self._params = params or {
-        song = "test",
-        difficulty = "normal",
-        gameMode = "freeplay"
-    }
+    self._params = params or Gameplay.lastParams
+    Gameplay.lastParams = self._params
 end
 
 function Gameplay:init()
     Gameplay.instance = self
+    Paths.currentMod = self._params.currentMod
 
     -- stop any playing music
     if BGM.isPlaying() then
@@ -362,7 +369,7 @@ function Gameplay:endSong()
     local accuracy = stats:getAccuracy()
 
     if score > scoreData.score or accuracy > scoreData.accuracy then
-        Highscore.setScoreData(self._params.song, self._params.difficulty, {
+        Highscore.setScoreData(self._params.song, self._params.difficulty, Paths.currentMod, {
             score = score,
             misses = stats.misses,
             maxCombo = stats.maxCombo,

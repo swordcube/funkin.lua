@@ -59,10 +59,17 @@ end
 ---
 --- @param  song        string
 --- @param  difficulty  string
+--- @param  mod         string?
 --- 
 --- @return funkin.backend.data.HighscoreData
 ---
-function Highscore.getScoreData(song, difficulty)
+function Highscore.getScoreData(song, difficulty, mod)
+    if mod then
+        local data = Highscore._save.data[song:lower() .. "-" .. difficulty:lower() .. "-" .. mod] --- @type funkin.backend.data.HighscoreData
+        if data and data.isValid then
+            return data
+        end
+    end
     local data = Highscore._save.data[song:lower() .. "-" .. difficulty:lower()] --- @type funkin.backend.data.HighscoreData
     if data and data.isValid then
         return data
@@ -79,10 +86,11 @@ end
 ---
 --- @param  song        string
 --- @param  difficulty  string
+--- @param  mod         string
 --- @param  data        funkin.backend.data.HighscoreData
 ---
-function Highscore.setScoreData(song, difficulty, data)
-    Highscore._save.data[song:lower() .. "-" .. difficulty:lower()] = data
+function Highscore.setScoreData(song, difficulty, mod, data)
+    Highscore._save.data[song:lower() .. "-" .. difficulty:lower() .. (mod and ("-" .. mod) or "")] = data
 end
 
 function Highscore.save()

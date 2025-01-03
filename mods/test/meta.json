@@ -11,6 +11,7 @@
             "url": "https://github.com/swordcube"
         }
     ],
+    "modType": "global",
     "dependencies": [],
 
     "versions": {

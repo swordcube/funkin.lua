@@ -47,7 +47,7 @@ function InitScene:init()
     end
     Options.init()
     Controls.init()
-
+    
     ModLoader.init()
     Highscore.init()
 

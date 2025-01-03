@@ -16,61 +16,163 @@
 
 local fs = love.filesystem
 local tblInsert = table.insert
+local tblRemove = table.remove
+local tblContains = table.contains
+
+local Script = require("funkin.backend.Script") --- @type funkin.backend.Script
 
 ---
 --- @class funkin.backend.ModLoader
 ---
 local ModLoader = {}
 
-ModLoader.MOD_LIST = {}
-ModLoader.MOD_DIRECTORY = "mods"
-
-ModLoader.ADDON_LIST = {}
-ModLoader.ADDON_DIRECTORY = "addons"
-
-ModLoader.CURRENT_MOD = "test"
+ModLoader.modList = {}
+ModLoader.modDirectory = "mods"
+ModLoader.currentMod = "test"
+ModLoader.loadedMainScripts = {}
 
 function ModLoader.init()
     ModLoader.updateModList()
-    ModLoader.updateAddonList()
+    ModLoader.reloadMainScripts()
+
+    Engine.preUpdate:connect(function()
+        local loadedMainScripts = ModLoader.loadedMainScripts
+        for i = 1, #loadedMainScripts do
+            script = loadedMainScripts[i] --- @type funkin.backend.Script
+            script:callMethod("update", {Engine.deltaTime})
+            script:callMethod("preUpdate", {Engine.deltaTime})
+        end
+    end)
+    Engine.postUpdate:connect(function()
+        local loadedMainScripts = ModLoader.loadedMainScripts
+        for i = 1, #loadedMainScripts do
+            script = loadedMainScripts[i] --- @type funkin.backend.Script
+            script:callMethod("postUpdate", {Engine.deltaTime})
+        end
+    end)
+    Engine.preDraw:connect(function()
+        local loadedMainScripts = ModLoader.loadedMainScripts
+        for i = 1, #loadedMainScripts do
+            script = loadedMainScripts[i] --- @type funkin.backend.Script
+            script:callMethod("preDraw")
+        end
+    end)
+    Engine.postDraw:connect(function()
+        local loadedMainScripts = ModLoader.loadedMainScripts
+        for i = 1, #loadedMainScripts do
+            script = loadedMainScripts[i] --- @type funkin.backend.Script
+            script:callMethod("postDraw")
+        end
+    end)
+    Engine.preSceneDraw:connect(function()
+        local loadedMainScripts = ModLoader.loadedMainScripts
+        for i = 1, #loadedMainScripts do
+            script = loadedMainScripts[i] --- @type funkin.backend.Script
+            script:callMethod("preSceneDraw")
+        end
+    end)
+    Engine.postSceneDraw:connect(function()
+        local loadedMainScripts = ModLoader.loadedMainScripts
+        for i = 1, #loadedMainScripts do
+            script = loadedMainScripts[i] --- @type funkin.backend.Script
+            script:callMethod("postSceneDraw")
+        end
+    end)
+    Engine.onFocusGained:connect(function()
+        local loadedMainScripts = ModLoader.loadedMainScripts
+        for i = 1, #loadedMainScripts do
+            script = loadedMainScripts[i] --- @type funkin.backend.Script
+            script:callMethod("onFocusGained")
+        end
+    end)
+    Engine.onFocusLost:connect(function()
+        local loadedMainScripts = ModLoader.loadedMainScripts
+        for i = 1, #loadedMainScripts do
+            script = loadedMainScripts[i] --- @type funkin.backend.Script
+            script:callMethod("onFocusLost")
+        end
+    end)
+    Engine.onWindowResize:connect(function(w, h)
+        local loadedMainScripts = ModLoader.loadedMainScripts
+        for i = 1, #loadedMainScripts do
+            script = loadedMainScripts[i] --- @type funkin.backend.Script
+            script:callMethod("onWindowResize", {w, h})
+        end
+    end)
+    Engine.onInputReceived:connect(function(e)
+        local loadedMainScripts = ModLoader.loadedMainScripts
+        for i = 1, #loadedMainScripts do
+            script = loadedMainScripts[i] --- @type funkin.backend.Script
+            script:callMethod("onInputReceived", {e})
+        end
+    end)
 end
 
 ---
 --- Updates the mod list with every available mod.
 ---
 function ModLoader.updateModList()
-    local list = ModLoader.MOD_LIST
-    local directory = ModLoader.MOD_DIRECTORY
+    local newModsDetected = 0
+    ModLoader.modList = Options.savedMods
 
+    local list = ModLoader.modList
+    local directory = ModLoader.modDirectory
+
+    local scannedList = {}
     if fs.getInfo(directory, "directory") then
         local dirItems = fs.getDirectoryItems(directory)
         for i = 1, #dirItems do
             local item = dirItems[i]
             if fs.getInfo(directory .. "/" .. item, "directory") then
-                tblInsert(list, item)
+                if not tblContains(list, item) then
+                    newModsDetected = newModsDetected + 1
+                    Options.enabledMods[item] = true
+                    tblInsert(list, item)
+                end
+                tblInsert(scannedList, item)
             end
         end
     end
-    print("Detected " .. #ModLoader.MOD_LIST .. " mod" .. (#ModLoader.MOD_LIST == 1 and "" or "s"))
+    for i = 1, #list do
+        if not tblContains(scannedList, list[i]) then
+            Options.enabledMods[list[i]] = nil
+            tblRemove(list, i)
+        end
+    end
+    if newModsDetected > 0 then
+        print("Detected " .. newModsDetected .. " new mod" .. (newModsDetected == 1 and "" or "s"))
+        Options.save()
+    end
+    print("Detected " .. #list .. " mod" .. (#list == 1 and "" or "s"))
 end
 
 ---
---- Updates the addon list with every available addon.
+--- Reloads the main script for every mod.
 ---
-function ModLoader.updateAddonList()
-    local list = ModLoader.ADDON_LIST
-    local directory = ModLoader.ADDON_DIRECTORY
-
-    if fs.getInfo(directory, "directory") then
-        local dirItems = fs.getDirectoryItems(directory)
-        for i = 1, #dirItems do
-            local item = dirItems[i]
-            if fs.getInfo(directory .. "/" .. item, "directory") then
-                tblInsert(list, item)
-            end
+function ModLoader.reloadMainScripts()
+    local loadedMainScripts = ModLoader.loadedMainScripts
+    for i = 1, #loadedMainScripts do
+        local script = loadedMainScripts[i] --- @type funkin.backend.Script
+        script:close()
+    end
+    ModLoader.loadedMainScripts = {}
+    
+    local modList = ModLoader.modList
+    for i = 1, #modList do
+        local script = Script:new(ModLoader.modDirectory .. "/" .. modList[i] .. "/main.lua") --- @type funkin.backend.Script
+        if not script:isClosed() then
+            tblInsert(ModLoader.loadedMainScripts, script)
         end
     end
-    print("Detected " .. #ModLoader.ADDON_LIST .. " addon" .. (#ModLoader.ADDON_LIST == 1 and "" or "s"))
+    local script = Script:new("assets/main.lua") --- @type funkin.backend.Script
+    if not script:isClosed() then
+        tblInsert(ModLoader.loadedMainScripts, script)
+    end
+    local loadedMainScripts = ModLoader.loadedMainScripts
+    for i = 1, #loadedMainScripts do
+        script = loadedMainScripts[i] --- @type funkin.backend.Script
+        script:callMethod("init")
+    end
 end
 
 return ModLoader

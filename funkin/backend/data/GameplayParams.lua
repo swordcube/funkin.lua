@@ -31,6 +31,11 @@ local GameplayParams = {
     ---
     --- @type "story"|"freeplay"
     ---
-    gameMode = nil
+    gameMode = nil,
+
+    ---
+    --- @type string
+    ---
+    currentMod = nil
 }
 return GameplayParams
