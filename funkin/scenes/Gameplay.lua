@@ -424,6 +424,7 @@ function Gameplay:setPlaybackRate(newRate)
 end
 
 function Gameplay:free()
+    Paths.currentMod = nil
     self.mainConductor.allowSongOffset = false
     Gameplay.super.free(self)
 end
