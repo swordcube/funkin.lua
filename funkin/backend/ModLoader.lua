@@ -35,76 +35,42 @@ function ModLoader.init()
     ModLoader.updateModList()
     ModLoader.reloadMainScripts()
 
-    Engine.preUpdate:connect(function()
+    local function callOnMainScripts(method, args)
         local loadedMainScripts = ModLoader.loadedMainScripts
         for i = 1, #loadedMainScripts do
             script = loadedMainScripts[i] --- @type funkin.backend.Script
-            script:callMethod("update", {Engine.deltaTime})
-            script:callMethod("preUpdate", {Engine.deltaTime})
+            script:callMethod(method, args)
         end
+    end
+    Engine.preUpdate:connect(function()
+        callOnMainScripts("onUpdate", {Engine.deltaTime})
     end)
     Engine.postUpdate:connect(function()
-        local loadedMainScripts = ModLoader.loadedMainScripts
-        for i = 1, #loadedMainScripts do
-            script = loadedMainScripts[i] --- @type funkin.backend.Script
-            script:callMethod("postUpdate", {Engine.deltaTime})
-        end
+        callOnMainScripts("onPostUpdate", {Engine.deltaTime})
     end)
     Engine.preDraw:connect(function()
-        local loadedMainScripts = ModLoader.loadedMainScripts
-        for i = 1, #loadedMainScripts do
-            script = loadedMainScripts[i] --- @type funkin.backend.Script
-            script:callMethod("preDraw")
-        end
+        callOnMainScripts("onDraw")
     end)
     Engine.postDraw:connect(function()
-        local loadedMainScripts = ModLoader.loadedMainScripts
-        for i = 1, #loadedMainScripts do
-            script = loadedMainScripts[i] --- @type funkin.backend.Script
-            script:callMethod("postDraw")
-        end
+        callOnMainScripts("onPostDraw")
     end)
     Engine.preSceneDraw:connect(function()
-        local loadedMainScripts = ModLoader.loadedMainScripts
-        for i = 1, #loadedMainScripts do
-            script = loadedMainScripts[i] --- @type funkin.backend.Script
-            script:callMethod("preSceneDraw")
-        end
+        callOnMainScripts("onSceneDraw")
     end)
     Engine.postSceneDraw:connect(function()
-        local loadedMainScripts = ModLoader.loadedMainScripts
-        for i = 1, #loadedMainScripts do
-            script = loadedMainScripts[i] --- @type funkin.backend.Script
-            script:callMethod("postSceneDraw")
-        end
+        callOnMainScripts("onPostSceneDraw")
     end)
     Engine.onFocusGained:connect(function()
-        local loadedMainScripts = ModLoader.loadedMainScripts
-        for i = 1, #loadedMainScripts do
-            script = loadedMainScripts[i] --- @type funkin.backend.Script
-            script:callMethod("onFocusGained")
-        end
+        callOnMainScripts("onFocusGained")
     end)
     Engine.onFocusLost:connect(function()
-        local loadedMainScripts = ModLoader.loadedMainScripts
-        for i = 1, #loadedMainScripts do
-            script = loadedMainScripts[i] --- @type funkin.backend.Script
-            script:callMethod("onFocusLost")
-        end
+        callOnMainScripts("onFocusLost")
     end)
     Engine.onWindowResize:connect(function(w, h)
-        local loadedMainScripts = ModLoader.loadedMainScripts
-        for i = 1, #loadedMainScripts do
-            script = loadedMainScripts[i] --- @type funkin.backend.Script
-            script:callMethod("onWindowResize", {w, h})
-        end
+        callOnMainScripts("onWindowResize", {w, h})
     end)
     Engine.onInputReceived:connect(function(e)
-        local loadedMainScripts = ModLoader.loadedMainScripts
-        for i = 1, #loadedMainScripts do
-            script = loadedMainScripts[i] --- @type funkin.backend.Script
-            script:callMethod("onInputReceived", {e})
-        end
+        callOnMainScripts("onInputReceived", {e})
     end)
 end
 
