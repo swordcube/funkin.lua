@@ -118,6 +118,15 @@ local Options = {
     _default_lowPowerMode = false, --- @protected
 
     ---
+    --- Controls whether or not the game will run
+    --- at an FPS matching your monitor refresh rate,
+    ---
+    --- @type boolean
+    ---
+    vsync = nil,
+    _default_vsync = true, --- @protected
+
+    ---
     --- Controls the ordering of your mods.
     ---
     --- @type table<string>

@@ -18,6 +18,7 @@ local gfx = love.graphics
 local window = love.window
 
 local peakMemUsage = 0.0
+local monitorRefreshRate = 60.0
 
 local floor = math.floor
 local humanizeBytes = math.humanizeBytes
@@ -39,9 +40,7 @@ end
 
 local function draw()
     local focused = window.hasFocus()
-    
-    local _, _, wf = window.getMode()
-    local cap = (focused and (Engine.vsync and wf.refreshrate or Engine.targetFPS) or 10)
+    local cap = (focused and (Engine.vsync and monitorRefreshRate or Engine.targetFPS) or 10)
 
     local currentFPS = Engine.getCurrentFPS()
     local currentTPS = Engine.getCurrentTPS()
@@ -77,6 +76,9 @@ end
 local StatsDisplay = {}
 
 function StatsDisplay.init()
+    local _, _, wf = window.getMode()
+    monitorRefreshRate = wf.refreshrate
+
     Engine.postDraw:connect(draw)
 end
 
