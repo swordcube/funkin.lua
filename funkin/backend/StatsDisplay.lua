@@ -39,7 +39,9 @@ end
 
 local function draw()
     local focused = window.hasFocus()
-    local cap = (focused and (Engine.vsync and Native.getMonitorRefreshRate() or Engine.targetFPS) or 10)
+    
+    local _, _, wf = window.getMode()
+    local cap = (focused and (Engine.vsync and wf.refreshrate or Engine.targetFPS) or 10)
 
     local currentFPS = Engine.getCurrentFPS()
     local currentTPS = Engine.getCurrentTPS()
