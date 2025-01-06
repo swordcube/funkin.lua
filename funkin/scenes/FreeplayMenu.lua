@@ -49,7 +49,7 @@ function FreeplayMenu:init()
     local songShit = FreeplaySongList.get()
     for i = 1, #songShit do
         tblInsert(self.songList, songShit[i].id)
-        tblInsert(self.songMods, songShit[i].mod)
+        tblInsert(self.songMods, tostring(songShit[i].mod))
         self.songMetas[songShit[i].id] = songShit[i].metas
     end
     self.curSelected = 1
@@ -277,11 +277,15 @@ function FreeplayMenu:update(dt)
         Engine.switchScene(MainMenu:new())
     end
     if Controls.justPressed.ACCEPT then
+        local mod = self.songMods[self.curSelected]
+        if mod:lower() == "nil" then
+            mod = nil
+        end
         Engine.switchScene(Gameplay:new({
             song = self.songList[self.curSelected] .. (self.curVariant ~= "default" and ("-" .. self.curVariant) or ""),
             difficulty = self.curDifficulty,
             gameMode = "freeplay",
-            currentMod = self.songMods[self.curSelected]
+            currentMod = mod
         }))
     end
     FreeplayMenu.super.update(self, dt)

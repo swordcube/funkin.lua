@@ -19,8 +19,6 @@ local abs = math.abs
 local tblSort = table.sort
 local tblInsert = table.insert
 
-local SongMetadata = require("funkin.backend.song.SongMetadata") --- @type funkin.backend.song.SongMetadata
-
 ---
 --- @class funkin.backend.song.Chart
 ---
