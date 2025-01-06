@@ -16,7 +16,6 @@ function registerSongs()
     end)
     for i = 1, #songList do
         local songID = songList[i] --- @type string
-        print(songID)
         SongRegistry.instance:registerEntry(songID, Json.parse(File.read(getModDirectory() .. "/songs/" .. songID:lower() .. "/meta.json")))
     end
 end
