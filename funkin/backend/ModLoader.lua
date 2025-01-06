@@ -36,11 +36,15 @@ function ModLoader.init()
     ModLoader.reloadMainScripts()
 
     local function callOnMainScripts(method, args)
+        local oldMod = Paths.currentMod
+        Paths.currentMod = ModLoader.currentMod
+
         local loadedMainScripts = ModLoader.loadedMainScripts
         for i = 1, #loadedMainScripts do
             script = loadedMainScripts[i] --- @type funkin.backend.Script
             script:callMethod(method, args)
         end
+        Paths.currentMod = oldMod
     end
     Engine.preUpdate:connect(function()
         callOnMainScripts("onUpdate", {Engine.deltaTime})
@@ -123,20 +127,21 @@ function ModLoader.reloadMainScripts()
     end
     ModLoader.loadedMainScripts = {}
     
+    local oldMod = Paths.currentMod
     local modList = ModLoader.modList
     for i = 1, #modList do
+        Paths.currentMod = ModLoader.currentMod
         local script = Script:new(ModLoader.modDirectory .. "/" .. modList[i] .. "/main.lua") --- @type funkin.backend.Script
         if not script:isClosed() then
             tblInsert(ModLoader.loadedMainScripts, script)
+            script:callMethod("init")
         end
     end
+    Paths.currentMod = oldMod
+    
     local script = Script:new("assets/main.lua") --- @type funkin.backend.Script
     if not script:isClosed() then
         tblInsert(ModLoader.loadedMainScripts, script)
-    end
-    local loadedMainScripts = ModLoader.loadedMainScripts
-    for i = 1, #loadedMainScripts do
-        script = loadedMainScripts[i] --- @type funkin.backend.Script
         script:callMethod("init")
     end
 end

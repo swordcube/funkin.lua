@@ -29,12 +29,13 @@ local Chart = {}
 ---
 --- @param  song        string
 --- @param  difficulty  string
+--- @param  mod?        string
 ---
 --- @return funkin.backend.song.chart.ChartData
 ---
-function Chart.load(song, difficulty)
-    local chart = Json.parse(File.read(Paths.chart(song, difficulty))) --- @type funkin.backend.song.chart.ChartData
-    chart.meta = SongMetadata.get(song)
+function Chart.load(song, difficulty, mod)
+    local chart = Json.parse(File.read(Paths.chart(song, difficulty, nil, mod))) --- @type funkin.backend.song.chart.ChartData
+    chart.meta = SongRegistry.instance:getEntry(song, mod)
 
     local uniqueNotes = {} --- @type table<funkin.backend.song.chart.NoteData>
     local chartNotes = chart.notes --- @type table<funkin.backend.song.chart.NoteData>

@@ -1,13 +1,28 @@
 local fs = love.filesystem
 
 function init()
-    -- this code below is concept code
-    -- SongRegistry.registerSongs(fs.getDirectoryItems("assets/songs"):filter(function(song)
-    --     return fs.getInfo("assets/songs/" .. song, "directory")
-    -- end))
-    -- LevelRegistry.registerLevels(fs.getDirectoryItems("assets/levels"):filter(function(song)
-    --     return fs.getInfo("assets/levels/" .. song, "directory")
-    -- end))
+    registerSongs()
+    registerLevels()
+end
+
+function registerSongs()
+    local songList = table.filter(fs.getDirectoryItems("assets/songs"), function(song)
+        return fs.getInfo("assets/songs/" .. song, "directory")
+    end)
+    for i = 1, #songList do
+        local songID = songList[i] --- @type string
+        SongRegistry.instance:registerEntry(songID, Json.parse(File.read("assets/songs/" .. songID:lower() .. "/meta.json")))
+    end
+end
+
+function registerLevels()
+    local levelList = table.filter(fs.getDirectoryItems("assets/data/levels"), function(level)
+        return fs.getInfo("assets/data/levels/" .. level, "file") and level:endsWith(".json")
+    end)
+    for i = 1, #levelList do
+        local levelID = levelList[i] --- @type string
+        LevelRegistry.instance:registerEntry(levelID:sub(1, #levelID - 5), Json.parse(File.read("assets/data/levels/" .. levelID)))
+    end
 end
 
 function onInputReceived(e)
@@ -21,6 +36,12 @@ function onInputReceived(e)
             Timer:new():start(0.001, function()
                 ModLoader.updateModList()
                 print("Reloaded mod list")
+
+                SongRegistry.instance:clearEntries()
+                print("Cleared registered songs")
+
+                LevelRegistry.instance:clearEntries()
+                print("Cleared registered levels")
     
                 ModLoader.reloadMainScripts()
                 print("Reloaded all main scripts")
@@ -30,5 +51,4 @@ function onInputReceived(e)
             end)
         end
     end
-    
 end

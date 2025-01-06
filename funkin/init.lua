@@ -33,3 +33,7 @@ AtlasText = require("funkin.ui.AtlasText")
 SoundTray = require("funkin.ui.SoundTray")
 
 Gameplay = require("funkin.scenes.Gameplay")
+
+BaseRegistry = require("funkin.backend.registry.BaseRegistry")
+SongRegistry = require("funkin.backend.registry.SongRegistry")
+LevelRegistry = require("funkin.backend.registry.LevelRegistry")

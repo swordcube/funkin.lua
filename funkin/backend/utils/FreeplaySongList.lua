@@ -58,17 +58,16 @@ function FreeplaySongList.get()
         local levelList = levelLists[a]
         for i = 1, #levelList.data.levels do
             -- go through each level
-            local levelID = levelList.data.levels[i] --- @type string
-            if not File.fileExists(levelList.directory .. "/" .. levelID .. ".json") then
+            local levelData = LevelRegistry.instance:getEntry(levelList.data.levels[i], levelList.mod)
+            if not levelData then
                 -- if it doesn't exist, skip
                 goto levelContinue
             end
-            local levelData = Json.parse(File.read(levelList.directory .. "/" .. levelID .. ".json"))
             for j = 1, #levelData.songs do
                 -- go through each song in this level
                 local songID = levelData.songs[j] --- @type string
     
-                local songMeta = SongMetadata.get(songID, levelList.mod) --- @type funkin.backend.song.SongMetadata?
+                local songMeta = SongRegistry.instance:getEntry(songID, levelList.mod) --- @type funkin.backend.song.SongMetadata?
                 if not songMeta then
                     -- if it doesn't exist, skip
                     goto songContinue
@@ -83,7 +82,7 @@ function FreeplaySongList.get()
                 for k = 1, #songMeta.variants do
                     -- go through each variant
                     local variant = songMeta.variants[k] --- @type string
-                    local variantMeta = SongMetadata.get(songID .. "-" .. variant, levelList.mod) --- @type funkin.backend.song.SongMetadata?
+                    local variantMeta = SongRegistry.instance:getEntry(songID .. "-" .. variant, levelList.mod) --- @type funkin.backend.song.SongMetadata?
                     
                     if variantMeta then
                         variantMeta._parsedColor = Color:new(variantMeta.color)
