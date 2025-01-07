@@ -120,10 +120,38 @@ end
 --- Refreshes all imports/requires, for scene/script reloading.
 ---
 function ModLoader.refreshImports()
-    for key, _ in pairs(package.loaded) do
-        package.loaded[key] = nil
+    local disallowedKeys = {
+        "funkin.backend.*",
+        "funkin.gameplay.GameplaySettings"
+    }
+    local packagesToRemove = {}
+    for key, value in pairs(package.loaded) do
+        if not key:startsWith("funkin") then
+            goto continue
+        end
+        for i = 1, #disallowedKeys do
+            local disallowedKey = disallowedKeys[i] --- @type string
+            if disallowedKey:endsWith(".*") and key:startsWith(disallowedKey:sub(1, #disallowedKey - 2)) then
+                goto continue
+            
+            elseif key == disallowedKey then
+                goto continue
+            end
+        end
+        packagesToRemove[key] = value
+        ::continue::
     end
-    collectgarbage("collect")
+    for key, value in pairs(packagesToRemove) do
+        package.loaded[key] = nil
+        collectgarbage("collect")
+
+        for key2, value2 in pairs(_G) do
+            if value2 == value then
+                _G[key2] = require(key)
+                break
+            end
+        end
+    end
 end
 
 ---

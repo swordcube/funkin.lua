@@ -33,8 +33,10 @@ local _disabled_, _inherit_ = "disabled", "inherit"
 local thread = love.thread
 
 local HealthIcon = require("funkin.ui.HealthIcon") --- @type funkin.ui.HealthIcon
-local MainMenu = require("funkin.scenes.MainMenu") --- @type funkin.scenes.MainMenu
 local FreeplaySongList = require("funkin.backend.utils.FreeplaySongList") --- @type funkin.backend.utils.FreeplaySongList
+
+local MainMenu = require("funkin.scenes.MainMenu") --- @type funkin.scenes.MainMenu
+local Gameplay = require("funkin.scenes.Gameplay") --- @type funkin.scenes.Gameplay
 
 ---
 --- @class funkin.scenes.FreeplayMenu : chip.core.Scene

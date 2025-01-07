@@ -100,7 +100,6 @@ function Paths.getSparrowAtlas(key, dir, mod)
     
     if not cache[atlasKey] then
         cache[atlasKey] = AtlasFrames.fromSparrow(imgPath, xmlPath)
-        cache[atlasKey]:reference()
     end
     return cache[atlasKey]
 end

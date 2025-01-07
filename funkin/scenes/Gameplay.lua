@@ -37,15 +37,6 @@ local Character = require("funkin.gameplay.Character") --- @type funkin.gameplay
 ---
 local Gameplay = Scene:extend("Gameplay", ...)
 
----
---- @type funkin.backend.data.GameplayParams
----
-Gameplay.lastParams = {
-    song = "test",
-    difficulty = "normal",
-    gameMode = "freeplay",
-    currentMod = nil
-}
 Gameplay.instance = nil --- @type funkin.scenes.Gameplay
 
 function Gameplay:constructor(params)
@@ -55,8 +46,14 @@ function Gameplay:constructor(params)
     --- @protected
     --- @type funkin.backend.data.GameplayParams
     ---
-    self._params = params or Gameplay.lastParams
-    Gameplay.lastParams = self._params
+    self._params = nil
+    if params then
+        self._params = params
+        GameplaySettings.lastParams = params
+    else
+        params = GameplaySettings.lastParams
+        self._params = params
+    end
 end
 
 function Gameplay:init()

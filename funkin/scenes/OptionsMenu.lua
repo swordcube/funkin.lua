@@ -74,6 +74,15 @@ function OptionsMenu:init()
             type = "number",
             data = {min = 5, max = 180, step = 5, decimals = 0}
         },
+        {
+            id = "masterVolume",
+            type = "number",
+            data = {min = 0, max = 1, step = 0.1, decimals = 1}
+        },
+        {
+            id = "muted",
+            type = "bool",
+        },
     }
 
     self.bg = Sprite:new() --- @type chip.graphics.Sprite
@@ -169,6 +178,9 @@ function OptionsMenu:handleInputsForOption(index, option)
             Options[optionID] = not Options[optionID]
             Options.apply(optionID)
 
+            if optionID == "muted" then
+                SoundTray.show(true)
+            end
             self:updateOptionDisplay(index)
         end
     elseif optionType == "number" then
@@ -183,6 +195,9 @@ function OptionsMenu:handleInputsForOption(index, option)
             Options[optionID] = math.clamp(value, option.data.min, option.data.max)
             Options.apply(optionID)
 
+            if optionID == "masterVolume" then
+                SoundTray.show(axis == 1.0)
+            end
             self:updateOptionDisplay(index)
         end
     end

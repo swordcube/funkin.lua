@@ -50,8 +50,8 @@ Cache.uiSkinCache = {}
 function Cache.clear()
     for _, value in pairs(Cache.atlasCache) do
         value:unreference()
+        Cache.atlasCache[_] = nil
     end
-    Cache.atlasCache = {}
     Cache.atlasFontCache = {}
     
     Cache.noteSkinCache = {}

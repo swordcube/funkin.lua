@@ -34,6 +34,9 @@ function onInputReceived(e)
             -- and it endlessly reloads over and over every frame
             -- basically making the game unplayable
             Timer:new():start(0.001, function()
+                ModLoader.refreshImports()
+                print("Refreshed imports")
+
                 ModLoader.updateModList()
                 print("Reloaded mod list")
 
@@ -42,14 +45,11 @@ function onInputReceived(e)
 
                 LevelRegistry.instance:clearEntries()
                 print("Cleared registered levels")
-
-                ModLoader.refreshImports()
-                print("Refreshed imports")
     
                 ModLoader.reloadMainScripts()
                 print("Reloaded all main scripts")
-    
-                Engine.switchScene(require(Engine.currentScene.__path):new())
+                
+                Engine.reloadScene()
                 print("Reloaded current scene")
             end)
         end

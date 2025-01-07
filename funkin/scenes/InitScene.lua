@@ -51,6 +51,11 @@ function InitScene:init()
     ModLoader.init()
     Highscore.init()
 
+    Engine.onInputReceived:connect(function(_)
+        if Controls.justPressed.FULLSCREEN then
+            love.window.setFullscreen(not love.window.getFullscreen())
+        end
+    end)
     Engine.targetFPS = Options.targetFPS
     Engine.vsync = Options.vsync
     Engine.autoPause = Options.autoPause
