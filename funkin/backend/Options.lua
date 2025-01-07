@@ -118,6 +118,15 @@ local Options = {
     _default_lowPowerMode = false, --- @protected
 
     ---
+    --- Controls the framerate the game should
+    --- try to run at. This only works if V-Sync is disabled.
+    ---
+    --- @type number
+    ---
+    targetFPS = nil,
+    _default_targetFPS = 144, --- @protected
+
+    ---
     --- Controls whether or not the game will run
     --- at an FPS matching your monitor refresh rate,
     ---
@@ -168,6 +177,34 @@ end
 function Options.save()
     local save = Options._save
     save:flush()
+end
+
+function Options.apply(option)
+    local behaviors = {
+        masterVolume = function(v)
+            local masterBus = AudioBus.master --- @type chip.audio.AudioBus
+            masterBus:setVolume(v)
+        end,
+        muted = function(v)
+            local masterBus = AudioBus.master --- @type chip.audio.AudioBus
+            masterBus:setMuted(v)
+        end,
+        targetFPS = function(v)
+            Engine.targetFPS = v
+        end,
+        vsync = function(v)
+            Engine.vsync = v
+        end,
+        lowPowerMode = function(v)
+            Engine.lowPowerMode = v
+        end,
+        autoPause = function(v)
+            Engine.autoPause = v
+        end
+    }
+    if behaviors[option] then
+        behaviors[option](Options[option])
+    end
 end
 
 setmetatable(Options, {

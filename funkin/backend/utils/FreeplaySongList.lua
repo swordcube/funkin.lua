@@ -78,7 +78,7 @@ function FreeplaySongList.get()
                     default = songMeta
                 }
                 Log.info({text = "[FREEPLAY] ", fgColor = Native.ConsoleColor.CYAN}, nil, nil, "Metadata found for " .. songID)
-    
+                
                 for k = 1, #songMeta.variants do
                     -- go through each variant
                     local variant = songMeta.variants[k] --- @type string
@@ -92,7 +92,6 @@ function FreeplaySongList.get()
                         Log.info({text = "[FREEPLAY] ", fgColor = Native.ConsoleColor.CYAN}, nil, nil, "Metadata found for " .. songID .. " [" .. variant .. "]")
                     end
                 end
-                tblInsert(songMeta.variants, "default")
                 tblInsert(songList, {
                     id = songID,
                     metas = data,

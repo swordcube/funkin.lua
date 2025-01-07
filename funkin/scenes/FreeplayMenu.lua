@@ -197,7 +197,7 @@ function FreeplayMenu:changeDifficulty(by, force)
         
     elseif curDifficultyIndex > #difficulties then
         curDifficultyIndex = 1
-
+        
         local curVariantIndex = wrap(prevVariantIndex + by, 1, #songMetas.default.variants)
         self.curVariant = songMetas.default.variants[curVariantIndex]
         

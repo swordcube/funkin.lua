@@ -17,7 +17,8 @@
         "need-check-nil",
         "undefined-field",
         "undefined-doc-param",
-        "param-type-mismatch"
+        "param-type-mismatch",
+        "assign-type-mismatch"
     ],
     "Lua.runtime.unicodeName": true
 }

@@ -51,6 +51,7 @@ function InitScene:init()
     ModLoader.init()
     Highscore.init()
 
+    Engine.targetFPS = Options.targetFPS
     Engine.vsync = Options.vsync
     Engine.autoPause = Options.autoPause
     Engine.lowPowerMode = Options.lowPowerMode

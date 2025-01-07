@@ -15,6 +15,7 @@
 ]]
 
 local tblInsert = table.insert
+local tblContains = table.contains
 
 ---
 --- @class funkin.backend.registry.SongRegistry : funkin.backend.registry.BaseRegistry
@@ -45,6 +46,9 @@ end
 --- @param  mod   string?                           Mod of the entry to register.
 ---
 function SongRegistry:registerEntry(id, data, mod)
+    if not tblContains(data.variants, "default") then
+        tblInsert(data.variants, 1, "default")
+    end
     if not mod then
         mod = Paths.currentMod
     end

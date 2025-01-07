@@ -117,6 +117,16 @@ function ModLoader.updateModList()
 end
 
 ---
+--- Refreshes all imports/requires, for scene/script reloading.
+---
+function ModLoader.refreshImports()
+    for key, _ in pairs(package.loaded) do
+        package.loaded[key] = nil
+    end
+    collectgarbage("collect")
+end
+
+---
 --- Reloads the main script for every mod.
 ---
 function ModLoader.reloadMainScripts()

@@ -42,6 +42,9 @@ function onInputReceived(e)
 
                 LevelRegistry.instance:clearEntries()
                 print("Cleared registered levels")
+
+                ModLoader.refreshImports()
+                print("Refreshed imports")
     
                 ModLoader.reloadMainScripts()
                 print("Reloaded all main scripts")

@@ -71,7 +71,7 @@ function MainMenu:init()
         self:startExitScene(require("funkin.scenes.FreeplayMenu"):new())
     end)
     self.menuItems:addItem("options", "Options", function(_)
-        print("STORY MODE SELECTED, TODO!!!")
+        print("OPTIONS SELECTED, TODO!!!")
         self:startExitScene(require("funkin.scenes.OptionsMenu"):new())
     end)
     self.menuItems:addItem("credits", "Credits", function(_)
@@ -92,6 +92,9 @@ function MainMenu:init()
 end
 
 function MainMenu:update(dt)
+    if BGM.audioPlayer:getVolume() < 0.8 then
+        BGM.audioPlayer:setVolume(BGM.audioPlayer:getVolume() + (dt * 0.5))
+    end
     if Controls.justPressed.BACK then
         AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
         Engine.switchScene(require("funkin.scenes.TitleScreen"):new())
