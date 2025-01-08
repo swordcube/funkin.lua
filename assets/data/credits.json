@@ -29,15 +29,25 @@
             "color": "#093a6b",
 
             "roles": ["programmer"]
+        },
+        {
+            "name": "MasterArt",
+            "desc": "Made the mods button graphic",
+            "url": "https://x.com/MasterArtMA",
+
+            "icon": "masterart",
+            "color": "#ffffff",
+
+            "roles": ["programmer"]
         }
     ],
     "specialThanks": [
         {
             "name": "The Funkin' Crew",
             "desc": "Made the original game, go check it out!\nWithout them, this project wouldn't be possible!",
-            "url": "github.com/FunkinCrew/Funkin",
+            "url": "https://github.com/FunkinCrew/Funkin",
             
-            "icon": "swordcube",
+            "icon": "funkincrew",
             "color": "#26a6f8",
             
             "roles": ["artist", "programmer", "composer"]

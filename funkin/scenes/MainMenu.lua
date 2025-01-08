@@ -46,22 +46,6 @@ function MainMenu:init()
     self.camera:snapToTargetPos()
     self:add(self.camera)
 
-    self.uiLayer = CanvasLayer:new() --- @type chip.graphics.CanvasLayer
-    self:add(self.uiLayer)
-
-    self.versionText = Text:new(2, Engine.gameHeight - 2) --- @type chip.graphics.Text
-    self.versionText:setFont(Paths.font("vcr.ttf"))
-    self.versionText:setBorderSize(1)
-    self.versionText:setBorderColor(Color.BLACK)
-
-    local text = "v" .. Constants.ENGINE_VERSION
-    if Constants.COMMIT_HASH then
-        text = text .. " - " .. Constants.COMMIT_HASH
-    end
-    self.versionText:setContents(text)
-    self.versionText:setY(self.versionText:getY() - self.versionText:getHeight())
-    self.uiLayer:add(self.versionText)
-
     self.menuItems = MainMenuList:new() --- @type funkin.ui.mainmenu.MainMenuList
     self.menuItems:addItem("storymode", "Story Mode", function(_)
         print("STORY MODE SELECTED, TODO!!!")
@@ -78,6 +62,10 @@ function MainMenu:init()
         print("CREDITS SELECTED, TODO!!!")
         self:startExitScene(require("funkin.scenes.CreditsMenu"):new())
     end)
+    self.menuItems:addItem("mods", "Mods", function(_)
+        print("MODS SELECTED, TODO!!!")
+        self:startExitScene(require("funkin.scenes.ModManagerMenu"):new())
+    end)
     self.menuItems.onChange:connect(function(item)
         self.camera:setY(item:getY())
     end)
@@ -88,7 +76,23 @@ function MainMenu:init()
     end)
     self.menuItems:centerItems()
     self.menuItems:selectItem(MainMenu.lastSelected)
-    self.uiLayer:add(self.menuItems)
+    self:add(self.menuItems)
+
+    self.uiLayer = CanvasLayer:new() --- @type chip.graphics.CanvasLayer
+    self:add(self.uiLayer)
+
+    self.versionText = Text:new(2, Engine.gameHeight - 2) --- @type chip.graphics.Text
+    self.versionText:setFont(Paths.font("vcr.ttf"))
+    self.versionText:setBorderSize(1)
+    self.versionText:setBorderColor(Color.BLACK)
+
+    local text = "v" .. Constants.ENGINE_VERSION
+    if Constants.COMMIT_HASH then
+        text = text .. " - " .. Constants.COMMIT_HASH
+    end
+    self.versionText:setContents(text)
+    self.versionText:setY(self.versionText:getY() - self.versionText:getHeight())
+    self.uiLayer:add(self.versionText)
 end
 
 function MainMenu:update(dt)

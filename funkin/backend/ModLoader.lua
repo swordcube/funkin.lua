@@ -122,7 +122,8 @@ end
 function ModLoader.refreshImports()
     local disallowedKeys = {
         "funkin.backend.*",
-        "funkin.gameplay.GameplaySettings"
+        "funkin.gameplay.GameplaySettings",
+        "funkin.ui.SoundTray"
     }
     local packagesToRemove = {}
     for key, value in pairs(package.loaded) do

@@ -100,7 +100,6 @@ end
 ---
 function MainMenuList:addItem(name, rpcName, callback, fireImmediately)
     local item = MainMenuButton:new(name, rpcName, callback, fireImmediately)
-    item.scrollFactor:set()
     self:add(item)
     return item
 end
@@ -108,12 +107,20 @@ end
 function MainMenuList:centerItems()
     local spacing = 160.0
     local top = (Engine.gameHeight - (spacing * (self:getLength() - 1))) * 0.5
-    for i = 1, self:getLength() do
+
+    local itemCount = self:getLength()
+    for i = 1, itemCount do
         ---
         --- @type funkin.ui.mainmenu.MainMenuButton
         ---
         local item = self:getMembers()[i]
         item:setPosition(Engine.gameWidth * 0.5, top + (spacing * (i - 1)))
+
+        if itemCount > 4 then
+            item.scrollFactor:set(0, itemCount * 0.1)
+        else
+            item.scrollFactor:set()
+        end
     end
 end
 

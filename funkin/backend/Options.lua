@@ -176,6 +176,9 @@ end
 
 function Options.apply(option)
     local behaviors = {
+        hitWindow = function(v)
+            Conductor.instance.safeZoneOffset = v
+        end,
         masterVolume = function(v)
             local masterBus = AudioBus.master --- @type chip.audio.AudioBus
             masterBus:setVolume(v)

@@ -40,12 +40,12 @@ function CreditsMenu:init()
 
     self.footer = Sprite:new() --- @type chip.graphics.Sprite
     self.footer:makeSolid(Engine.gameWidth, 50, Color.BLACK)
-    self.footer:setY(Engine.gameHeight - self.footer:getHeight())
+    self.footer:setY(Engine.gameHeight - (self.footer:getHeight() * 0.5))
+    self.footer:screenCenter("x")
     self.footer:setAlpha(0.6)
     self:add(self.footer)
 
-    self.curSelected = 0
-
+    self.curSelected = 1
     self:changeSelection(0, true)
 end
 

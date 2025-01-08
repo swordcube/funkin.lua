@@ -16,6 +16,8 @@
 
 require("funkin") -- Imports a lot of default stuff
 
+local _default_ = "_default_"
+
 local StatsDisplay = require("funkin.backend.StatsDisplay")
 
 ---
@@ -56,19 +58,15 @@ function InitScene:init()
             love.window.setFullscreen(not love.window.getFullscreen())
         end
     end)
-    Engine.targetFPS = Options.targetFPS
-    Engine.vsync = Options.vsync
-    Engine.autoPause = Options.autoPause
-    Engine.lowPowerMode = Options.lowPowerMode
-
-    AudioBus.master:setVolume(Options.masterVolume)
-    AudioBus.master:setMuted(Options.masterMuted)
-    
-    SoundTray.init()
-    StatsDisplay.init()
-
     Conductor.instance = Conductor:new()
     Engine.plugins:add(Conductor.instance)
+
+    for key, _ in pairs(Options) do
+        local skey = key:sub(#_default_ + 1)
+        Options.apply(skey)
+    end
+    SoundTray.init()
+    StatsDisplay.init()
 
     Engine.preSceneSwitch:connect(function()
         Cache.clear()
