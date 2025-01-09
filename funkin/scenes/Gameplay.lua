@@ -56,10 +56,10 @@ function Gameplay:constructor(params)
         params = GameplaySettings.lastParams
         self._params = params
     end
+    Gameplay.instance = self
 end
 
 function Gameplay:init()
-    Gameplay.instance = self
     Paths.currentMod = self._params.currentMod
 
     -- stop any playing music
