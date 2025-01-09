@@ -72,24 +72,27 @@ function FreeplaySongList.get()
                     -- if it doesn't exist, skip
                     goto songContinue
                 end
+                if not songMeta.color then
+                    songMeta.color = "#FFFFFF"
+                end
                 songMeta._parsedColor = Color:new(songMeta.color)
                 
                 local data = {
                     default = songMeta
                 }
-                Log.info({text = "[FREEPLAY] ", fgColor = Native.ConsoleColor.CYAN}, nil, nil, "Metadata found for " .. songID)
-                
                 for k = 1, #songMeta.variants do
                     -- go through each variant
                     local variant = songMeta.variants[k] --- @type string
                     local variantMeta = SongRegistry.instance:getEntry(songID .. "-" .. variant, levelList.mod) --- @type funkin.backend.song.SongMetadata?
                     
                     if variantMeta then
+                        if not variantMeta.color then
+                            variantMeta.color = "#FFFFFF"
+                        end
                         variantMeta._parsedColor = Color:new(variantMeta.color)
     
                         -- if it exists, add it
                         data[variant] = variantMeta
-                        Log.info({text = "[FREEPLAY] ", fgColor = Native.ConsoleColor.CYAN}, nil, nil, "Metadata found for " .. songID .. " [" .. variant .. "]")
                     end
                 end
                 tblInsert(songList, {

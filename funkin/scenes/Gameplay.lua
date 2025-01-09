@@ -32,6 +32,8 @@ local ComboPopups = require("funkin.gameplay.combo.ComboPopups") --- @type funki
 local Stage = require("funkin.gameplay.Stage") --- @type funkin.gameplay.Stage
 local Character = require("funkin.gameplay.Character") --- @type funkin.gameplay.Character
 
+local Countdown = require("funkin.gameplay.Countdown") --- @type funkin.gameplay.Countdown
+
 ---
 --- @class funkin.scenes.Gameplay : chip.core.Scene
 ---
@@ -153,7 +155,7 @@ function Gameplay:init()
     self:add(self.hudLayer)
 
     -- make strumlines
-    self.opponentStrumLine = StrumLine:new(Engine.gameWidth * 0.25, 50, Options.downscroll, "pixel") --- @type funkin.gameplay.StrumLine
+    self.opponentStrumLine = StrumLine:new(Engine.gameWidth * 0.25, 50, Options.downscroll, self.currentChart.meta.uiSkin) --- @type funkin.gameplay.StrumLine
     self.opponentStrumLine:attachNotes(table.filter(self.currentChart.notes, function(note)
         return note.lane < 4
     end))
@@ -232,6 +234,12 @@ function Gameplay:init()
     -- combo popups
     self.comboPopups = ComboPopups:new(0, 0, self.currentChart.meta.uiSkin) --- @type funkin.gameplay.combo.ComboPopups
     self.hudLayer:add(self.comboPopups)
+
+    -- countdown
+    Countdown.start(self.currentChart.meta.uiSkin, self.mainConductor, function(sprite, sound, _, _)
+        sound:play()
+        self.hudLayer:add(sprite)
+    end)
 end
 
 ---
