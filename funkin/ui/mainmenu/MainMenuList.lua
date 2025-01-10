@@ -55,9 +55,7 @@ function MainMenuList:constructor()
     self.onAcceptPress = Signal:new():type(MainMenuButton)
 end
 
-function MainMenuList:update(dt)
-    MainMenuList.super.update(self, dt)
-
+function MainMenuList:input(_)
     if self.enabled and not self.busy then
         local wheel = -Input:getMouseWheelY()
         if Controls.justPressed.UI_UP or wheel < 0 then

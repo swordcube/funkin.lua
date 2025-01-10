@@ -24,6 +24,8 @@ local MainMenu = Scene:extend("MainMenu", ...)
 MainMenu.lastSelected = 1
 
 function MainMenu:init()
+    self:setUpdateMode("always")
+
     self.bg = Sprite:new() --- @type chip.graphics.Sprite
     self.bg:loadTexture(Paths.image("yellow", "images/menus"))
     self.bg.scale:set(1.17, 1.17)
@@ -99,6 +101,9 @@ function MainMenu:update(dt)
     if BGM.audioPlayer:getVolume() < 0.8 then
         BGM.audioPlayer:setVolume(BGM.audioPlayer:getVolume() + (dt * 0.5))
     end
+end
+
+function MainMenu:input(_)
     if Controls.justPressed.BACK then
         AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
         Engine.switchScene(require("funkin.scenes.TitleScreen"):new())
@@ -106,7 +111,6 @@ function MainMenu:update(dt)
     if Input.wasKeyJustPressed(KeyCode.SEVEN) then
         Engine.switchScene(require("funkin.scenes.TestingScene"):new())
     end
-    MainMenu.super.update(self, dt)
 end
 
 function MainMenu:startExitScene(scene)
@@ -124,6 +128,7 @@ function MainMenu:startExitScene(scene)
     end
     local t = Timer:new() --- @type chip.utils.Timer
     t:start(duration + 0.05, function(_)
+        self:setUpdateMode("inherit")
         Engine.switchScene(scene)
     end)
 end

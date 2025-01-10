@@ -56,12 +56,11 @@ function CreditsMenu:changeSelection(by, force)
     AudioPlayer.playSFX(Paths.sound("scroll", "sounds/menus"))
 end
 
-function CreditsMenu:update(dt)
+function CreditsMenu:init(_)
     if Controls.justPressed.BACK then
         AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
         Engine.switchScene(MainMenu:new())
     end
-    CreditsMenu.super.update(self, dt)
 end
 
 return CreditsMenu

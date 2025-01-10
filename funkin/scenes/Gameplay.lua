@@ -60,6 +60,7 @@ function Gameplay:constructor(params)
 end
 
 function Gameplay:init()
+    self:setUpdateMode("always")
     Paths.currentMod = self._params.currentMod
 
     -- stop any playing music
@@ -128,6 +129,11 @@ function Gameplay:init()
     -- setup misc variables
     self.startingSong = true
     self.endingSong = false
+
+    self.canPause = true
+    self.inCutscene = false
+
+    self.paused = false
 
     ---
     --- @protected
@@ -236,10 +242,12 @@ function Gameplay:init()
     self.hudLayer:add(self.comboPopups)
 
     -- countdown
-    Countdown.start(self.currentChart.meta.uiSkin, self.mainConductor, function(sprite, sound, _, _)
-        sound:play()
-        self.hudLayer:add(sprite)
-    end)
+    if not self.inCutscene then
+        Countdown.start(self.currentChart.meta.uiSkin, self.mainConductor, function(sprite, sound, _, _)
+            sound:play()
+            self.hudLayer:add(sprite)
+        end)
+    end
 end
 
 ---
@@ -268,6 +276,7 @@ function Gameplay:update(dt)
         -- if you're softlocked on song end, just press end or your back binds
         -- to instantly go to freeplay
         if Controls.justPressed.BACK then
+            self:setUpdateMode("inherit")
             Engine.switchScene(require("funkin.scenes.FreeplayMenu"):new())
         end
     end
@@ -324,6 +333,21 @@ function Gameplay:update(dt)
     Gameplay.super.update(self, dt)
 end
 
+function Gameplay:input(_)
+    if self.canPause and Controls.justPressed.PAUSE then
+        self.paused = true
+        BGM.audioPlayer:pause()
+
+        if Countdown.timer then
+            Countdown.timer:pause()
+        end
+        for _, value in pairs(self.vocalTracks) do
+            value:pause()
+        end
+        self:add(require("funkin.subscenes.PauseMenu"):new())
+    end
+end
+
 function Gameplay:updateIconPositions()
     local iconOffset, healthBar, iconP2, iconP1 = 26.0, self.healthBar, self.iconP2, self.iconP1
     iconP2:setPosition(
@@ -365,6 +389,15 @@ function Gameplay:endSong()
     self.endingSong = true
 
     BGM.stop()
+    for _, value in pairs(self.vocalTracks) do
+        value:stop()
+    end
+    self.opponentStrumLine._forceSongPos = self.mainConductor:getTime()
+    self.opponentStrumLine.notes:forEach(function(note)
+        note:updatePosition()
+    end)
+    self.playerStrumLine._forceSongPos = self.mainConductor:getTime()
+    
     self.mainConductor.music = nil
 
     local stats = self.player.stats
@@ -394,12 +427,10 @@ function Gameplay:endSong()
         -- TODO: story mode in general lol!!
     
     elseif self._params.gameMode == "freeplay" then
-        -- TODO: highscore :O
         CoolUtil.playMenuMusic()
+
+        self:setUpdateMode("inherit")
         Engine.switchScene(require("funkin.scenes.FreeplayMenu"):new())
-    
-    else
-        print("Unknown game mode: " .. self._params.gameMode .. ", press one of your BACK binds to go to freeplay")
     end
 end
 

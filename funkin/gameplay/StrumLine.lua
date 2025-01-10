@@ -63,6 +63,12 @@ function StrumLine:constructor(x, y, downscroll, skin)
     ---
     self._curSplash = 1
 
+    ---
+    --- @protected
+    --- @type number?
+    ---
+    self._forceSongPos = nil
+
     self.receptors = CanvasLayer:new() --- @type chip.graphics.CanvasLayer
     self:add(self.receptors)
 

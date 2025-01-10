@@ -273,6 +273,9 @@ end
 
 function Note:updatePosition(songPos)
     local strumLine = self._strumLine
+    if strumLine._forceSongPos then
+        songPos = strumLine._forceSongPos
+    end
     local receptor = strumLine.receptors:getMembers()[self._lane + 1]
 
     local scrollSpeed = strumLine:getScrollSpeed() / Engine.timeScale
@@ -289,7 +292,7 @@ function Note:updatePosition(songPos)
     local conductor = self._attachedConductor --- @type funkin.backend.Conductor
 
     local wasHit = self._wasHit and not self._missed
-    local sexo = wasHit and 0.45 * (conductor:getTime() - self._time) * absScrollSpeed or 0.0
+    local sexo = wasHit and 0.45 * (songPos - self._time) * absScrollSpeed or 0.0
     
     local sustain = self._sustain --- @type funkin.gameplay.Sustain
     local calcHeight = max((0.45 * (self._length - conductor:getStepCrotchet()) * absScrollSpeed) - sexo)

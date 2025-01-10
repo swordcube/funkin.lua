@@ -175,7 +175,7 @@ function TitleScreen:skipIntro()
     end)
 end
 
-function TitleScreen:update(dt)
+function TitleScreen:input(_)
     if Controls.justPressed.ACCEPT then
         if not self.skippedIntro then
             self:skipIntro()
@@ -207,7 +207,6 @@ function TitleScreen:update(dt)
             end
         end
     end
-    TitleScreen.super.update(self, dt)
 end
 
 function TitleScreen:beatHit(beat)

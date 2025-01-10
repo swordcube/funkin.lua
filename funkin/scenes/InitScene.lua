@@ -18,6 +18,7 @@ require("funkin") -- Imports a lot of default stuff
 
 local _default_ = "_default_"
 
+local Transition = require("funkin.ui.transition.Transition")
 local StatsDisplay = require("funkin.backend.StatsDisplay")
 
 ---
@@ -71,6 +72,9 @@ function InitScene:init()
     Engine.preSceneSwitch:connect(function()
         Cache.clear()
     end)
+    Engine.postSceneSwitch:connect(function()
+        Transition.init()
+    end, nil, true)
     Engine.switchScene(require("funkin.scenes.TitleScreen"):new())
 end
 

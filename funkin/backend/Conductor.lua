@@ -343,7 +343,7 @@ function Conductor:update(dt)
         end
     end
     local scene = Engine.currentScene
-    if not scene then
+    if not scene or not scene:isActive() then
         return
     end
     if runStep then

@@ -47,7 +47,7 @@ function Countdown.start(uiSkin, conductor, callback)
         Countdown.timer:free()
     end
     Countdown.timer = Timer:new()
-    Countdown.timer:start(conductor:getCrotchet() / 1000, function()
+    Countdown.timer:start(conductor:getCrotchet() / 1000, function(tmr)
         local sprite = Sprite:new() --- @type chip.graphics.Sprite
         if json.countdown.atlasType == "sparrow" then
             sprite:setFrames(Paths.getSparrowAtlas(json.countdown.texture, "images/" .. json.countdown.textureFolder))
@@ -88,6 +88,9 @@ function Countdown.start(uiSkin, conductor, callback)
         end
         swagCounter = swagCounter + 1
 
+        if tmr:getLoopsLeft() == 0 then
+            Countdown.timer = nil
+        end
     end, #json.countdown.sounds)
 end
 

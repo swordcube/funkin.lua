@@ -87,7 +87,6 @@ function AtlasText:update(dt)
         self:setX(lerp(self:getX(), (self.targetY * 20) + 90, lerpRatio))
         self:setY(lerp(self:getY(), (self.targetY * 156) + (Engine.gameHeight * 0.45), lerpRatio))
     end
-    AtlasText.super.update(self, dt)
 end
 
 function AtlasText:getFont()

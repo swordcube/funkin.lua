@@ -29,7 +29,6 @@ local tblContains = table.contains
 
 ---@diagnostic disable: invisible
 
-local _disabled_, _inherit_ = "disabled", "inherit"
 local thread = love.thread
 
 local HealthIcon = require("funkin.ui.HealthIcon") --- @type funkin.ui.HealthIcon
@@ -44,6 +43,8 @@ local Gameplay = require("funkin.scenes.Gameplay") --- @type funkin.scenes.Gamep
 local FreeplayMenu = Scene:extend("FreeplayMenu", ...)
 
 function FreeplayMenu:init()
+    self:setUpdateMode("always")
+
     self.songList = {} --- @type table<string>
     self.songMods = {} --- @type table<string>
     self.songMetas = {} --- @type table<string, table<string, funkin.backend.song.SongMetadata>>
@@ -258,6 +259,9 @@ function FreeplayMenu:update(dt)
         BGM.fade(0, 1, 2)
         self._playingSong = song
     end
+end
+
+function FreeplayMenu:input(_)
     if Controls.justPressed.BACK then
         AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
         Engine.switchScene(require("funkin.scenes.MainMenu"):new())
@@ -279,6 +283,7 @@ function FreeplayMenu:update(dt)
         Engine.switchScene(MainMenu:new())
     end
     if Controls.justPressed.ACCEPT then
+        self:setUpdateMode("inherit")
         local mod = self.songMods[self.curSelected]
         if mod:lower() == "nil" then
             mod = nil
@@ -290,7 +295,6 @@ function FreeplayMenu:update(dt)
             currentMod = mod
         }))
     end
-    FreeplayMenu.super.update(self, dt)
 end
 
 function FreeplayMenu:positionHighscore()

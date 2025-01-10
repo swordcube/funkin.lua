@@ -33,6 +33,8 @@ local MainMenu = require("funkin.scenes.MainMenu") --- @type funkin.scenes.MainM
 local ModManagerMenu = Scene:extend("ModManagerMenu", ...)
 
 function ModManagerMenu:init()
+    self:setUpdateMode("always")
+    
     self.bg = Sprite:new() --- @type chip.graphics.Sprite
     self.bg:loadTexture(Paths.image("blue", "images/menus"))
     self.bg:screenCenter("xy")
@@ -49,12 +51,13 @@ function ModManagerMenu:changeSelection(by, force)
     AudioPlayer.playSFX(Paths.sound("scroll", "sounds/menus"))
 end
 
-function ModManagerMenu:update(dt)
+function ModManagerMenu:input(_)
     if Controls.justPressed.BACK then
         AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
+
+        self:setUpdateMode("inherit")
         Engine.switchScene(MainMenu:new())
     end
-    ModManagerMenu.super.update(self, dt)
 end
 
 return ModManagerMenu

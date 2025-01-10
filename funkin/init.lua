@@ -41,3 +41,5 @@ Character = require("funkin.gameplay.Character")
 BaseRegistry = require("funkin.backend.registry.BaseRegistry")
 SongRegistry = require("funkin.backend.registry.SongRegistry")
 LevelRegistry = require("funkin.backend.registry.LevelRegistry")
+
+Transition = require("funkin.ui.transition.Transition")

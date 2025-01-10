@@ -38,12 +38,14 @@ function TestingScene:init()
 end
 
 function TestingScene:update(dt)
+    self.balls:setRotationDegrees(self.balls:getRotationDegrees() + (dt * 180.0))
+end
+
+function TestingScene:input(_)
     if Controls.justPressed.BACK then
         AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
         Engine.switchScene(require("funkin.scenes.MainMenu"):new())
     end
-    self.balls:setRotationDegrees(self.balls:getRotationDegrees() + (dt * 180.0))
-    TestingScene.super.update(self, dt)
 end
 
 return TestingScene

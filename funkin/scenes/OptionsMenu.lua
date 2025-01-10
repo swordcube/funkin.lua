@@ -33,6 +33,8 @@ local MainMenu = require("funkin.scenes.MainMenu") --- @type funkin.scenes.MainM
 local OptionsMenu = Scene:extend("OptionsMenu", ...)
 
 function OptionsMenu:init()
+    self:setUpdateMode("always")
+
     self.curSelected = 1
     self.options = {
         {
@@ -203,9 +205,11 @@ function OptionsMenu:handleInputsForOption(index, option)
     end
 end
 
-function OptionsMenu:update(dt)
+function OptionsMenu:input(_)
     if Controls.justPressed.BACK then
         AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
+
+        self:setUpdateMode("inherit")
         Engine.switchScene(MainMenu:new())
     end
     local wheel = -Input:getMouseWheelY()
@@ -216,7 +220,6 @@ function OptionsMenu:update(dt)
         self:changeSelection(1)
     end
     self:handleInputsForOption(self.curSelected, self.options[self.curSelected])
-    OptionsMenu.super.update(self, dt)
 end
 
 return OptionsMenu
