@@ -43,10 +43,11 @@ local NumberOption = Option:extend("NumberOption", ...)
 function NumberOption:constructor(data)
     NumberOption.super.constructor(self, data)
 
-    self.text = Text:new(0, 0, 0, data.name, 32) --- @type chip.graphics.Text
+    self.text = Text:new(0, 0, 0, data.name .. "\n  ", 32) --- @type chip.graphics.Text
     self.text:setFont(Paths.font("funkin.ttf"))
     self.text:setBorderSize(4)
     self.text:setBorderColor(Color.BLACK)
+    self.text:setFastRendering(false)
     self:add(self.text)
     
     local value = Options[data.id] --- @type number
@@ -54,6 +55,11 @@ function NumberOption:constructor(data)
     self.valueText:setFont(Paths.font("funkin.ttf"))
     self.valueText:setColor(Color.BLACK)
     self:add(self.valueText)
+
+    ---
+    --- @protected
+    ---
+    self._autoChangeTimer = 0.0
 end
 
 ---
@@ -87,28 +93,48 @@ function NumberOption:unselect()
     self.valueText:setContents(" " .. tostring(Options[data.id]) .. " ")
 end
 
+function NumberOption:increment(axis)
+    local data = self:getData()
+    local value = Options[data.id] + (axis * data.step) --- @type number
+
+    if data.decimals and data.decimals > 0 then
+        value = math.truncate(value, data.decimals)
+    end
+    value = math.clamp(value, data.min, data.max)
+    Options[data.id] = value
+
+    if value <= data.min then
+        self.valueText:setContents(" " .. tostring(value) .. " >")
+    elseif value >= data.max then
+        self.valueText:setContents("< " .. tostring(value))
+    else
+        self.valueText:setContents("< " .. tostring(value) .. " >")
+    end
+end
+
+function NumberOption:update(dt)
+    if not self.selected then
+        return
+    end
+    if Controls.pressed.UI_LEFT or Controls.pressed.UI_RIGHT then
+        local axis = Controls.pressed.UI_LEFT and -1.0 or 1.0
+        self._autoChangeTimer = self._autoChangeTimer + dt
+        if self._autoChangeTimer >= 0.5 then
+            self._autoChangeTimer = self._autoChangeTimer - 0.05
+            self:increment(axis)
+        end
+    else
+        self._autoChangeTimer = 0.0
+    end
+end
+
 function NumberOption:input(_)
     if not self.selected then
         return
     end
     if Controls.justPressed.UI_LEFT or Controls.justPressed.UI_RIGHT then
-        local data = self:getData()
         local axis = Controls.pressed.UI_LEFT and -1.0 or 1.0
-
-        local value = Options[data.id] + (axis * data.step) --- @type number
-        if data.decimals and data.decimals > 0 then
-            value = math.truncate(value, data.decimals)
-        end
-        value = math.clamp(value, data.min, data.max)
-        Options[data.id] = value
-
-        if value <= data.min then
-            self.valueText:setContents(" " .. tostring(value) .. " >")
-        elseif value >= data.max then
-            self.valueText:setContents("< " .. tostring(value))
-        else
-            self.valueText:setContents("< " .. tostring(value) .. " >")
-        end
+        self:increment(axis)
     end
 end
 

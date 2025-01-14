@@ -40,10 +40,11 @@ local ChoiceOption = Option:extend("ChoiceOption", ...)
 function ChoiceOption:constructor(data)
     ChoiceOption.super.constructor(self, data)
 
-    self.text = Text:new(0, 0, 0, data.name, 32) --- @type chip.graphics.Text
+    self.text = Text:new(0, 0, 0, data.name .. "\n  ", 32) --- @type chip.graphics.Text
     self.text:setFont(Paths.font("funkin.ttf"))
     self.text:setBorderSize(4)
     self.text:setBorderColor(Color.BLACK)
+    self.text:setFastRendering(false)
     self:add(self.text)
     
     local value = Options[data.id] --- @type number

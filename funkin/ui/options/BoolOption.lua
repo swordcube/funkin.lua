@@ -38,10 +38,11 @@ local BoolOption = Option:extend("BoolOption", ...)
 function BoolOption:constructor(data)
     BoolOption.super.constructor(self, data)
 
-    self.text = Text:new(0, 0, 0, data.name, 32) --- @type chip.graphics.Text
+    self.text = Text:new(0, 0, 0, data.name .. "\n  ", 32) --- @type chip.graphics.Text
     self.text:setFont(Paths.font("funkin.ttf"))
     self.text:setBorderSize(4)
     self.text:setBorderColor(Color.BLACK)
+    self.text:setFastRendering(false)
     self:add(self.text)
 
     self.checkbox = Checkbox:new(self.text:getWidth() - 20, -30) --- @type funkin.ui.Checkbox
