@@ -56,6 +56,33 @@ local Options = {
     _default_downscroll = false, --- @protected
 
     ---
+    --- Controls whether or not your notefield
+    --- is centered during gameplay.
+    ---
+    --- @type boolean
+    ---
+    centeredNoteField = nil,
+    _default_centeredNoteField = false, --- @protected
+
+    ---
+    --- Controls whether or not the opponent notefield
+    --- is visible during gameplay.
+    ---
+    --- @type boolean
+    ---
+    opponentNotes = nil,
+    _default_opponentNotes = true, --- @protected
+
+    ---
+    --- Controls whether or not you can hit non-existent
+    --- notes during gameplay.
+    ---
+    --- @type boolean
+    ---
+    ghostTapping = nil,
+    _default_ghostTapping = true, --- @protected
+
+    ---
     --- Controls the hit window for notes
     --- during gameplay.
     ---
@@ -73,6 +100,15 @@ local Options = {
     ---
     songOffset = nil,
     _default_songOffset = 0, --- @protected
+
+    ---
+    --- Controls the system used for calculating score
+    --- during gameplay.
+    ---
+    --- @type "PBot"|"Week 7"|"Legacy"|"Judge4"
+    ---
+    scoringSystem = nil,
+    _default_scoringSystem = "PBot", --- @protected
 
     ---
     --- Controls whether or not the game will

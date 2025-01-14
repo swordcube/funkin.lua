@@ -56,10 +56,11 @@ function Gameplay:constructor(params)
         params = GameplaySettings.lastParams
         self._params = params
     end
-    Gameplay.instance = self
 end
 
 function Gameplay:init()
+    Gameplay.instance = self
+
     self:setUpdateMode("always")
     Paths.currentMod = self._params.currentMod
 
@@ -161,10 +162,11 @@ function Gameplay:init()
     self:add(self.hudLayer)
 
     -- make strumlines
-    self.opponentStrumLine = StrumLine:new(Engine.gameWidth * 0.25, 50, Options.downscroll, self.currentChart.meta.uiSkin) --- @type funkin.gameplay.StrumLine
+    self.opponentStrumLine = StrumLine:new(Engine.gameWidth * 0.25, 50, Options.downscroll, "pixel") --- @type funkin.gameplay.StrumLine
     self.opponentStrumLine:attachNotes(table.filter(self.currentChart.notes, function(note)
         return note.lane < 4
     end))
+    self.opponentStrumLine:setVisibility(Options.opponentNotes)
     self.opponentStrumLine:setScrollSpeed(scrollSpeed[self._params.difficulty] or scrollSpeed.default)
     self.hudLayer:add(self.opponentStrumLine)
     
@@ -241,6 +243,17 @@ function Gameplay:init()
     self.comboPopups = ComboPopups:new(0, 0, self.currentChart.meta.uiSkin) --- @type funkin.gameplay.combo.ComboPopups
     self.hudLayer:add(self.comboPopups)
 
+    -- setup scoring system
+    -- TODO: week 7, legacy, and judge4
+
+    if Options.scoringSystem == "PBot" then
+        Scoring.currentSystem = require("funkin.gameplay.scoring.PBotSystem"):new()
+    else
+        -- fallback to pbot if that scoring system doesn't exist
+        Log.warn(nil, nil, nil, "Scoring system " .. Options.scoringSystem .. " doesn't exist! Falling back to PBot.")
+        Scoring.currentSystem = require("funkin.gameplay.scoring.PBotSystem"):new()
+    end
+
     -- countdown
     if not self.inCutscene then
         Countdown.start(self.currentChart.meta.uiSkin, self.mainConductor, function(sprite, sound, _, _)
@@ -264,6 +277,9 @@ function Gameplay:executeEvent(event)
 end
 
 function Gameplay:update(dt)
+    if not Transition.instance then
+        self:setUpdateMode("inherit")
+    end
     local mainConductor = self.mainConductor
     if self.startingSong then
         mainConductor:setTime(mainConductor:getRawTime() + (dt * 1000.0))

@@ -61,7 +61,7 @@ function InitScene:init()
     end)
     Conductor.instance = Conductor:new()
     Engine.plugins:add(Conductor.instance)
-
+    
     for key, _ in pairs(Options) do
         local skey = key:sub(#_default_ + 1)
         Options.apply(skey)

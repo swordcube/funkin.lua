@@ -64,7 +64,7 @@ function Receptor:setLaneID(id)
     self._initialWidth = self:getFrameWidth()
     self._initialHeight = self:getFrameHeight()
 
-    self.frameOffset:set((self:getFrameWidth() - self._initialWidth) * 0.5, (self:getFrameHeight() - self._initialHeight) * 0.5)
+    self.offset:set((self:getFrameWidth() - self._initialWidth) * 0.5, (self:getFrameHeight() - self._initialHeight) * 0.5)
 end
 
 function Receptor:getSkin()
@@ -127,9 +127,13 @@ end
 --- @param  cpu?       boolean
 ---
 function Receptor:press(confirm, duration, cpu)
+    local json = NoteSkin.get(self:getSkin()) --- @type funkin.backend.data.NoteSkin?
+
     self.animation:play(dirs[self._lane + 1] .. (confirm and " confirm" or " press"), true)
-    self.frameOffset:set((self:getFrameWidth() - self._initialWidth) * 0.5, (self:getFrameHeight() - self._initialHeight) * 0.5)
-    
+    self.offset:set(
+        json.receptors.offset.x + ((self:getFrameWidth() - self._initialWidth) * 0.5),
+        json.receptors.offset.y + ((self:getFrameHeight() - self._initialHeight) * 0.5)
+    )
     if duration then
         if self._confirmTimer then
             self._confirmTimer:free()
@@ -141,7 +145,10 @@ function Receptor:press(confirm, duration, cpu)
             
             elseif confirm and self.animation:getCurrentAnimationName():endsWith("confirm") then
                 self.animation:play(dirs[self._lane + 1] .. " press", true)
-                self.frameOffset:set((self:getFrameWidth() - self._initialWidth) * 0.5, (self:getFrameHeight() - self._initialHeight) * 0.5)
+                self.offset:set(
+                    json.receptors.offset.x + ((self:getFrameWidth() - self._initialWidth) * 0.5),
+                    json.receptors.offset.y + ((self:getFrameHeight() - self._initialHeight) * 0.5)
+                )
             end
             self._confirmTimer = nil
         end)
@@ -149,8 +156,13 @@ function Receptor:press(confirm, duration, cpu)
 end
 
 function Receptor:release()
+    local json = NoteSkin.get(self:getSkin()) --- @type funkin.backend.data.NoteSkin?
+
     self.animation:play(dirs[self._lane + 1] .. " static")
-    self.frameOffset:set((self:getFrameWidth() - self._initialWidth) * 0.5, (self:getFrameHeight() - self._initialHeight) * 0.5)
+    self.offset:set(
+        json.receptors.offset.x + ((self:getFrameWidth() - self._initialWidth) * 0.5),
+        json.receptors.offset.y + ((self:getFrameHeight() - self._initialHeight) * 0.5)
+    )
 end
 
 return Receptor

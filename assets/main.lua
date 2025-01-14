@@ -34,6 +34,8 @@ function onInputReceived(e)
             -- and it endlessly reloads over and over every frame
             -- basically making the game unplayable
             Timer:new():start(0.001, function()
+                Engine.paused = false -- Prevent accidental softlocking
+
                 ModLoader.refreshImports()
                 print("Refreshed imports")
 

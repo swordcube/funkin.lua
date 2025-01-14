@@ -58,8 +58,8 @@ function MainMenu:init()
     end)
     self.menuItems:addItem("options", "Options", function(_)
         print("OPTIONS SELECTED, TODO!!!")
-        self:startExitScene(require("funkin.scenes.OptionsMenu"):new())
-    end)
+        self:add(require("funkin.subscenes.OptionsMenu"):new())
+    end, Engine.debugMode)
     self.menuItems:addItem("credits", "Credits", function(_)
         print("CREDITS SELECTED, TODO!!!")
         self:startExitScene(require("funkin.scenes.CreditsMenu"):new())
@@ -98,6 +98,9 @@ function MainMenu:init()
 end
 
 function MainMenu:update(dt)
+    if not Transition.instance then
+        self:setUpdateMode("inherit")
+    end
     if BGM.audioPlayer:getVolume() < 0.8 then
         BGM.audioPlayer:setVolume(BGM.audioPlayer:getVolume() + (dt * 0.5))
     end

@@ -20,6 +20,8 @@
 local TitleScreen = Scene:extend("TitleScreen", ...)
 
 function TitleScreen:init()
+    self:setUpdateMode("always")
+
     self.beatCallbacks = {
         [1] = function()
             self:createCoolText({"The", "Funkin Crew Inc"})
@@ -194,6 +196,7 @@ function TitleScreen:input(_)
                     end)
                 end
                 self._acceptTimer = Timer:new():start(2, function(_)
+                    self:setUpdateMode("inherit")
                     Engine.switchScene(require("funkin.scenes.MainMenu"):new())
                 end)
                 self.titleText.animation:play("press")
@@ -203,6 +206,7 @@ function TitleScreen:input(_)
                     self._acceptTimer:free()
                     self._acceptTimer = nil
                 end
+                self:setUpdateMode("inherit")
                 Engine.switchScene(require("funkin.scenes.MainMenu"):new())
             end
         end

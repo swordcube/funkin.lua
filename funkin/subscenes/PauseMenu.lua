@@ -19,6 +19,7 @@ local tblInsert = table.insert
 local tblRemove = table.remove
 
 local Countdown = require("funkin.gameplay.Countdown") --- @type funkin.gameplay.Countdown
+local OptionsMenu = require("funkin.subscenes.OptionsMenu") --- @type funkin.subscenes.OptionsMenu
 
 ---
 --- @class funkin.subscenes.PauseMenu : chip.graphics.CanvasLayer
@@ -95,13 +96,10 @@ function PauseMenu:constructor()
             {
                 name = "Change Options",
                 callback = function()
-                    print("hmm")
-                end
-            },
-            {
-                name = "Change Controls",
-                callback = function()
-                    print("hmm")
+                    self._paused = true
+                    Timer:new():start(0.001, function(_)
+                        self:add(OptionsMenu:new())
+                    end)
                 end
             },
             {
@@ -135,12 +133,16 @@ function PauseMenu:constructor()
     ---
     self._canInput = false
 
+    ---
+    --- @protected
+    ---
+    self._paused = false
+
     self:setUpdateMode("always")
     Gameplay.instance:setUpdateMode("disabled")
 
     TimerManager.global:pause()
     TweenManager.global:pause()
-
 
     self.pauseMusic = AudioPlayer:new() --- @type chip.audio.AudioPlayer
     self:add(self.pauseMusic)
@@ -185,6 +187,12 @@ function PauseMenu:constructor()
     local t = Tween:new() --- @type chip.tweens.Tween
     t:tweenProperty(self.bg, "alpha", 0.6, 0.4):setEase(Ease.quartInOut)
     t:tweenProperty(self.pauseMusic, "volume", 0.5, 25)
+
+    self.memberRemoved:connect(function(m)
+        if m:is(OptionsMenu) then
+            self._paused = false
+        end
+    end)
 end
 
 function PauseMenu:update(_)
@@ -192,7 +200,7 @@ function PauseMenu:update(_)
 end
 
 function PauseMenu:input(_)
-    if not self._canInput then
+    if not self._canInput or self._paused then
         return
     end
     local wheel = -Input:getMouseWheelY()

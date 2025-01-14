@@ -52,10 +52,11 @@ function GradientSwipe:enterTransition()
 end
 
 function GradientSwipe:exitTransition()
-    if GradientSwipe.isBlocking and Engine.currentScene:getUpdateMode() == "inherit" then
+    local prevUpdateMode = Engine.currentScene:getUpdateMode()
+    if GradientSwipe.isBlocking and prevUpdateMode == "inherit" then
         GradientSwipe.isBlocking = true
         Engine.currentScene:setUpdateMode("disabled")
-
+        
         TweenManager.global:pause()
         TimerManager.global:pause()
     end
@@ -63,7 +64,7 @@ function GradientSwipe:exitTransition()
     blackScreen:makeSolid(Engine.gameWidth, Engine.gameHeight, Color.BLACK)
     blackScreen:screenCenter("xy")
     self:add(blackScreen)
-
+    
     local gradientSpr = Sprite:new() --- @type chip.graphics.Sprite
     gradientSpr:loadTexture(Paths.image("transitionSpr", "images/menus"))
     gradientSpr:setGraphicSize(Engine.gameWidth, Engine.gameHeight)
@@ -71,19 +72,19 @@ function GradientSwipe:exitTransition()
     gradientSpr.flipY = true
     gradientSpr:setY(gradientSpr:getY() - gradientSpr:getHeight())
     self:add(gradientSpr)
-
+    
     local t = Tween:new() --- @type chip.tweens.Tween
     t:tweenProperty(blackScreen, "y",blackScreen:getY() + (blackScreen:getHeight() * 2), 0.7):setEase(Ease.sineOut)
     t:tweenProperty(gradientSpr, "y", gradientSpr:getY() + (gradientSpr:getHeight() * 2), 0.7):setEase(Ease.sineOut)
     t:setCompletionCallback(function(_)
-        if GradientSwipe.isBlocking then
+        local prevUpdateMode = Engine.currentScene:getUpdateMode()
+        if GradientSwipe.isBlocking and prevUpdateMode ~= "disabled" then
             Engine.currentScene:setUpdateMode("inherit")
 
             TweenManager.global:resume()
             TimerManager.global:resume()
-            
-            GradientSwipe.isBlocking = false
         end
+        GradientSwipe.isBlocking = false
         self:finish()
     end)
 end

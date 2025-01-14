@@ -287,9 +287,13 @@ function HealthIcon:_loadCharacter(characterID)
     self.flipX = (charData and charData.healthIcon and charData.healthIcon.flip) and charData.healthIcon.flip.x or false
     self.flipY = (charData and charData.healthIcon and charData.healthIcon.flip) and charData.healthIcon.flip.y or false
 
+    self.offset:set(
+        (self:getWidth() - self:getFrameWidth()) * -0.5,
+        (self:getHeight() - self:getFrameHeight()) * -0.5
+    )
     self.frameOffset:set(
-        ((self:getWidth() - self:getFrameWidth()) * -0.5) + ((charData and charData.healthIcon and charData.healthIcon.offset) and charData.healthIcon.offset.x or 0.0),
-        ((self:getHeight() - self:getFrameHeight()) * -0.5) + ((charData and charData.healthIcon and charData.healthIcon.offset) and charData.healthIcon.offset.y or 0.0)
+        (charData and charData.healthIcon and charData.healthIcon.offset) and charData.healthIcon.offset.x or 0.0,
+        (charData and charData.healthIcon and charData.healthIcon.offset) and charData.healthIcon.offset.y or 0.0
     )
 end
 
