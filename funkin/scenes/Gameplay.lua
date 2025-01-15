@@ -141,6 +141,11 @@ function Gameplay:init()
     ---
     self._currentEvent = 1 --- @type integer
 
+    ---
+    --- @protected
+    ---
+    self._validScore = true --- @type boolean
+
     local panEvents = self.currentChart.events
     table.filter(panEvents, function(e)
         return e.time <= 20 and e.type == "Camera Pan"
@@ -162,25 +167,35 @@ function Gameplay:init()
     self:add(self.hudLayer)
 
     -- make strumlines
-    self.opponentStrumLine = StrumLine:new(Engine.gameWidth * 0.25, 50, Options.downscroll, "pixel") --- @type funkin.gameplay.StrumLine
+    self.opponentStrumLine = StrumLine:new(Engine.gameWidth * 0.25, 50, Options.downscroll, "opponent", "pixel") --- @type funkin.gameplay.StrumLine
     self.opponentStrumLine:attachNotes(table.filter(self.currentChart.notes, function(note)
         return note.lane < 4
     end))
     self.opponentStrumLine:setVisibility(Options.opponentNotes)
     self.opponentStrumLine:setScrollSpeed(scrollSpeed[self._params.difficulty] or scrollSpeed.default)
+    self.opponentStrumLine:setCharacters({self.opponentCharacter})
     self.hudLayer:add(self.opponentStrumLine)
     
-    self.playerStrumLine = StrumLine:new(Engine.gameWidth * 0.75, 50, Options.downscroll, self.currentChart.meta.uiSkin) --- @type funkin.gameplay.StrumLine
+    self.playerStrumLine = StrumLine:new(Engine.gameWidth * 0.75, 50, Options.downscroll, "player", self.currentChart.meta.uiSkin) --- @type funkin.gameplay.StrumLine
     self.playerStrumLine:attachNotes(table.filter(self.currentChart.notes, function(note)
         return note.lane > 3
     end))
     self.playerStrumLine:setScrollSpeed(scrollSpeed[self._params.difficulty] or scrollSpeed.default)
+    self.playerStrumLine:setCharacters({self.playerCharacter})
     self.hudLayer:add(self.playerStrumLine)
 
     -- position strumlines on downscroll
     if Options.downscroll then
         self.opponentStrumLine:setY(Engine.gameHeight - self.opponentStrumLine:getY() - self.opponentStrumLine.receptors:getHeight())
         self.playerStrumLine:setY(Engine.gameHeight - self.playerStrumLine:getY() - self.playerStrumLine.receptors:getHeight())
+    end
+
+    -- position strumlines for centered notefield
+    if Options.centeredNoteField then
+        self.playerStrumLine:setX(Engine.gameWidth * 0.5)
+
+        self.opponentStrumLine.scale:set(0.5, 0.5)
+        self.opponentStrumLine:setPosition(220, Engine.gameHeight * 0.65)
     end
 
     -- make players (these control behaviors for the 2 strumlines)
@@ -261,6 +276,11 @@ function Gameplay:init()
             self.hudLayer:add(sprite)
         end)
     end
+
+    -- dumb hacky workaround for a crash
+    ModLoader.onRefreshImports:connect(function()
+        Gameplay.instance = self
+    end, nil, true)
 end
 
 ---
@@ -297,6 +317,13 @@ function Gameplay:update(dt)
         end
     end
     if Engine.debugMode then
+        -- if we're in debug mode, press F6 to
+        -- toggle botplay
+        if Input.wasKeyJustPressed(KeyCode.F6) then
+            self._validScore = false
+            self.player.cpu = not self.player.cpu
+            self:updateScoreText()
+        end
         -- if we're in debug mode, press HOME
         -- to instantly skip to the first note
         if Input.wasKeyJustPressed(KeyCode.HOME) then
@@ -346,7 +373,6 @@ function Gameplay:update(dt)
         lerp(self.camera:getY(), focusedCharacter:getCameraY(), dt * 2.4)
     )
     self:updateIconPositions()
-    Gameplay.super.update(self, dt)
 end
 
 function Gameplay:input(_)
@@ -409,9 +435,6 @@ function Gameplay:endSong()
         value:stop()
     end
     self.opponentStrumLine._forceSongPos = self.mainConductor:getTime()
-    self.opponentStrumLine.notes:forEach(function(note)
-        note:updatePosition()
-    end)
     self.playerStrumLine._forceSongPos = self.mainConductor:getTime()
     
     self.mainConductor.music = nil
@@ -422,7 +445,7 @@ function Gameplay:endSong()
     local score = stats:getScore()
     local accuracy = stats:getAccuracy()
 
-    if score > scoreData.score or accuracy > scoreData.accuracy then
+    if self._validScore and (score > scoreData.score or accuracy > scoreData.accuracy) then
         Highscore.setScoreData(self._params.song, self._params.difficulty, Paths.currentMod, {
             score = score,
             misses = stats.misses,

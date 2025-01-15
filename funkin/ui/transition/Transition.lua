@@ -19,6 +19,9 @@
 ---
 local Transition = CanvasLayer:extend("Transition", ...)
 
+Transition.onStateExit = Signal:new()
+Transition.onStateEnter = Signal:new()
+
 Transition.instance = nil --- @type funkin.ui.transition.Transition
 Transition.currentType = nil --- @type funkin.ui.transition.Transition
 
@@ -47,8 +50,10 @@ function Transition.show(state)
     end
     if state == "in" then
         Engine.currentScene:add(Transition.currentType:new("in"))
+        Transition.onStateExit:emit()
     else
         Engine.currentScene:add(Transition.currentType:new("out"))
+        Transition.onStateEnter:emit()
     end
 end
 

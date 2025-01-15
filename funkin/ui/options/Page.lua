@@ -14,10 +14,16 @@
     limitations under the License.
 ]]
 
+local min = math.min
+local max = math.max
 local wrap = math.wrap
 local lerp = math.lerp
 
+local OptionsMenu = require("funkin.subscenes.OptionsMenu") --- @type funkin.subscenes.OptionsMenu
+
 local Option = require("funkin.ui.options.Option") --- @type funkin.ui.options.Option
+local Separator = require("funkin.ui.options.Separator") --- @type funkin.ui.options.Separator
+local ControlOption = require("funkin.ui.options.ControlOption") --- @type funkin.ui.options.ControlOption
 
 ---
 --- @class funkin.ui.options.Page : chip.graphics.CanvasLayer
@@ -34,6 +40,7 @@ function Page:constructor()
     self:add(self.grpOptions)
     
     self:init()
+    self.pageHeight = self.grpOptions:getHeight()
 
     self:changeSelection(0, true)
 end
@@ -45,14 +52,10 @@ end
 --- @param  option  funkin.ui.options.Option
 ---
 function Page:addOption(option)
-    local data = option:getData()
-    print("Adding option: " .. data.name .. " (" .. data.id .. ")")
-
     if not option:is(Option) then
         Log.warn(nil, nil, nil, "You cannot add a non-option to a page!")
         return
     end
-    option:setUpdateMode("always")
     option:setPosition(
         20,
         35 + (40 * self.grpOptions:getLength())
@@ -65,9 +68,19 @@ function Page:changeSelection(by, force)
         return
     end
     local itemCount = self.grpOptions:getLength()
+    local members = self.grpOptions:getMembers()
+
+    local prevItem = members[self.curSelected]
     self.curSelected = wrap(self.curSelected + by, 1, itemCount)
 
-    local members = self.grpOptions:getMembers()
+    while members[self.curSelected] and members[self.curSelected]:is(Separator) do
+        self.curSelected = wrap(self.curSelected + by, 1, itemCount)
+    end
+    local curItem = members[self.curSelected]
+    if prevItem:is(ControlOption) then
+        local controlItem = curItem --- @type funkin.ui.options.ControlOption
+        controlItem.selectedKey = prevItem.selectedKey
+    end
     for i = 1, itemCount do
         local option = members[i] --- @type funkin.ui.options.Option
         option.selected = i == self.curSelected
@@ -81,9 +94,18 @@ function Page:changeSelection(by, force)
 end
 
 function Page:update(dt)
+    if self.grpOptions:getLength() >= 12 then
+        self.grpOptions:setY(lerp(self.grpOptions:getY(), min(0.0, (-40 * (self.curSelected - 12))), dt * 10.0))
+    else
+        self.grpOptions:setY(lerp(self.grpOptions:getY(), 0.0, dt * 25.0))
+    end
 end
 
 function Page:input(_)
+    local menu = OptionsMenu.instance
+    if not menu.canInput then
+        return
+    end
     local wheel = -Input:getMouseWheelY()
     if Controls.justPressed.UI_UP or wheel < 0 then
         self:changeSelection(-1)

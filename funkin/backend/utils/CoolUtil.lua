@@ -65,4 +65,71 @@ function CoolUtil.parseCSV(csv)
     return list
 end
 
+---
+--- @param  key  string
+---
+function CoolUtil.formatKey(key)
+    local shits = {
+        [KeyCode.NONE] = "---",
+        [KeyCode.LEFT] = "Left",
+        [KeyCode.DOWN] = "Down",
+        [KeyCode.UP] = "Up",
+        [KeyCode.RIGHT] = "Right",
+        [KeyCode.ENTER] = "Enter",
+        [KeyCode.L_CTRL] = "LCtrl",
+        [KeyCode.R_CTRL] = "RCtrl",
+        [KeyCode.L_SHIFT] = "LShift",
+        [KeyCode.R_SHIFT] = "RShift",
+        [KeyCode.L_ALT] = "LAlt",
+        [KeyCode.R_ALT] = "RAlt",
+        [KeyCode.ESCAPE] = "ESC",
+        [KeyCode.BACKSPACE] = "BckSpc",
+        [KeyCode.SPACE] = "Space",
+        [KeyCode.NUMPAD_0] = "#0",
+        [KeyCode.NUMPAD_1] = "#1",
+        [KeyCode.NUMPAD_2] = "#2",
+        [KeyCode.NUMPAD_3] = "#3",
+        [KeyCode.NUMPAD_4] = "#4",
+        [KeyCode.NUMPAD_5] = "#5",
+        [KeyCode.NUMPAD_6] = "#6",
+        [KeyCode.NUMPAD_7] = "#7",
+        [KeyCode.NUMPAD_8] = "#8",
+        [KeyCode.NUMPAD_9] = "#9",
+        [KeyCode.NUMPAD_PLUS] = "#+",
+        [KeyCode.NUMPAD_MINUS] = "#-",
+        [KeyCode.NUMPAD_PERIOD] = "#.",
+        [KeyCode.NUMPAD_MULTIPLY] = "#*",
+        [KeyCode.NUM_LOCK] = "NumLock",
+        [KeyCode.GRAVE_ACCENT] = "`",
+        [KeyCode.LBRACKET] = "[",
+        [KeyCode.RBRACKET] = "]",
+        [KeyCode.PRINT_SCREEN] = "PrtScrn",
+        [KeyCode.QUOTE] = "'",
+        [KeyCode.ZERO] = "0",
+        [KeyCode.ONE] = "1",
+        [KeyCode.TWO] = "2",
+        [KeyCode.THREE] = "3",
+        [KeyCode.FOUR] = "4",
+        [KeyCode.FIVE] = "5",
+        [KeyCode.SIX] = "6",
+        [KeyCode.SEVEN] = "7",
+        [KeyCode.EIGHT] = "8",
+        [KeyCode.NINE] = "9",
+        [KeyCode.COMMA] = ",",
+        [KeyCode.PERIOD] = ".",
+        [KeyCode.SEMICOLON] = ",",
+        [KeyCode.BACKSLASH] = "\\",
+        [KeyCode.SLASH] = "/",
+        [KeyCode.PAGE_UP] = "PgUp",
+        [KeyCode.PAGE_DOWN] = "PgDown",
+        [KeyCode.TAB] = "Tab",
+        [KeyCode.PLUS] = "+",
+        [KeyCode.MINUS] = "-"
+    }
+    if key then
+        return shits[key] or key:title():replace(" ", "")
+    end
+    return "---"
+end
+
 return CoolUtil

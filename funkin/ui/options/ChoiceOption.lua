@@ -78,8 +78,8 @@ function ChoiceOption:select()
 end
 
 function ChoiceOption:unselect()
-    self.text:setAlpha(0.6)
-    self.valueText:setAlpha(0.6)
+    self.text:setAlpha(0.5)
+    self.valueText:setAlpha(0.5)
     
     local data = self:getData()
     self.valueText:setContents(" " .. tostring(Options[data.id]) .. " ")

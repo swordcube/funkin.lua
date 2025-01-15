@@ -25,14 +25,12 @@ local max = math.max
 
 ---@diagnostic disable: invisible
 
-local Page = require("funkin.ui.options.Page") --- @type funkin.ui.options.Page
-
 ---
---- @class funkin.scenes.OptionsMenu : chip.graphics.CanvasLayer
+--- @class funkin.subscenes.OptionsMenu : chip.graphics.CanvasLayer
 ---
 local OptionsMenu = CanvasLayer:extend("OptionsMenu", ...)
 
-OptionsMenu.instance = nil --- @type funkin.scenes.OptionsMenu
+OptionsMenu.instance = nil --- @type funkin.subscenes.OptionsMenu
 
 function OptionsMenu:constructor()
     OptionsMenu.super.constructor(self)
@@ -55,6 +53,8 @@ function OptionsMenu:constructor()
         --     page = require("funkin.ui.options.pages.MiscPage")
         -- }
     }
+    self.canInput = true
+
     self.bg = Sprite:new() --- @type chip.graphics.Sprite
     self.bg:makeSolid(Engine.gameWidth, Engine.gameHeight, Color.BLACK)
     self.bg:screenCenter("xy")
@@ -70,13 +70,6 @@ function OptionsMenu:constructor()
     self.containerBG:screenCenter("xy")
     self.containerBG:setY(self.containerBG:getY() + 20)
     self.uiLayer:add(self.containerBG)
-
-    self.optionsThingie = Sprite:new(50, 20) --- @type chip.graphics.Sprite
-    self.optionsThingie:setFrames(Paths.getSparrowAtlas("buttons", "images/menus/main"))
-    self.optionsThingie.animation:addByPrefix("idle", "options selected", 24)
-    self.optionsThingie.animation:play("idle")
-    self.optionsThingie.scale:set(0.5, 0.5)
-    self.uiLayer:add(self.optionsThingie)
 
     self.grpCategories = CanvasLayer:new(self.containerBG:getX(), self.containerBG:getY() - 20) --- @type chip.graphics.CanvasLayer
     self.uiLayer:add(self.grpCategories)
@@ -110,6 +103,13 @@ function OptionsMenu:constructor()
     self.uiContainer:setClearColor(Color.TRANSPARENT)
     self.uiLayer:add(self.uiContainer)
 
+    self.optionsThingie = Sprite:new(50, 20) --- @type chip.graphics.Sprite
+    self.optionsThingie:setFrames(Paths.getSparrowAtlas("buttons", "images/menus/main"))
+    self.optionsThingie.animation:addByPrefix("idle", "options selected", 24)
+    self.optionsThingie.animation:play("idle")
+    self.optionsThingie.scale:set(0.5, 0.5)
+    self.uiLayer:add(self.optionsThingie)
+
     self.curPage = 1 --- @type integer
     self.pageUI = nil --- @type funkin.ui.options.Page
 
@@ -138,11 +138,15 @@ function OptionsMenu:openPage(page)
 end
 
 function OptionsMenu:input(_)
+    if not self.canInput then
+        return
+    end
     if Controls.justPressed.BACK then
         Timer:new():start(0.001, function(_)
             Engine.paused = false
 
             Options.save()
+            Controls.save()
             AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
 
             local t = Tween:new() --- @type chip.tweens.Tween
@@ -160,7 +164,6 @@ function OptionsMenu:input(_)
             t:setCompletionCallback(function(_)
                 self:free()
             end)
-
         end)
     end
 end

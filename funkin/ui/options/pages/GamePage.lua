@@ -15,10 +15,13 @@
 ]]
 
 local Page = require("funkin.ui.options.Page") --- @type funkin.ui.options.Page
+local Separator = require("funkin.ui.options.Separator") --- @type funkin.ui.options.Separator
 
 local BoolOption = require("funkin.ui.options.BoolOption") --- @type funkin.ui.options.BoolOption
 local NumberOption = require("funkin.ui.options.NumberOption") --- @type funkin.ui.options.NumberOption
 local ChoiceOption = require("funkin.ui.options.ChoiceOption") --- @type funkin.ui.options.ChoiceOption
+
+local ControlOption = require("funkin.ui.options.ControlOption") --- @type funkin.ui.options.ControlOption
 
 ---
 --- @class funkin.ui.options.pages.GamePage : funkin.ui.options.Page
@@ -63,6 +66,7 @@ function GamePage:init()
         step = 5,
         decimals = 0,
 
+        suffix = "ms",
         id = "hitWindow"
     }))
     self:addOption(NumberOption:new({
@@ -75,6 +79,7 @@ function GamePage:init()
         step = 5,
         decimals = 0,
 
+        suffix = "ms",
         id = "songOffset"
     }))
     self:addOption(ChoiceOption:new({
@@ -83,6 +88,64 @@ function GamePage:init()
 
         choices = {"PBot", "Week 7", "Legacy", "Judge4"},
         id = "scoringSystem"
+    }))
+
+    --- [ CONTROLS ] ---
+    
+    self:addOption(Separator:new(""))
+    self:addOption(Separator:new("UI CONTROLS"))
+
+    self:addOption(ControlOption:new({
+        name = "LEFT",
+        id = "UI_LEFT"
+    }))
+    self:addOption(ControlOption:new({
+        name = "DOWN",
+        id = "UI_DOWN"
+    }))
+    self:addOption(ControlOption:new({
+        name = "UP",
+        id = "UI_UP"
+    }))
+    self:addOption(ControlOption:new({
+        name = "RIGHT",
+        id = "UI_RIGHT"
+    }))
+    self:addOption(ControlOption:new({
+        name = "RESET",
+        id = "RESET"
+    }))
+    self:addOption(ControlOption:new({
+        name = "ACCEPT",
+        id = "ACCEPT"
+    }))
+    self:addOption(ControlOption:new({
+        name = "BACK",
+        id = "BACK"
+    }))
+    self:addOption(ControlOption:new({
+        name = "PAUSE",
+        id = "PAUSE"
+    }))
+
+    self:addOption(Separator:new(""))
+    self:addOption(Separator:new("NOTE CONTROLS"))
+
+    self:addOption(ControlOption:new({
+        name = "LEFT",
+        id = "NOTE_LEFT"
+    }))
+    self:addOption(ControlOption:new({
+        name = "DOWN",
+        id = "NOTE_DOWN"
+    }))
+    self:addOption(ControlOption:new({
+        name = "UP",
+        id = "NOTE_UP"
+    }))
+    self:addOption(ControlOption:new({
+        name = "RIGHT",
+        id = "NOTE_RIGHT"
     }))
 end
 

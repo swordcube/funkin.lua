@@ -71,8 +71,8 @@ function BoolOption:select()
 end
 
 function BoolOption:unselect()
-    self.checkbox:setAlpha(0.6)
-    self.text:setAlpha(0.6)
+    self.checkbox:setAlpha(0.5)
+    self.text:setAlpha(0.5)
 end
 
 function BoolOption:input(_)

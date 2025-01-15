@@ -149,6 +149,7 @@ function PauseMenu:constructor()
 
     self.pauseMusic:load(Paths.music("breakfast"))
     self.pauseMusic:setVolume(0.0)
+    self.pauseMusic:setLooping(true)
     self.pauseMusic:play()
 
     self.bg = Sprite:new() --- @type chip.graphics.Sprite

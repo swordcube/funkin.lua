@@ -29,6 +29,9 @@ local NumberOptionData = {
     step = nil, --- @type number?
     decimals = nil, --- @type number?
 
+    prefix = nil, --- @type string?
+    suffix = nil, --- @type string?
+
     id = nil, --- @type string
 }
 
@@ -69,6 +72,19 @@ function NumberOption:getData()
     return self._data
 end
 
+function NumberOption:stringifyValue()
+    local data = self:getData()
+    local str = ""
+    if data.prefix then
+        str = data.prefix
+    end
+    str = str .. tostring(Options[data.id])
+    if data.suffix then
+        str = str .. data.suffix
+    end
+    return str
+end
+
 function NumberOption:select()
     self.text:setAlpha(1)
     self.valueText:setAlpha(1)
@@ -77,20 +93,20 @@ function NumberOption:select()
     local value = Options[data.id] --- @type number
     
     if value <= data.min then
-        self.valueText:setContents(" " .. tostring(Options[data.id]) .. " >")
+        self.valueText:setContents(" " .. self:stringifyValue() .. " >")
     elseif value >= data.max then
-        self.valueText:setContents("< " .. tostring(Options[data.id]))
+        self.valueText:setContents("< " .. self:stringifyValue())
     else
-        self.valueText:setContents("< " .. tostring(Options[data.id]) .. " >")
+        self.valueText:setContents("< " .. self:stringifyValue() .. " >")
     end
 end
 
 function NumberOption:unselect()
-    self.text:setAlpha(0.6)
-    self.valueText:setAlpha(0.6)
+    self.text:setAlpha(0.5)
+    self.valueText:setAlpha(0.5)
     
     local data = self:getData()
-    self.valueText:setContents(" " .. tostring(Options[data.id]) .. " ")
+    self.valueText:setContents(" " .. self:stringifyValue() .. " ")
 end
 
 function NumberOption:increment(axis)

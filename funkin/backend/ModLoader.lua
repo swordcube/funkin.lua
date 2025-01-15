@@ -31,6 +31,9 @@ ModLoader.modDirectory = "mods"
 ModLoader.currentMod = "test"
 ModLoader.loadedMainScripts = {}
 
+ModLoader.onRefreshImports = Signal:new() --- @type chip.utils.Signal
+ModLoader.onReloadMainScripts = Signal:new() --- @type chip.utils.Signal
+
 function ModLoader.init()
     ModLoader.updateModList()
     ModLoader.reloadMainScripts()
@@ -154,6 +157,7 @@ function ModLoader.refreshImports()
             end
         end
     end
+    ModLoader.onRefreshImports:emit()
 end
 
 ---
@@ -184,6 +188,7 @@ function ModLoader.reloadMainScripts()
         tblInsert(ModLoader.loadedMainScripts, script)
         script:callMethod("init")
     end
+    ModLoader.onReloadMainScripts:emit()
 end
 
 return ModLoader

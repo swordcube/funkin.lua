@@ -63,7 +63,7 @@ function ComboPopups:showJudgement(judgement, skin)
     sprite.animation:play(judgement)
 
     local json = UISkin.get(skin) --- @type funkin.backend.data.UISkin?
-    sprite.scale:set(json.judgements.scale, json.judgements.scale)
+    sprite.scale:set(json.judgements.scale * 0.95, json.judgements.scale * 0.95)
 
     if json.judgements.antialiasing ~= nil then
         sprite:setAntialiasing(json.judgements.antialiasing)
@@ -79,6 +79,7 @@ function ComboPopups:showJudgement(judgement, skin)
         sprite._tween:free()
     end
     local t = Tween:new() --- @type chip.tweens.Tween
+    t:tweenProperty(sprite, "scale", Point:new(json.judgements.scale, json.judgements.scale), 0.1)
     t:tweenProperty(sprite, "alpha", 0, 0.2):setStartDelay(Conductor.instance:getCrotchet() * 0.001)
     t:setCompletionCallback(function(_)
         sprite._tween = nil
@@ -118,7 +119,7 @@ function ComboPopups:showCombo(combo, skin, miss)
         sprite.animation:play(separatedCombo:charAt(digitCount - (i - 1)))
 
         local json = UISkin.get(skin) --- @type funkin.backend.data.UISkin?
-        sprite.scale:set(json.combo.scale, json.combo.scale)
+        sprite.scale:set(json.combo.scale * 0.95, json.combo.scale * 0.95)
 
         if json.combo.antialiasing ~= nil then
             sprite:setAntialiasing(json.combo.antialiasing)
@@ -132,6 +133,7 @@ function ComboPopups:showCombo(combo, skin, miss)
             sprite._tween:free()
         end
         local t = Tween:new() --- @type chip.tweens.Tween
+        t:tweenProperty(sprite, "scale", Point:new(json.combo.scale, json.combo.scale), 0.1)
         t:tweenProperty(sprite, "alpha", 0, 0.2):setStartDelay(Conductor.instance:getCrotchet() * 0.002)
         t:setCompletionCallback(function(_)
             sprite._tween = nil

@@ -35,10 +35,7 @@ local Option = CanvasLayer:extend("Option", ...)
 function Option:constructor(data)
     Option.super.constructor(self)
 
-    self.targetY = 0
     self.selected = false
-
-    self:setUpdateMode("disabled")
 
     ---
     --- @protected

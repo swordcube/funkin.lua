@@ -66,7 +66,7 @@ function NoteSpawner:update(dt)
         if attachedNotesCount == 0 then
             goto continue
         end
-        while strumLine._spawnedNotes < attachedNotesCount and attachedNotes[strumLine._spawnedNotes + 1].time < self._attachedConductor:getTime() + (1500 / (strumLine:getScrollSpeed() / timeScale)) do
+        while strumLine._spawnedNotes < attachedNotesCount and attachedNotes[strumLine._spawnedNotes + 1].time < self._attachedConductor:getTime() + ((1500 / (strumLine:getScrollSpeed() / timeScale)) / strumLine.scale.y) do
             strumLine._spawnedNotes = strumLine._spawnedNotes + 1
             local noteData = attachedNotes[strumLine._spawnedNotes] --- @type funkin.backend.song.chart.NoteData
             

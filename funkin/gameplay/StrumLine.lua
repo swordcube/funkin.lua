@@ -27,13 +27,18 @@ local Note = require("funkin.gameplay.Note") --- @type funkin.gameplay.Note
 ---
 local StrumLine = CanvasLayer:extend("StrumLine", ...)
 
-function StrumLine:constructor(x, y, downscroll, skin)
+function StrumLine:constructor(x, y, downscroll, type, skin)
     StrumLine.super.constructor(self, x, y, downscroll, skin)
 
     ---
     --- @protected
     ---
     self._downscroll = downscroll --- @type boolean
+
+    ---
+    --- @protected
+    ---
+    self._type = type or "opponent" --- @type "opponent"|"player"
 
     ---
     --- @protected
@@ -68,6 +73,12 @@ function StrumLine:constructor(x, y, downscroll, skin)
     --- @type number?
     ---
     self._forceSongPos = nil
+
+    ---
+    --- @protected
+    --- @type table<funkin.gameplay.Character>
+    ---
+    self._characters = {}
 
     self.receptors = CanvasLayer:new() --- @type chip.graphics.CanvasLayer
     self:add(self.receptors)
@@ -125,6 +136,17 @@ function StrumLine:setDownscroll(downscroll)
     self._downscroll = downscroll
 end
 
+function StrumLine:getType()
+    return self._type
+end
+
+---
+--- @param  type  "opponent"|"player"
+---
+function StrumLine:setType(type)
+    self._type = type
+end
+
 function StrumLine:getAttachedNotes()
     return self._attachedNotes
 end
@@ -178,6 +200,17 @@ end
 ---
 function StrumLine:setScrollSpeed(scrollSpeed)
     self._scrollSpeed = scrollSpeed
+end
+
+function StrumLine:getCharacters()
+    return self._characters
+end
+
+---
+--- @param  characters  table<funkin.gameplay.Character>
+---
+function StrumLine:setCharacters(characters)
+    self._characters = characters
 end
 
 return StrumLine
