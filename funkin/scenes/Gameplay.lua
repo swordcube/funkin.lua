@@ -124,7 +124,7 @@ function Gameplay:init()
 
     -- hook song ending signal shit
     BGM.audioPlayer.finished:connect(function()
-        self:endSong()
+        self:finishSong()
     end)
 
     -- setup misc variables
@@ -424,19 +424,34 @@ function Gameplay:startSong()
     self.mainConductor.music = BGM.audioPlayer
 end
 
+function Gameplay:finishSong()
+    if Options.songOffset > 0 then
+        Timer:new():start(Options.songOffset / 1000, function(_)
+            self:endSong()
+        end)
+    else
+        self:endSong()
+    end
+end
+
 function Gameplay:endSong()
     if self.endingSong then
         return
     end
     self.endingSong = true
 
+    self.opponentStrumLine._forceSongPos = self.mainConductor:getTime()
+    self.opponentStrumLine.notes:forEach(function(note)
+        note:updatePosition()
+    end)
+    self.playerStrumLine._forceSongPos = self.mainConductor:getTime()
+    self.playerStrumLine.notes:forEach(function(note)
+        note:updatePosition()
+    end)
     BGM.stop()
     for _, value in pairs(self.vocalTracks) do
         value:stop()
     end
-    self.opponentStrumLine._forceSongPos = self.mainConductor:getTime()
-    self.playerStrumLine._forceSongPos = self.mainConductor:getTime()
-    
     self.mainConductor.music = nil
 
     local stats = self.player.stats

@@ -288,20 +288,21 @@ function Note:updatePosition(songPos)
     self:setX(receptor:getX())
     self:setY(receptor:getY() + (0.45 * (self._time - songPos) * absScrollSpeed * scrollMult))
     
-    local receptor = strumLine.receptors:getMembers()[self:getLaneID() + 1]
-    local conductor = self._attachedConductor --- @type funkin.backend.Conductor
-
-    local wasHit = self._wasHit and not self._missed
-    local sexo = wasHit and 0.45 * (songPos - self._time) * absScrollSpeed or 0.0
-    
     local sustain = self._sustain --- @type funkin.gameplay.Sustain
-    local calcHeight = max((0.45 * (self._length - conductor:getStepCrotchet()) * absScrollSpeed) - sexo)
-
-    sustain:setPosition(
-        self:getX(),
-        (wasHit and receptor:getY() or self:getY()) + (scrollMult < 0.0 and -calcHeight or 0.0) + (receptor._initialHeight * 0.5)
-    )
-    sustain:setLength(calcHeight)
+    if sustain then
+        local conductor = self._attachedConductor --- @type funkin.backend.Conductor
+    
+        local wasHit = self._wasHit and not self._missed
+        local sexo = wasHit and 0.45 * (songPos - self._time) * absScrollSpeed or 0.0
+        
+        local calcHeight = max((0.45 * (self._length - conductor:getStepCrotchet()) * absScrollSpeed) - sexo)
+    
+        sustain:setPosition(
+            self:getX(),
+            (wasHit and receptor:getY() or self:getY()) + (scrollMult < 0.0 and -calcHeight or 0.0) + (receptor._initialHeight * 0.5)
+        )
+        sustain:setLength(calcHeight)
+    end
 end
 
 function Note:canBeHit()

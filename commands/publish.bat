@@ -36,8 +36,14 @@ copy "%LOVE_PATH%\OpenAL32.dll" "../../export/%1/OpenAL32.dll" > nul
 copy "%LOVE_PATH%\mpg123.dll" "../../export/%1/mpg123.dll" > nul
 copy "%LOVE_PATH%\msvcp120.dll" "../../export/%1/msvcp120.dll" > nul
 copy "%LOVE_PATH%\msvcp140.dll" "../../export/%1/msvcp140.dll" > nul
+copy "%LOVE_PATH%\msvcp140_1.dll" "../../export/%1/msvcp140_1.dll" > nul
+copy "%LOVE_PATH%\msvcp140_2.dll" "../../export/%1/msvcp140_2.dll" > nul
+copy "%LOVE_PATH%\msvcp140_atomic_wait.dll" "../../export/%1/msvcp140_atomic_wait.dll" > nul
+copy "%LOVE_PATH%\msvcp140_codecvt_ids.dll" "../../export/%1/msvcp140_codecvt_ids.dll" > nul
 copy "%LOVE_PATH%\msvcr120.dll" "../../export/%1/msvcr120.dll" > nul
 copy "%LOVE_PATH%\msvcr140.dll" "../../export/%1/msvcr140.dll" > nul
+copy "%LOVE_PATH%\vcruntime140.dll" "../../export/%1/vcruntime140.dll" > nul
+copy "%LOVE_PATH%\vcruntime140_1.dll" "../../export/%1/vcruntime140_1.dll" > nul
 
 @REM Create final executable
 echo Creating final executable

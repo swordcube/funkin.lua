@@ -128,7 +128,8 @@
                 ],
                 "indices": null,
                 "fps": 24,
-                "looped": false
+                "looped": false,
+                "offset": {"x": 4, "y": 2}
             },
             {
                 "name": "hold",

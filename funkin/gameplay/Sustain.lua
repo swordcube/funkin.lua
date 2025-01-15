@@ -189,7 +189,8 @@ function Sustain:setLength(value)
     value = max(value, 0.0)
     self._length = value
     
-    body:setVerticalLength((value - tail:getHeight()) / body.scale.y)
+    local bodyLength = max((value - tail:getHeight()) / body.scale.y, 0.0)
+    body:setVerticalLength(bodyLength)
     
     local note = self._note --- @type funkin.gameplay.Note
     local strumLine = note:getStrumLine() --- @type funkin.gameplay.StrumLine
