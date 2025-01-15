@@ -136,6 +136,25 @@ local Options = {
     _default_comboStacking = true, --- @protected
 
     ---
+    --- Controls whether or not a firework-like
+    --- effect will be shown after hitting a note
+    --- and getting a SiCK!! rating from it.
+    ---
+    --- @type boolean
+    ---
+    noteSplashes = nil,
+    _default_noteSplashes = true, --- @protected
+
+    ---
+    --- Controls whether or not a little animation
+    --- plays on your receptors to indicate holding a sustain.
+    ---
+    --- @type boolean
+    ---
+    holdCovers = nil,
+    _default_holdCovers = true, --- @protected
+
+    ---
     --- Controls whether or not the game will
     --- automatically pause when the window is unfocused.
     ---
@@ -164,12 +183,21 @@ local Options = {
 
     ---
     --- Controls whether or not the game will run
-    --- at an FPS matching your monitor refresh rate,
+    --- at an FPS matching your monitor refresh rate.
     ---
     --- @type boolean
     ---
     vsync = nil,
     _default_vsync = true, --- @protected
+
+    ---
+    --- Controls whether or not sustains should
+    --- go below or above your receptors.
+    ---
+    --- @type "Below"|"Above"
+    ---
+    sustainLayering = nil,
+    _default_sustainLayering = "Above", --- @protected
 
     ---
     --- Controls the ordering of your mods.

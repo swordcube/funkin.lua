@@ -44,14 +44,14 @@ function OptionsMenu:constructor()
             name = "Game",
             page = require("funkin.ui.options.pages.GamePage")
         },
-        -- {
-        --     name = "Visuals",
-        --     page = require("funkin.ui.options.pages.VisualsPage")
-        -- },
+        {
+            name = "Visuals",
+            page = require("funkin.ui.options.pages.VisualsPage")
+        },
         -- {
         --     name = "Misc",
         --     page = require("funkin.ui.options.pages.MiscPage")
-        -- }
+        -- },
     }
     self.canInput = true
 
@@ -71,16 +71,16 @@ function OptionsMenu:constructor()
     self.containerBG:setY(self.containerBG:getY() + 20)
     self.uiLayer:add(self.containerBG)
 
-    self.grpCategories = CanvasLayer:new(self.containerBG:getX(), self.containerBG:getY() - 20) --- @type chip.graphics.CanvasLayer
-    self.uiLayer:add(self.grpCategories)
+    self.grpPages = CanvasLayer:new(self.containerBG:getX(), self.containerBG:getY() - 20) --- @type chip.graphics.CanvasLayer
+    self.uiLayer:add(self.grpPages)
 
     local pageList = self.pageList
     for i = 1, #pageList do
         local page = pageList[i]
 
         local lastX = 0
-        if self.grpCategories:getLength() > 0 then
-            local lastMember = self.grpCategories:getMembers()[self.grpCategories:getLength()] --- @type chip.graphics.Text
+        if self.grpPages:getLength() > 0 then
+            local lastMember = self.grpPages:getMembers()[self.grpPages:getLength()] --- @type chip.graphics.Text
             lastX = lastMember:getX() + (lastMember:getWidth() + 20)
         end
         local text = Text:new(lastX, 0, 0, page.name, 38) --- @type chip.graphics.Text
@@ -88,9 +88,9 @@ function OptionsMenu:constructor()
         text:setBorderSize(4)
         text:setBorderColor(Color.BLACK)
         text:setTint(0xFF9271FD)
-        self.grpCategories:add(text)
+        self.grpPages:add(text)
     end
-    self.grpCategories:setX(self.grpCategories:getX() + ((self.containerBG:getWidth() - self.grpCategories:getWidth()) - 40))
+    self.grpPages:setX(self.grpPages:getX() + ((self.containerBG:getWidth() - self.grpPages:getWidth()) - 40))
 
     local padding = 4
     local uiWidth, uiHeight = 900, 540
@@ -129,7 +129,10 @@ function OptionsMenu:constructor()
 end
 
 function OptionsMenu:openPage(page)
+    self.grpPages:getMembers()[self.curPage]:setTint(0xFF9271FD)
     self.curPage = page
+    self.grpPages:getMembers()[self.curPage]:setTint(Color.WHITE)
+
     if self.pageUI then
         self.pageUI:free()
     end
@@ -137,7 +140,7 @@ function OptionsMenu:openPage(page)
     self.uiContainer:add(self.pageUI)
 end
 
-function OptionsMenu:input(_)
+function OptionsMenu:input(e)
     if not self.canInput then
         return
     end
@@ -165,6 +168,20 @@ function OptionsMenu:input(_)
                 self:free()
             end)
         end)
+    end
+    if e:is(InputEventMouseButton) then
+        local me = e --- @type chip.input.mouse.InputEventMouseButton
+        if me:getButton() ~= "left" or me:isPressed() then
+            goto skip
+        end
+        for i = 1, self.grpPages:getLength() do
+            local text = self.grpPages:getMembers()[i] --- @type chip.graphics.Text
+            if MouseCursor.overlaps(text) then
+                self:openPage(i)
+                break
+            end
+        end
+        ::skip::
     end
 end
 

@@ -33,6 +33,8 @@ local MainMenu = require("funkin.scenes.MainMenu") --- @type funkin.scenes.MainM
 local CreditsMenu = Scene:extend("CreditsMenu", ...)
 
 function CreditsMenu:init()
+    self:setUpdateMode("always")
+
     self.bg = Sprite:new() --- @type chip.graphics.Sprite
     self.bg:loadTexture(Paths.image("desat", "images/menus"))
     self.bg:screenCenter("xy")
@@ -56,7 +58,7 @@ function CreditsMenu:changeSelection(by, force)
     AudioPlayer.playSFX(Paths.sound("scroll", "sounds/menus"))
 end
 
-function CreditsMenu:init(_)
+function CreditsMenu:input(_)
     if Controls.justPressed.BACK then
         AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
         Engine.switchScene(MainMenu:new())

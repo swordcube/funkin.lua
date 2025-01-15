@@ -140,7 +140,7 @@ function Player:hitNote(note)
     note:hit()
     
     local strumLine = note:getStrumLine() --- @type funkin.gameplay.StrumLine
-    if note:getLength() > 0.0 then
+    if note:getLength() > 0.0 and Options.holdCovers then
         local lane = note:getLaneID()
         local holdCoverMembers = strumLine.holdCovers:getMembers() --- @type table<funkin.gameplay.HoldCover>
         
@@ -164,7 +164,7 @@ function Player:hitNote(note)
     game.comboPopups:showCombo(self.stats.combo, note:getSkin())
     game:updateScoreText()
 
-    if Scoring.splashAllowed(judgement) then
+    if Scoring.splashAllowed(judgement) and Options.noteSplashes then
         local splashCount = strumLine.splashes:getLength()
         local splashMembers = strumLine.splashes:getMembers()
 
@@ -267,8 +267,9 @@ function Player:processPlayer(strumLine)
                 local holdCoverMembers = strumLine.holdCovers:getMembers() --- @type table<funkin.gameplay.HoldCover>
                 
                 local holdCover = holdCoverMembers[note:getLaneID() + 1] --- @type funkin.gameplay.HoldCover
-                holdCover:splurge()
-
+                if holdCover:isExisting() then
+                    holdCover:splurge()
+                end
                 note:kill()
                 note:getSustain():kill()
             end

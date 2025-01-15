@@ -69,7 +69,7 @@ function Glyph:updateOffset()
 	local fy = fontData.offset.y
 
 	local ox = (glyphData and glyphData.offset) and glyphData.offset.x or 0.0
-	local oy = ((glyphData and glyphData.offset) and glyphData.offset.y or 0.0) - (110 - self:getFrameHeight())
+	local oy = ((glyphData and glyphData.offset) and glyphData.offset.y or 0.0) + (110 - self:getFrameHeight())
 
 	self.frameOffset:set(ox - fx, oy - fy)
 end

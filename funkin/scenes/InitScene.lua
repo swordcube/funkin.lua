@@ -69,6 +69,8 @@ function InitScene:init()
     SoundTray.init()
     StatsDisplay.init()
 
+    MouseCursor.loadTexture(Paths.image("default", "images/cursors"))
+
     Engine.preSceneSwitch:connect(function()
         Cache.clear()
     end)

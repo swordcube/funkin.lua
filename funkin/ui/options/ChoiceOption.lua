@@ -107,6 +107,7 @@ function ChoiceOption:input(_)
         else
             self.valueText:setContents("< " .. tostring(value) .. " >")
         end
+        Options.apply(data.id)
     end
 end
 

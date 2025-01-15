@@ -181,6 +181,6 @@
                 "looped": false
             }
         ],
-        "offset": {"x": -20, "y": -40}
+        "offset": {"x": 20, "y": 40}
     }
 }

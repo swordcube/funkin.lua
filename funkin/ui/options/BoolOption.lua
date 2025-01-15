@@ -79,7 +79,7 @@ function BoolOption:input(_)
     if not self.selected then
         return
     end
-    if Controls.justPressed.ACCEPT then
+    if Controls.justPressed.ACCEPT or (Input.wasMouseJustPressed("left") and (MouseCursor.overlaps(self.text) or MouseCursor.overlaps(self.checkbox))) then
         local data = self:getData()
         Options[data.id] = not Options[data.id]
 
@@ -88,6 +88,7 @@ function BoolOption:input(_)
         else
             self.checkbox:unselect()
         end
+        Options.apply(data.id)
     end
 end
 

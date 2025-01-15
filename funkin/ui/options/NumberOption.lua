@@ -126,6 +126,7 @@ function NumberOption:increment(axis)
     else
         self.valueText:setContents("< " .. tostring(value) .. " >")
     end
+    Options.apply(data.id)
 end
 
 function NumberOption:update(dt)

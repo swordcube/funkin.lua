@@ -77,10 +77,10 @@ function GradientSwipe:exitTransition()
     t:tweenProperty(blackScreen, "y",blackScreen:getY() + (blackScreen:getHeight() * 2), 0.7):setEase(Ease.sineOut)
     t:tweenProperty(gradientSpr, "y", gradientSpr:getY() + (gradientSpr:getHeight() * 2), 0.7):setEase(Ease.sineOut)
     t:setCompletionCallback(function(_)
-        local prevUpdateMode = Engine.currentScene:getUpdateMode()
-        if GradientSwipe.isBlocking and prevUpdateMode ~= "disabled" then
-            Engine.currentScene:setUpdateMode("inherit")
-
+        if prevUpdateMode ~= "disabled" then
+            if prevUpdateMode ~= "always" then
+                Engine.currentScene:setUpdateMode("inherit")
+            end
             TweenManager.global:resume()
             TimerManager.global:resume()
         end

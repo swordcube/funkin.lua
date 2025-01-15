@@ -196,7 +196,7 @@ function SoundTray.input(event)
     if not event:is(InputEventKey) then
         return
     end
-    local event = event --- @type chip.input.InputEventKey
+    local event = event --- @type chip.input.keyboard.InputEventKey
     if not event:isPressed() then
         return
     end

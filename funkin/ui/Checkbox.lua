@@ -24,10 +24,10 @@ function Checkbox:constructor(x, y)
 
     self:setFrames(Paths.getSparrowAtlas("checkbox", "images/menus/options"))
     self.animation:addByPrefix("unselected", "unselected", 24, false)
-    self.animation:setOffset("unselected", -8, -8)
+    self.animation:setOffset("unselected", 8, 8)
 
     self.animation:addByPrefix("selecting", "selecting", 24, false)
-    self.animation:setOffset("selecting", -50, -88)
+    self.animation:setOffset("selecting", 50, 88)
 
     self.scale:set(0.8, 0.8)
     self:unselect()

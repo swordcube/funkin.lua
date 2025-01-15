@@ -109,7 +109,7 @@ function ControlOption:input(e)
         end
     end
     if e:is(InputEventKey) then
-        local ke = e --- @type chip.input.InputEventKey
+        local ke = e --- @type chip.input.keyboard.InputEventKey
         local menu = require("funkin.subscenes.OptionsMenu").instance
         if not menu.canInput and ke:isPressed() then
             Timer:new():start(0.001, function(_)

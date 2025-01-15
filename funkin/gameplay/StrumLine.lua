@@ -80,6 +80,10 @@ function StrumLine:constructor(x, y, downscroll, type, skin)
     ---
     self._characters = {}
 
+    if Options.sustainLayering == "Below" then
+        self.sustains = CanvasLayer:new() --- @type chip.graphics.CanvasLayer
+        self:add(self.sustains)
+    end
     self.receptors = CanvasLayer:new() --- @type chip.graphics.CanvasLayer
     self:add(self.receptors)
 
@@ -92,9 +96,10 @@ function StrumLine:constructor(x, y, downscroll, type, skin)
         )
         self.receptors:add(receptor)
     end
-    self.sustains = CanvasLayer:new() --- @type chip.graphics.CanvasLayer
-    self:add(self.sustains)
-
+    if Options.sustainLayering == "Above" then
+        self.sustains = CanvasLayer:new() --- @type chip.graphics.CanvasLayer
+        self:add(self.sustains)
+    end
     self.notes = CanvasLayer:new() --- @type chip.graphics.CanvasLayer
     self:add(self.notes)
 
