@@ -129,7 +129,10 @@
                 "indices": null,
                 "fps": 24,
                 "looped": false,
-                "offset": {"x": 4, "y": 2}
+                "offsets": [
+                    {"x": 4, "y": 2}, {"x": 4, "y": 2},
+                    {"x": 4, "y": 2}, {"x": 4, "y": 2}
+                ]
             },
             {
                 "name": "hold",
@@ -153,10 +156,14 @@
                 ],
                 "indices": null,
                 "fps": 24,
-                "looped": false
+                "looped": false,
+                "offsets": [
+                    {"x": 4, "y": 4}, {"x": 4, "y": 4},
+                    {"x": 4, "y": 4}, {"x": 4, "y": 4}
+                ]
             }
         ],
-        "offset": {"x": 53, "y": 55}
+        "offset": {"x": 55, "y": 58}
     },
     "splashes": {
         "scale": 6,
@@ -178,9 +185,15 @@
                 ],
                 "indices": null,
                 "fps": 24,
-                "looped": false
+                "looped": false,
+                "offsets": [
+                    [{"x": 0, "y": 0}, {"x": 2, "y": 12}],
+                    [{"x": 0, "y": 0}, {"x": 2, "y": 12}],
+                    [{"x": 0, "y": 0}, {"x": 2, "y": 12}],
+                    [{"x": 0, "y": 0}, {"x": 2, "y": 12}]
+                ]
             }
         ],
-        "offset": {"x": 20, "y": 40}
+        "offset": {"x": -50, "y": -120}
     }
 }

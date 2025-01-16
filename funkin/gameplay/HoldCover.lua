@@ -93,6 +93,11 @@ function HoldCover:setSkin(skin)
     elseif json.holdCovers.atlasType == "animate" then
         -- TODO
     end
+    if json.holdCovers.antialiasing ~= nil then
+        self:setAntialiasing(json.holdCovers.antialiasing)
+    else
+        self:setAntialiasing(true)
+    end
     self.scale:set(json.holdCovers.scale, json.holdCovers.scale)
     self:setLane(self:getLane())
 

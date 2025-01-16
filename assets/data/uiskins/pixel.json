@@ -1,6 +1,6 @@
 {
     "judgements": {
-        "scale": 4.7,
+        "scale": 4,
         "antialiasing": false,
 
         "folder": "game/uiskins/pixel",
@@ -12,37 +12,37 @@
         "animations": [
             {
                 "name": "killer",
-                "indices": [0],
-                "fps": 24,
-                "looped": false
-            },
-            {
-                "name": "sick",
                 "indices": [1],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "good",
+                "name": "sick",
                 "indices": [2],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "bad",
+                "name": "good",
                 "indices": [3],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "shit",
+                "name": "bad",
                 "indices": [4],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "miss",
+                "name": "shit",
                 "indices": [5],
+                "fps": 24,
+                "looped": false
+            },
+            {
+                "name": "miss",
+                "indices": [6],
                 "fps": 24,
                 "looped": false
             }
@@ -62,67 +62,67 @@
         "animations": [
             {
                 "name": "-",
-                "indices": [0],
-                "fps": 24,
-                "looped": false
-            },
-            {
-                "name": "0",
                 "indices": [1],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "1",
+                "name": "0",
                 "indices": [2],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "2",
+                "name": "1",
                 "indices": [3],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "3",
+                "name": "2",
                 "indices": [4],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "4",
+                "name": "3",
                 "indices": [5],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "5",
+                "name": "4",
                 "indices": [6],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "6",
+                "name": "5",
                 "indices": [7],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "7",
+                "name": "6",
                 "indices": [8],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "8",
+                "name": "7",
                 "indices": [9],
                 "fps": 24,
                 "looped": false
             },
             {
-                "name": "9",
+                "name": "8",
                 "indices": [10],
+                "fps": 24,
+                "looped": false
+            },
+            {
+                "name": "9",
+                "indices": [11],
                 "fps": 24,
                 "looped": false
             }

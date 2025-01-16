@@ -107,7 +107,6 @@ function Receptor:setSkin(skin)
     elseif json.receptors.atlasType == "animate" then
         -- TODO
     end
-    -- TODO: fix autobatch.lua to allow this to actually function
     if json.receptors.antialiasing ~= nil then
         self:setAntialiasing(json.receptors.antialiasing)
     else

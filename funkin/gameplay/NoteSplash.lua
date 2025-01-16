@@ -97,6 +97,11 @@ function NoteSplash:setSkin(skin)
     elseif json.splashes.atlasType == "animate" then
         -- TODO
     end
+    if json.splashes.antialiasing ~= nil then
+        self:setAntialiasing(json.splashes.antialiasing)
+    else
+        self:setAntialiasing(true)
+    end
     self.scale:set(json.splashes.scale, json.splashes.scale)
     self:setLane(self:getLane())
 

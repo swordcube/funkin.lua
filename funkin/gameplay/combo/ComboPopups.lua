@@ -71,6 +71,10 @@ function ComboPopups:showJudgement(judgement, skin)
         sprite:setAntialiasing(true)
     end
     sprite:setPosition(sprite:getX() - (sprite:getWidth() * 0.5), sprite:getY() - (sprite:getHeight() * 0.5))
+    sprite:setPosition(
+        sprite:getX() - ((sprite:getFrameWidth() - sprite:getWidth()) * 0.5),
+        sprite:getY() - ((sprite:getFrameHeight() - sprite:getHeight()) * 0.5)
+    )
     sprite.scale:multiply(0.95, 0.95)
 
     sprite.acceleration.y = 550
@@ -113,7 +117,7 @@ function ComboPopups:showCombo(combo, skin, miss)
         sprite:setAlpha(1.0)
         sprite:setTint(miss and 0xFFb73c3c or Color.WHITE)
 
-        sprite:setPosition((Engine.gameWidth * 0.507) - (36 * (i - 1)) - 65, (Engine.gameHeight * 0.5) - 60)
+        sprite:setPosition((Engine.gameWidth * 0.474) - (36 * (i - 1)) - 65, (Engine.gameHeight * 0.5) - 60)
         sprite:setRotation(0.0)
 
         sprite:setComboSkin(skin)
@@ -127,9 +131,14 @@ function ComboPopups:showCombo(combo, skin, miss)
         else
             sprite:setAntialiasing(true)
         end
+        sprite:setPosition(
+            sprite:getX() - ((sprite:getFrameWidth() - sprite:getWidth()) * 0.5),
+            sprite:getY() - ((sprite:getFrameHeight() - sprite:getHeight()) * 0.5)
+        )
+        sprite.scale:multiply(0.95, 0.95)
+
         sprite.acceleration.y = math.random(200, 300)
         sprite.velocity:set(math.random(-5.0, 5.0), -math.random(140, 160))
-        sprite.scale:multiply(0.95, 0.95)
 
         if sprite._tween then
             sprite._tween:free()
