@@ -34,6 +34,9 @@ local Character = require("funkin.gameplay.Character") --- @type funkin.gameplay
 
 local Countdown = require("funkin.gameplay.Countdown") --- @type funkin.gameplay.Countdown
 
+local CancellableEvent = require("funkin.backend.events.CancellableEvent") --- @type funkin.backend.events.CancellableEvent
+local NoteHitEvent = require("funkin.backend.events.NoteHitEvent") --- @type funkin.backend.events.NoteHitEvent
+
 ---
 --- @class funkin.scenes.Gameplay : chip.core.Scene
 ---
@@ -56,6 +59,14 @@ function Gameplay:constructor(params)
         params = GameplaySettings.lastParams
         self._params = params
     end
+    self.gameScripts = {}
+
+    self.onChartLoaded = Signal:new() --- @type chip.utils.Signal
+    self.onSongLoaded = Signal:new() --- @type chip.utils.Signal
+    self.onCharactersLoaded = Signal:new() --- @type chip.utils.Signal
+    self.onStageLoaded = Signal:new() --- @type chip.utils.Signal
+    self.onStrumLinesLoaded = Signal:new() --- @type chip.utils.Signal
+    self.onPlayersLoaded = Signal:new() --- @type chip.utils.Signal
 end
 
 function Gameplay:init()
@@ -64,12 +75,16 @@ function Gameplay:init()
     self:setUpdateMode("always")
     Paths.currentMod = self._params.currentMod
 
+    self:setOnScripts("game", self)
+    self:callOnScripts("onInit")
+
     -- stop any playing music
     if BGM.isPlaying() then
         BGM.stop()
     end
     -- load chart
     self.currentChart = Chart.load(self._params.song, self._params.difficulty) --- @type funkin.backend.song.chart.ChartData
+    self:callOnScripts("onChartLoaded", {self.currentChart})
 
     -- load inst
     BGM.audioPlayer:setVolume(1.0)
@@ -97,15 +112,20 @@ function Gameplay:init()
         self.vocalTracks[meta.characters.player] = playerVocals
         self:add(playerVocals)
     end
+    self:callOnScripts("onSongLoaded")
 
     -- setup stage & characters! yay!!
     local characters = self.currentChart.meta.characters
     self.spectatorCharacter = Character:new(0, 0, characters.spectator, false) --- @type funkin.gameplay.Character
     self.opponentCharacter = Character:new(0, 0, characters.opponent, false) --- @type funkin.gameplay.Character
     self.playerCharacter = Character:new(0, 0, characters.player, true) --- @type funkin.gameplay.Character
-
+    
+    self:callOnScripts("onCharactersLoaded")
+    
     self.stage = Stage:new(self.currentChart.meta.stage) --- @type funkin.gameplay.Stage
     self:add(self.stage)
+    
+    self:callOnScripts("onStageLoaded")
 
     -- setup camera
     self.camera = Camera:new() --- @type chip.graphics.Camera
@@ -167,7 +187,7 @@ function Gameplay:init()
     self:add(self.hudLayer)
 
     -- make strumlines
-    self.opponentStrumLine = StrumLine:new(Engine.gameWidth * 0.25, 50, Options.downscroll, "opponent", "pixel") --- @type funkin.gameplay.StrumLine
+    self.opponentStrumLine = StrumLine:new(Engine.gameWidth * 0.25, 50, Options.downscroll, "pixel") --- @type funkin.gameplay.StrumLine
     self.opponentStrumLine:attachNotes(table.filter(self.currentChart.notes, function(note)
         return note.lane < 4
     end))
@@ -176,7 +196,7 @@ function Gameplay:init()
     self.opponentStrumLine:setCharacters({self.opponentCharacter})
     self.hudLayer:add(self.opponentStrumLine)
     
-    self.playerStrumLine = StrumLine:new(Engine.gameWidth * 0.75, 50, Options.downscroll, "player", self.currentChart.meta.uiSkin) --- @type funkin.gameplay.StrumLine
+    self.playerStrumLine = StrumLine:new(Engine.gameWidth * 0.75, 50, Options.downscroll, self.currentChart.meta.uiSkin) --- @type funkin.gameplay.StrumLine
     self.playerStrumLine:attachNotes(table.filter(self.currentChart.notes, function(note)
         return note.lane > 3
     end))
@@ -197,19 +217,22 @@ function Gameplay:init()
         self.opponentStrumLine.scale:set(0.5, 0.5)
         self.opponentStrumLine:setPosition(220, Engine.gameHeight * 0.65)
     end
+    self:callOnScripts("onStrumLinesLoaded")
 
     -- make players (these control behaviors for the 2 strumlines)
-    self.opponent = Player:new(true) --- @type funkin.gameplay.Player
+    self.opponent = Player:new(true, "opponent") --- @type funkin.gameplay.Player
     self.opponent:attachStrumLines({self.opponentStrumLine})
     self:add(self.opponent)
     
-    self.player = Player:new(false) --- @type funkin.gameplay.Player
+    self.player = Player:new(false, "player") --- @type funkin.gameplay.Player
     self.player:attachStrumLines({self.playerStrumLine})
     self:add(self.player)
     
     self.noteSpawner = NoteSpawner:new() --- @type funkin.gameplay.NoteSpawner
     self.noteSpawner:attachStrumLines({self.opponentStrumLine, self.playerStrumLine})
     self:add(self.noteSpawner)
+
+    self:callOnScripts("onPlayersLoaded")
 
     -- health bar
     self.healthBarBG = Sprite:new(0, Options.downscroll and Engine.gameHeight * 0.1 or Engine.gameHeight * 0.9) --- @type chip.graphics.Sprite
@@ -281,6 +304,8 @@ function Gameplay:init()
     ModLoader.onRefreshImports:connect(function()
         Gameplay.instance = self
     end, nil, true)
+
+    self:callOnScripts("onInitPost")
 end
 
 ---
@@ -296,10 +321,28 @@ function Gameplay:executeEvent(event)
     end
 end
 
+function Gameplay:setOnScripts(variable, value)
+    local scripts = self.gameScripts --- @type table<funkin.backend.Script>
+    for i = 1, #scripts do
+        local script = scripts[i] --- @type funkin.backend.Script
+        script:setVariable(variable, value)
+    end
+end
+
+function Gameplay:callOnScripts(method, args)
+    local scripts = self.gameScripts --- @type table<funkin.backend.Script>
+    for i = 1, #scripts do
+        local script = scripts[i] --- @type funkin.backend.Script
+        script:callMethod(method, args)
+    end
+end
+
 function Gameplay:update(dt)
     if not Transition.instance then
         self:setUpdateMode("inherit")
     end
+    self:callOnScripts("onUpdate", {dt})
+
     local mainConductor = self.mainConductor
     if self.startingSong then
         mainConductor:setTime(mainConductor:getRawTime() + (dt * 1000.0))
@@ -321,7 +364,7 @@ function Gameplay:update(dt)
         -- toggle botplay
         if Input.wasKeyJustPressed(KeyCode.F6) then
             self._validScore = false
-            self.player.cpu = not self.player.cpu
+            self.player:setCPU(not self.player:isCPU())
             self:updateScoreText()
         end
         -- if we're in debug mode, press HOME
@@ -358,6 +401,9 @@ function Gameplay:update(dt)
 
     local chart = self.currentChart
     while self._currentEvent < #chart.events and self.mainConductor:getTime() >= chart.events[self._currentEvent].time do
+        if math.abs(Engine.timeScale) < 0.001 then
+            break
+        end
         self:executeEvent(chart.events[self._currentEvent])
         self._currentEvent = self._currentEvent + 1
     end
@@ -373,9 +419,11 @@ function Gameplay:update(dt)
         lerp(self.camera:getY(), focusedCharacter:getCameraY(), dt * 2.4)
     )
     self:updateIconPositions()
+    self:callOnScripts("onUpdatePost", {dt})
 end
 
-function Gameplay:input(_)
+function Gameplay:input(e)
+    self:callOnScripts("onInputReceived", {e})
     if self.canPause and Controls.justPressed.PAUSE then
         self.paused = true
         BGM.audioPlayer:pause()
@@ -403,7 +451,8 @@ function Gameplay:updateIconPositions()
 end
 
 function Gameplay:updateScoreText()
-    if self.player.cpu then
+    -- TODO: add script events for this function
+    if self.player:isCPU() then
         self.scoreText:setContents("Botplay Enabled")
         return
     end
@@ -411,12 +460,13 @@ function Gameplay:updateScoreText()
 end
 
 function Gameplay:startSong()
+    -- TODO: add script events for this function
     local pb = self:getPlaybackRate()
     self.startingSong = false
-
+    
     BGM.play(nil, false)
     BGM.audioPlayer:setPitch(pb)
-
+    
     for _, value in pairs(self.vocalTracks) do
         value:setPitch(pb)
         value:play()
@@ -438,8 +488,11 @@ function Gameplay:endSong()
     if self.endingSong then
         return
     end
+    -- TODO: add script events for this function
+    self:callOnScripts("onSongEnd")
+    self:callOnScripts("onEndSong")
     self.endingSong = true
-
+    
     self.opponentStrumLine._forceSongPos = self.mainConductor:getTime()
     self.opponentStrumLine.notes:forEach(function(note)
         note:updatePosition()
@@ -488,16 +541,29 @@ function Gameplay:endSong()
     end
 end
 
+function Gameplay:stepHit(step)
+    -- TODO: add script events for this function
+    self:callOnScripts("onStepHit", step)
+end
+
 function Gameplay:beatHit(beat)
+    -- TODO: add script events for this function
     local iconP2, iconP1 = self.iconP2, self.iconP1
     iconP2:bop()
     iconP1:bop()
-
+    
     local conductor = self.mainConductor
     if beat > 0 and beat % conductor.timeSignature[1] == 0 then
         self.camera:setZoom(self.camera:getZoom() + 0.015)
         self.hudLayer:setZoom(self.hudLayer:getZoom() + 0.03)
     end
+    self:callOnScripts("onBeatHit", beat)
+end
+
+function Gameplay:measureHit(measure)
+    -- TODO: add script events for this function
+    self:callOnScripts("onMeasureHit", measure)
+    self:callOnScripts("onSectionHit", measure)
 end
 
 function Gameplay:getPlaybackRate()
@@ -505,6 +571,9 @@ function Gameplay:getPlaybackRate()
 end
 
 function Gameplay:setPlaybackRate(newRate)
+    -- TODO: add script events for this function
+    self:callOnScripts("onPlaybackRateChanged", {newRate})
+
     Engine.timeScale = newRate
     BGM.audioPlayer:setPitch(newRate)
 
@@ -516,6 +585,15 @@ end
 function Gameplay:free()
     Paths.currentMod = nil
     self.mainConductor.allowSongOffset = false
+    
+    if self.gameScripts then
+        local scripts = self.gameScripts --- @type table<funkin.backend.Script>
+        for i = 1, #self.gameScripts do
+            local script = scripts[i] --- @type funkin.backend.Script
+            script:close()
+        end
+    end
+    self:setPlaybackRate(1.0)
     Gameplay.super.free(self)
 end
 

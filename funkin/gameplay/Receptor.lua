@@ -14,7 +14,6 @@
     limitations under the License.
 ]]
 
-local dirs = {"left", "down", "up", "right"}
 local NoteSkin = require("funkin.backend.data.NoteSkin") --- @type funkin.backend.data.NoteSkin
 
 ---
@@ -53,13 +52,13 @@ function Receptor:constructor(x, y, lane, skin)
     self:setSkin(skin)
 end
 
-function Receptor:getLaneID()
+function Receptor:getLane()
     return self._lane
 end
 
-function Receptor:setLaneID(id)
+function Receptor:setLane(id)
     self._lane = id % 4
-    self.animation:play(dirs[self._lane + 1] .. " static")
+    self.animation:play(Constants.NOTE_DIRECTIONS[self._lane + 1] .. " static")
 
     self._initialWidth = self:getFrameWidth()
     self._initialHeight = self:getFrameHeight()
@@ -83,7 +82,7 @@ function Receptor:setSkin(skin)
         for i = 1, #json.receptors.animations do
             local animData = json.receptors.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             for j = 1, 4 do
-                local animName = dirs[j] .. " " .. animData.name --- @type string
+                local animName = Constants.NOTE_DIRECTIONS[j] .. " " .. animData.name --- @type string
                 if animData.indices and #animData.indices > 0 then
                     self.animation:addByIndices(animName, animData.prefixes[j], animData.indices[j], animData.fps, animData.looped)
                 else
@@ -100,7 +99,7 @@ function Receptor:setSkin(skin)
         for i = 1, #json.receptors.animations do
             local animData = json.receptors.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             for j = 1, 4 do
-                local animName = dirs[j] .. " " .. animData.name --- @type string
+                local animName = Constants.NOTE_DIRECTIONS[j] .. " " .. animData.name --- @type string
                 self.animation:add(animName, animData.indices[j], animData.fps, animData.looped)
             end
         end
@@ -115,7 +114,7 @@ function Receptor:setSkin(skin)
         self:setAntialiasing(true)
     end
     self.scale:set(json.receptors.scale, json.receptors.scale)
-    self:setLaneID(self:getLaneID())
+    self:setLane(self:getLane())
 
     self.offset:set(json.receptors.offset.x, json.receptors.offset.y)
     self._skin = skin
@@ -129,7 +128,7 @@ end
 function Receptor:press(confirm, duration, cpu)
     local json = NoteSkin.get(self:getSkin()) --- @type funkin.backend.data.NoteSkin?
 
-    self.animation:play(dirs[self._lane + 1] .. (confirm and " confirm" or " press"), true)
+    self.animation:play(Constants.NOTE_DIRECTIONS[self._lane + 1] .. (confirm and " confirm" or " press"), true)
     self.offset:set(
         json.receptors.offset.x + ((self:getFrameWidth() - self._initialWidth) * 0.5),
         json.receptors.offset.y + ((self:getFrameHeight() - self._initialHeight) * 0.5)
@@ -144,7 +143,7 @@ function Receptor:press(confirm, duration, cpu)
                 self:release()
             
             elseif confirm and self.animation:getCurrentAnimationName():endsWith("confirm") then
-                self.animation:play(dirs[self._lane + 1] .. " press", true)
+                self.animation:play(Constants.NOTE_DIRECTIONS[self._lane + 1] .. " press", true)
                 self.offset:set(
                     json.receptors.offset.x + ((self:getFrameWidth() - self._initialWidth) * 0.5),
                     json.receptors.offset.y + ((self:getFrameHeight() - self._initialHeight) * 0.5)
@@ -158,7 +157,7 @@ end
 function Receptor:release()
     local json = NoteSkin.get(self:getSkin()) --- @type funkin.backend.data.NoteSkin?
 
-    self.animation:play(dirs[self._lane + 1] .. " static")
+    self.animation:play(Constants.NOTE_DIRECTIONS[self._lane + 1] .. " static")
     self.offset:set(
         json.receptors.offset.x + ((self:getFrameWidth() - self._initialWidth) * 0.5),
         json.receptors.offset.y + ((self:getFrameHeight() - self._initialHeight) * 0.5)

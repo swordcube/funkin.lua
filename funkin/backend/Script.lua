@@ -39,6 +39,12 @@ function Script:constructor(filePath)
                 env[k] = f
             end
             env._G = _G
+            vars.__getCurrentFile = function()
+                return debug.getinfo(2, "S").source:sub(2)
+            end
+            vars.__getCurrentLine = function()
+                return debug.getinfo(2, "l").currentline
+            end
             setfenv(chunk, setmetatable(vars, {__index = env}))
             chunk()
         end
@@ -72,10 +78,13 @@ end
 function Script:callMethod(method, args)
     local f = self._variables[method]
     if type(f) == "function" then
-        if args == nil then
-            return f()
+        local unpackedArgs = (args ~= nil) and unpack(args) or nil
+        local success, result = pcall(f, unpackedArgs)
+        if not success then
+            local vars = self._variables
+            Log.error(nil, vars.__getCurrentFile(), vars.__getCurrentLine(), result)
         end
-        return f(unpack(args))
+        return success and result or nil
     end
     return nil
 end
@@ -83,16 +92,12 @@ end
 function Script:close()
     local chunk = self.chunk
     if chunk then
-        local onClose = self._variables.onClose
-        if onClose then
-            onClose()
-        end
+        self:callMethod("onClose")
         setfenv(chunk, setmetatable({}, {
             __index = function() error("Tried to use a closed script") end,
             __newindex = function() error("Tried to use a closed script") end,
         }))
     end
-    self._variables = nil
     self._closed = true
 end
 

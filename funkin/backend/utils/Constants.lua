@@ -47,4 +47,9 @@ Constants.DEFAULT_HEALTH_ICON = "face"
 ---
 Constants.COMMIT_HASH = nil
 
+---
+--- A list of every available note direction.
+---
+Constants.NOTE_DIRECTIONS = {"left", "down", "up", "right"}
+
 return Constants

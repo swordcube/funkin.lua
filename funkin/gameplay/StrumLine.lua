@@ -27,18 +27,13 @@ local Note = require("funkin.gameplay.Note") --- @type funkin.gameplay.Note
 ---
 local StrumLine = CanvasLayer:extend("StrumLine", ...)
 
-function StrumLine:constructor(x, y, downscroll, type, skin)
+function StrumLine:constructor(x, y, downscroll, skin)
     StrumLine.super.constructor(self, x, y, downscroll, skin)
 
     ---
     --- @protected
     ---
     self._downscroll = downscroll --- @type boolean
-
-    ---
-    --- @protected
-    ---
-    self._type = type or "opponent" --- @type "opponent"|"player"
 
     ---
     --- @protected
@@ -139,17 +134,6 @@ end
 
 function StrumLine:setDownscroll(downscroll)
     self._downscroll = downscroll
-end
-
-function StrumLine:getType()
-    return self._type
-end
-
----
---- @param  type  "opponent"|"player"
----
-function StrumLine:setType(type)
-    self._type = type
 end
 
 function StrumLine:getAttachedNotes()

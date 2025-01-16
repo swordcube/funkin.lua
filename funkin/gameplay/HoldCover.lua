@@ -14,7 +14,6 @@
     limitations under the License.
 ]]
 
-local dirs = {"left", "down", "up", "right"}
 local NoteSkin = require("funkin.backend.data.NoteSkin") --- @type funkin.backend.data.NoteSkin
 
 ---
@@ -42,7 +41,7 @@ function HoldCover:constructor(x, y, lane, skin)
 
     self.animation:setCompletionCallback(function(name)
         if name:endsWith("start") then
-            self.animation:play(dirs[self._lane + 1] .. " hold")
+            self.animation:play(Constants.NOTE_DIRECTIONS[self._lane + 1] .. " hold")
         
         elseif name:endsWith("end") then
             self:kill()
@@ -51,13 +50,13 @@ function HoldCover:constructor(x, y, lane, skin)
     self:setSkin(skin)
 end
 
-function HoldCover:getLaneID()
+function HoldCover:getLane()
     return self._lane
 end
 
-function HoldCover:setLaneID(id)
+function HoldCover:setLane(id)
     self._lane = id % 4
-    self.animation:play(dirs[self._lane + 1] .. " start", true)
+    self.animation:play(Constants.NOTE_DIRECTIONS[self._lane + 1] .. " start", true)
 end
 
 function HoldCover:getSkin()
@@ -78,7 +77,7 @@ function HoldCover:setSkin(skin)
         for i = 1, #json.holdCovers.animations do
             local animData = json.holdCovers.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             for j = 1, 4 do
-                local animName = dirs[j] .. " " .. animData.name --- @type string
+                local animName = Constants.NOTE_DIRECTIONS[j] .. " " .. animData.name --- @type string
                 if animData.indices and #animData.indices > 0 then
                     self.animation:addByIndices(animName, animData.prefixes[j], animData.indices[j], animData.fps, animData.looped)
                 else
@@ -95,7 +94,7 @@ function HoldCover:setSkin(skin)
         -- TODO
     end
     self.scale:set(json.holdCovers.scale, json.holdCovers.scale)
-    self:setLaneID(self:getLaneID())
+    self:setLane(self:getLane())
 
     self:setAlpha(json.holdCovers.alpha or 1.0)
 
@@ -118,7 +117,7 @@ end
 ---
 function HoldCover:setup(strumLine, lane, skin)
     self:setSkin(skin)
-    self:setLaneID(lane)
+    self:setLane(lane)
 
     self:revive()
     self:setStrumLine(strumLine)
@@ -132,7 +131,7 @@ end
 
 function HoldCover:splurge()
     self:revive()
-    self.animation:play(dirs[self._lane + 1] .. " end", true)
+    self.animation:play(Constants.NOTE_DIRECTIONS[self._lane + 1] .. " end", true)
 end
 
 return HoldCover

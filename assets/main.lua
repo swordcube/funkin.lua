@@ -1,4 +1,5 @@
 local fs = love.filesystem
+local Script = require("funkin.backend.Script")
 
 function init()
     registerSongs()
@@ -39,6 +40,7 @@ function onInputReceived(e)
             -- basically making the game unplayable
             Timer:new():start(0.001, function()
                 Engine.paused = false -- Prevent accidental softlocking
+                Engine.timeScale = 1.0 -- Prevent accidental softlocking again
 
                 ModLoader.refreshImports()
                 print("Refreshed imports")
@@ -61,6 +63,30 @@ function onInputReceived(e)
                 Engine.reloadScene()
                 print("Reloaded current scene")
             end)
+        end
+    end
+end
+
+function onSceneInit(scene)
+    if scene:is(Gameplay) then
+        local game = scene --- @type funkin.scenes.Gameplay
+
+        -- scripts that run in any song
+        local globalScripts = table.filter(fs.getDirectoryItems(getModDirectory() .. "/scripts"), function(script)
+            return fs.getInfo(getModDirectory() .. "scripts/" .. script, "file")
+        end)
+        for i = 1, #globalScripts do
+            local script = Script:new(getModDirectory() .. "scripts/" .. globalScripts[i]) --- @type funkin.backend.Script
+            table.insert(game.gameScripts, script)
+        end
+        
+        -- scripts that run only for the current song
+        local songScripts = table.filter(fs.getDirectoryItems(getModDirectory() .. "scripts/songs/" .. game._params.song), function(script)
+            return fs.getInfo(getModDirectory() .. "scripts/songs/" .. game._params.song .. "/" .. script, "file")
+        end)
+        for i = 1, #songScripts do
+            local script = Script:new(getModDirectory() .. "scripts/songs/" .. game._params.song .. "/" .. songScripts[i]) --- @type funkin.backend.Script
+            table.insert(game.gameScripts, script)
         end
     end
 end

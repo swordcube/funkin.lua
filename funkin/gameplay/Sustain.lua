@@ -16,7 +16,6 @@
 
 ---@diagnostic disable: invisible
 
-local dirs = {"left", "down", "up", "right"}
 local _inherit_ = "inherit"
 
 local max = math.max
@@ -84,7 +83,7 @@ function Sustain:setSkin(skin)
         for i = 1, #json.sustains.animations do
             local animData = json.sustains.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             for j = 1, 4 do
-                local animName = dirs[j] .. " " .. animData.name --- @type string
+                local animName = Constants.NOTE_DIRECTIONS[j] .. " " .. animData.name --- @type string
                 if animData.indices and #animData.indices > 0 then
                     self._body.animation:addByIndices(animName, animData.prefixes[j], animData.indices[j], animData.fps, animData.looped)
                     self._tail.animation:addByIndices(animName, animData.prefixes[j], animData.indices[j], animData.fps, animData.looped)
@@ -101,7 +100,7 @@ function Sustain:setSkin(skin)
         for i = 1, #json.sustains.animations do
             local animData = json.sustains.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             for j = 1, 4 do
-                local animName = dirs[j] .. " " .. animData.name --- @type string
+                local animName = Constants.NOTE_DIRECTIONS[j] .. " " .. animData.name --- @type string
                 self._body.animation:add(animName, animData.indices[j], animData.fps, animData.looped)
                 self._tail.animation:add(animName, animData.indices[j], animData.fps, animData.looped)
             end
@@ -117,11 +116,11 @@ function Sustain:setSkin(skin)
         self._body:setAntialiasing(true)
         self._tail:setAntialiasing(true)
     end
-    self._body.animation:play(dirs[self._note:getLaneID() + 1] .. " hold")
+    self._body.animation:play(Constants.NOTE_DIRECTIONS[self._note:getLane() + 1] .. " hold")
     self._body.scale:set(json.sustains.scale, json.sustains.scale)
     self._body.offset:set(json.sustains.offset.x, json.sustains.offset.y)
     
-    self._tail.animation:play(dirs[self._note:getLaneID() + 1] .. " tail")
+    self._tail.animation:play(Constants.NOTE_DIRECTIONS[self._note:getLane() + 1] .. " tail")
     self._tail.scale:set(json.sustains.scale, json.sustains.scale)
     self._tail.offset:set(json.sustains.offset.x, json.sustains.offset.y)
 
@@ -139,10 +138,10 @@ function Sustain:setup(note, skin)
     self._note = note
     self:setSkin(skin)
     
-    self._body.animation:play(dirs[note:getLaneID() + 1] .. " hold")
+    self._body.animation:play(Constants.NOTE_DIRECTIONS[note:getLane() + 1] .. " hold")
     self._body:setVerticalPadding(1.5)
     
-    self._tail.animation:play(dirs[note:getLaneID() + 1] .. " tail")
+    self._tail.animation:play(Constants.NOTE_DIRECTIONS[note:getLane() + 1] .. " tail")
     self._tail:setClipRect(nil)
 
     self._body:setUpdateMode(_inherit_)
@@ -215,7 +214,7 @@ function Sustain:setLength(value)
         tail:setY(calcHeight)
     end
     if note:wasHit() and not note:wasMissed() then
-        local receptor = strumLine.receptors:getMembers()[note:getLaneID() + 1]
+        local receptor = strumLine.receptors:getMembers()[note:getLane() + 1]
         local receptorCenter = (strumLine:getY() + receptor:getY()) + (receptor._initialHeight * 0.5)
     
         local py = 0.0

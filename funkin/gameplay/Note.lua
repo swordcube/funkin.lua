@@ -14,8 +14,6 @@
     limitations under the License.
 ]]
 
-local dirs = {"left", "down", "up", "right"}
-
 local abs = math.abs
 local max = math.max
 local _inherit_ = "inherit"
@@ -93,16 +91,16 @@ function Note:setTime(time)
     self._time = time
 end
 
-function Note:getLaneID()
+function Note:getLane()
     return self._lane
 end
 
 ---
 --- @param  id  integer
 ---
-function Note:setLaneID(id)
+function Note:setLane(id)
     self._lane = id % 4
-    self.animation:play(dirs[self._lane + 1] .. " scroll")
+    self.animation:play(Constants.NOTE_DIRECTIONS[self._lane + 1] .. " scroll")
 end
 
 function Note:getLength()
@@ -146,7 +144,7 @@ function Note:setSkin(skin)
         for i = 1, #json.notes.animations do
             local animData = json.notes.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             for j = 1, 4 do
-                local animName = dirs[j] .. " " .. animData.name --- @type string
+                local animName = Constants.NOTE_DIRECTIONS[j] .. " " .. animData.name --- @type string
                 if animData.indices and #animData.indices > 0 then
                     self.animation:addByIndices(animName, animData.prefixes[j], animData.indices[j], animData.fps, animData.looped)
                 else
@@ -159,7 +157,7 @@ function Note:setSkin(skin)
         for i = 1, #json.notes.animations do
             local animData = json.notes.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             for j = 1, 4 do
-                local animName = dirs[j] .. " " .. animData.name --- @type string
+                local animName = Constants.NOTE_DIRECTIONS[j] .. " " .. animData.name --- @type string
                 self.animation:add(animName, animData.indices[j], animData.fps, animData.looped)
             end
         end
@@ -173,7 +171,7 @@ function Note:setSkin(skin)
         self:setAntialiasing(true)
     end
     self.scale:set(json.notes.scale, json.notes.scale)
-    self.animation:play(dirs[self._lane + 1] .. " scroll")
+    self.animation:play(Constants.NOTE_DIRECTIONS[self._lane + 1] .. " scroll")
 
     self._skin = skin
 end
@@ -257,7 +255,7 @@ function Note:setup(strumLine, time, lane, length, type, skin)
     self:setType(type)
 
     self:setSkin(skin)
-    self:setLaneID(lane)
+    self:setLane(lane)
 
     self._wasHit = false
     self._missed = false

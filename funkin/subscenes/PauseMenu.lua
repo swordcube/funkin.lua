@@ -138,6 +138,12 @@ function PauseMenu:constructor()
     ---
     self._paused = false
 
+    ---
+    --- @protected
+    ---
+    self._prevTimeScale = Engine.timeScale
+    Engine.timeScale = 1.0
+
     self:setUpdateMode("always")
     Gameplay.instance:setUpdateMode("disabled")
 
@@ -247,6 +253,11 @@ function PauseMenu:changeSelection(by, force)
         text:setAlpha((i == self.curSelected) and 1 or 0.6)
     end
     AudioPlayer.playSFX(Paths.sound("scroll", "sounds/menus"))
+end
+
+function PauseMenu:free()
+    Engine.timeScale = self._prevTimeScale
+    PauseMenu.super.free(self)
 end
 
 return PauseMenu

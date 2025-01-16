@@ -16,14 +16,13 @@
 
 ---@diagnostic disable: invisible
 
-local dirs = {"left", "down", "up", "right"}
-
 local max = math.max
+
+local NoteHitEvent = require("funkin.backend.events.NoteHitEvent") --- @type funkin.backend.events.NoteHitEvent
+local NoteMissEvent = require("funkin.backend.events.NoteMissEvent") --- @type funkin.backend.events.NoteMissEvent
 
 local Scoring = require("funkin.gameplay.scoring.Scoring") --- @type funkin.gameplay.scoring.Scoring
 local PlayerStats = require("funkin.gameplay.PlayerStats") --- @type funkin.gameplay.PlayerStats
-
-local NoteSplash = require("funkin.gameplay.NoteSplash") --- @type funkin.gameplay.NoteSplash
 
 local function noteSort(a, b)
     return a:getTime() < b:getTime()
@@ -34,12 +33,8 @@ end
 ---
 local Player = Actor:extend("Player", ...)
 
-function Player:constructor(cpu)
+function Player:constructor(cpu, type)
     Player.super.constructor(self)
-
-    self.cpu = cpu --- @type boolean
-
-    self.stats = PlayerStats:new() --- @type funkin.gameplay.PlayerStats
 
     ---
     --- @protected
@@ -61,6 +56,72 @@ function Player:constructor(cpu)
         Controls.list.NOTE_UP,
         Controls.list.NOTE_RIGHT
     }
+
+    ---
+    --- @protected
+    ---
+    self._cpu = cpu --- @type boolean
+
+    ---
+    --- @protected
+    ---
+    self._type = type or "opponent" --- @type "opponent"|"player"
+
+    self.stats = PlayerStats:new() --- @type funkin.gameplay.PlayerStats
+
+    -- TODO: connect these shits to gameplay scripts
+
+    self.onNoteHit = Signal:new():type(NoteHitEvent) --- @type chip.utils.Signal
+    self.onNoteHitPost = Signal:new():type(NoteHitEvent) --- @type chip.utils.Signal
+
+    self.onNoteMiss = Signal:new():type(NoteMissEvent) --- @type chip.utils.Signal
+    self.onNoteMissPost = Signal:new():type(NoteMissEvent) --- @type chip.utils.Signal
+
+    local game = Gameplay.instance --- @type funkin.scenes.Gameplay
+    if game then
+        self.onNoteHit:connect(function(e) game:callOnScripts("onNoteHit", {e}) end)
+        self.onNoteHitPost:connect(function(e) game:callOnScripts("onNoteHitPost", {e}) end)
+        
+        self.onNoteMiss:connect(function(e) game:callOnScripts("onNoteMiss", {e}) end)
+        self.onNoteMissPost:connect(function(e) game:callOnScripts("onNoteMissPost", {e}) end)
+
+        if game.playerStrumLine == self then
+            self.onNoteHit:connect(function(e) game:callOnScripts("onPlayerNoteHit", {e}) end)
+            self.onNoteHitPost:connect(function(e) game:callOnScripts("onPlayerNoteHitPost", {e}) end)
+
+            self.onNoteMiss:connect(function(e) game:callOnScripts("onPlayerNoteMiss", {e}) end)
+            self.onNoteMissPost:connect(function(e) game:callOnScripts("onPlayerNoteMissPost", {e}) end)
+        
+        elseif game.opponentStrumLine == self then
+            self.onNoteHit:connect(function(e) game:callOnScripts("onOpponentNoteHit", {e}) end)
+            self.onNoteHitPost:connect(function(e) game:callOnScripts("onOpponentNoteHitPost", {e}) end)
+
+            self.onNoteMiss:connect(function(e) game:callOnScripts("onOpponentNoteMiss", {e}) end)
+            self.onNoteMissPost:connect(function(e) game:callOnScripts("onOpponentNoteMissPost", {e}) end)
+        end
+    end
+end
+
+function Player:isCPU()
+    return self._cpu
+end
+
+---
+--- @param  cpu  boolean
+---
+function Player:setCPU(cpu)
+    self._cpu = cpu
+end
+
+function Player:getType()
+    return self._type
+end
+
+---
+--- @param  type  "opponent"|"player"
+---
+function Player:setType(type)
+    self._type = type
 end
 
 function Player:getAttachedStrumLines()
@@ -78,38 +139,53 @@ end
 --- @param  note  funkin.gameplay.Note
 ---
 function Player:missNote(note)
+    --- @type funkin.backend.events.NoteMissEvent
+    local event = NoteMissEvent:new(
+        note, self, self:getType() == "player", 10, 0.0475 + math.min(note:getLength() * 0.001, 0.25),
+        self:getType() == "player", self:getType() == "player"
+    )
+    self.onNoteMiss:emit(event)
+
+    if event:isCancelled() then
+        return
+    end
     note:miss()
 
     local stats = self.stats
-    stats:resetCombo()
-    stats:increaseMissCombo()
-    stats:increaseMisses()
-
-    stats:increaseScore(-10)
-    stats:increaseHealth(-(0.0475 + math.min(note:getLength() * 0.001, 0.25)))
+    if event:breaksCombo() then
+        stats:resetCombo()
+        stats:increaseMissCombo()
+        stats:increaseMisses()
+    end
+    stats:increaseScore(-event:getScore())
+    stats:increaseHealth(-event:getHealthLoss())
 
     local strumLine = note:getStrumLine() --- @type funkin.gameplay.StrumLine
     local holdCoverMembers = strumLine.holdCovers:getMembers() --- @type table<funkin.gameplay.HoldCover>
     
-    local holdCover = holdCoverMembers[note:getLaneID() + 1] --- @type funkin.gameplay.HoldCover
+    local holdCover = holdCoverMembers[note:getLane() + 1] --- @type funkin.gameplay.HoldCover
     holdCover:kill()
 
     local characters = strumLine:getCharacters()
     for i = 1, #characters do
         local character = characters[i] --- @type funkin.gameplay.Character
-        character:sing(dirs[note:getLaneID() + 1], true)
+        character:sing(Constants.NOTE_DIRECTIONS[note:getLane() + 1], true)
     end
-    if strumLine:getType() ~= "player" then
+    local game = Gameplay.instance --- @type funkin.scenes.Gameplay
+    if not game then
         return
     end
-    -- TODO: make a signal that gameplay hooks to instead
-    local game = Gameplay.instance --- @type funkin.scenes.Gameplay
-    if not Options.comboStacking then
+    if (event:showJudgement() or event:showCombo()) and not Options.comboStacking then
         game.comboPopups:killAllSprites()
     end
-    game.comboPopups:showJudgement("miss", note:getSkin())
-    game.comboPopups:showCombo(-self.stats.missCombo, note:getSkin(), true)
+    if event:showJudgement() then
+        game.comboPopups:showJudgement("miss", note:getSkin())
+    end
+    if event:showCombo() then
+        game.comboPopups:showCombo(-self.stats.missCombo, note:getSkin(), true)
+    end
     game:updateScoreText()
+    self.onNoteMissPost:emit(event)
 end
 
 ---
@@ -117,31 +193,39 @@ end
 ---
 function Player:hitNote(note)
     local songPos = note:getAttachedConductor():getTime()
-
     local judgement = Scoring.judgeNote(note, songPos)
-    local accScore = Scoring.getAccuracyScore(judgement)
-    
+
+    --- @type funkin.backend.events.NoteHitEvent
+    local event = NoteHitEvent:new(
+        note, self, Scoring.breaksCombo(judgement), Scoring.scoreNote(note, songPos),
+        Scoring.getAccuracyScore(judgement), judgement, 0.023 * Scoring.getHealthGainMultiplier(judgement),
+        self:getType() == "player", self:getType() == "player", self:getType() == "player" and Scoring.splashAllowed(judgement) and Options.noteSplashes
+    )
+    self.onNoteHit:emit(event)
+
+    if event:isCancelled() then
+        return
+    end
     local stats = self.stats
-    if Scoring.breaksCombo(judgement) then
+    if event:breaksCombo() then
         stats:resetCombo()
         stats:increaseMissCombo()
         stats:increaseMisses()
+    else
+        stats:resetMissCombo()
+        stats:increaseCombo()
     end
-    stats:resetMissCombo()
-    stats:increaseCombo()
-    
-    local score = Scoring.scoreNote(note, songPos)
-    stats:increaseScore(score)
-    stats:increaseHealth(0.023 * Scoring.getHealthGainMultiplier(judgement))
+    stats:increaseScore(event:getScore())
+    stats:increaseHealth(event:getHealthGain())
 
     stats:increaseTotalNotesHit()
-    stats:increaseAccuracyScore(accScore)
+    stats:increaseAccuracyScore(event:getAccuracyScore())
 
     note:hit()
     
     local strumLine = note:getStrumLine() --- @type funkin.gameplay.StrumLine
     if note:getLength() > 0.0 and Options.holdCovers then
-        local lane = note:getLaneID()
+        local lane = note:getLane()
         local holdCoverMembers = strumLine.holdCovers:getMembers() --- @type table<funkin.gameplay.HoldCover>
         
         local holdCover = holdCoverMembers[lane + 1] --- @type funkin.gameplay.HoldCover
@@ -150,28 +234,32 @@ function Player:hitNote(note)
     local characters = strumLine:getCharacters()
     for i = 1, #characters do
         local character = characters[i] --- @type funkin.gameplay.Character
-        character:sing(dirs[note:getLaneID() + 1], false, note:getLength())
+        character:sing(Constants.NOTE_DIRECTIONS[note:getLane() + 1], false, note:getLength())
     end
-    if strumLine:getType() ~= "player" then
+    local game = Gameplay.instance --- @type funkin.scenes.Gameplay
+    if not game then
         return
     end
-    -- TODO: make a signal that gameplay hooks to instead
-    local game = Gameplay.instance --- @type funkin.scenes.Gameplay
-    if not Options.comboStacking then
+    if (event:showJudgement() or event:showCombo()) and not Options.comboStacking then
         game.comboPopups:killAllSprites()
     end
-    game.comboPopups:showJudgement(judgement, note:getSkin())
-    game.comboPopups:showCombo(self.stats.combo, note:getSkin())
+    if event:showJudgement() then
+        game.comboPopups:showJudgement(event:getJudgement(), note:getSkin())
+    end
+    if event:showCombo() then
+        game.comboPopups:showCombo(self.stats.combo, note:getSkin())
+    end
     game:updateScoreText()
 
-    if Scoring.splashAllowed(judgement) and Options.noteSplashes then
+    if event:showNoteSplash() then
         local splashCount = strumLine.splashes:getLength()
         local splashMembers = strumLine.splashes:getMembers()
 
         local splash = splashMembers[strumLine._curSplash] --- @type funkin.gameplay.NoteSplash
-        splash:setup(strumLine, note:getLaneID(), note:getSkin())
+        splash:setup(strumLine, note:getLane(), note:getSkin())
         strumLine._curSplash = math.wrap(strumLine._curSplash + 1, 1, splashCount)
     end
+    self.onNoteHitPost:emit(event)
 end
 
 ---
@@ -196,13 +284,14 @@ function Player:processOpponent(strumLine)
 
             -- if the note is able to be hit, hit it
             if not wasHit and time < songPos then
-                local receptor = receptors[note:getLaneID() + 1] --- @type funkin.gameplay.Receptor
+                local receptor = receptors[note:getLane() + 1] --- @type funkin.gameplay.Receptor
                 receptor:press(true, max(length - stepCrotchet, stepCrotchet), true)
                 self:hitNote(note)
 
-                -- TODO: make a signal that gameplay hooks to instead
                 local game = Gameplay.instance --- @type funkin.scenes.Gameplay
-                game:updateScoreText()
+                if game then                    
+                    game:updateScoreText()
+                end
             end
             -- give score and health for sustains
             if wasHit and not wasMissed and length > 0 then
@@ -210,15 +299,16 @@ function Player:processOpponent(strumLine)
                 self.stats:increaseHealth(dt * 0.125)
                 self.stats:increaseScore(dt * 250.0)
 
-                -- TODO: make a signal that gameplay hooks to instead
                 local game = Gameplay.instance --- @type funkin.scenes.Gameplay
-                game:updateScoreText()
+                if game then
+                    game:updateScoreText()
+                end
             end
             -- kill note if it was held fully
             if wasHit and not wasMissed and time < songPos - (length - stepCrotchet) then
                 local holdCoverMembers = strumLine.holdCovers:getMembers() --- @type table<funkin.gameplay.HoldCover>
                 
-                local holdCover = holdCoverMembers[note:getLaneID() + 1] --- @type funkin.gameplay.HoldCover
+                local holdCover = holdCoverMembers[note:getLane() + 1] --- @type funkin.gameplay.HoldCover
                 holdCover:kill()
 
                 note:kill()
@@ -258,15 +348,16 @@ function Player:processPlayer(strumLine)
                 self.stats:increaseHealth(dt * 0.125)
                 self.stats:increaseScore(dt * 250.0)
 
-                -- TODO: make a signal that gameplay hooks to instead
                 local game = Gameplay.instance --- @type funkin.scenes.Gameplay
-                game:updateScoreText()
+                if game then
+                    game:updateScoreText()
+                end
             end
             -- kill note if it was held fully
             if wasHit and not wasMissed and time < songPos - (length - stepCrotchet) then
                 local holdCoverMembers = strumLine.holdCovers:getMembers() --- @type table<funkin.gameplay.HoldCover>
                 
-                local holdCover = holdCoverMembers[note:getLaneID() + 1] --- @type funkin.gameplay.HoldCover
+                local holdCover = holdCoverMembers[note:getLane() + 1] --- @type funkin.gameplay.HoldCover
                 if holdCover:isExisting() then
                     holdCover:splurge()
                 end
@@ -285,7 +376,7 @@ end
 function Player:update(dt)
     for i = 1, #self._attachedStrumLines do
         local strumLine = self._attachedStrumLines[i] --- @type funkin.gameplay.StrumLine
-        if self.cpu then
+        if self:isCPU() then
             self:processOpponent(strumLine)
         else
             self:processPlayer(strumLine)
@@ -297,7 +388,7 @@ end
 --- @param  event  chip.input.InputEvent
 ---
 function Player:input(event)
-    if self.cpu then
+    if self:isCPU() then
         return
     end
     local pressed = self._pressed --- @type table<boolean>
@@ -312,7 +403,7 @@ function Player:input(event)
     
                     local receptor = receptors[i] --- @type funkin.gameplay.Receptor
                     local availableNotes = table.filter(strumLine.notes:getMembers(), function(n)
-                        return n:getLaneID() == i - 1 and n:isExisting() and n:isActive() and n:canBeHit() and not n:wasHit() and not n:wasMissed() and not n:isTooLate()
+                        return n:getLane() == i - 1 and n:isExisting() and n:isActive() and n:canBeHit() and not n:wasHit() and not n:wasMissed() and not n:isTooLate()
                     end)
                     table.sort(availableNotes, noteSort)
     
@@ -339,7 +430,7 @@ function Player:input(event)
                     local noteMembers = strumLine.notes:getMembers() --- @type table<funkin.gameplay.Note>
                     for k = 1, strumLine.notes:getLength() do
                         local note = noteMembers[k] --- @type funkin.gameplay.Note
-                        if note:isExisting() and note:isActive() and note:getLaneID() == i - 1 and note:wasHit() and not note:wasMissed() and note:getTime() > note:getAttachedConductor():getTime() - (note:getLength() - 200) then
+                        if note:isExisting() and note:isActive() and note:getLane() == i - 1 and note:wasHit() and not note:wasMissed() and note:getTime() > note:getAttachedConductor():getTime() - (note:getLength() - 200) then
                             self:missNote(note)
                         end
                     end

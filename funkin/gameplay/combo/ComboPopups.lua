@@ -63,7 +63,7 @@ function ComboPopups:showJudgement(judgement, skin)
     sprite.animation:play(judgement)
 
     local json = UISkin.get(skin) --- @type funkin.backend.data.UISkin?
-    sprite.scale:set(json.judgements.scale * 0.95, json.judgements.scale * 0.95)
+    sprite.scale:set(json.judgements.scale, json.judgements.scale)
 
     if json.judgements.antialiasing ~= nil then
         sprite:setAntialiasing(json.judgements.antialiasing)
@@ -71,6 +71,7 @@ function ComboPopups:showJudgement(judgement, skin)
         sprite:setAntialiasing(true)
     end
     sprite:setPosition(sprite:getX() - (sprite:getWidth() * 0.5), sprite:getY() - (sprite:getHeight() * 0.5))
+    sprite.scale:multiply(0.95, 0.95)
 
     sprite.acceleration.y = 550
     sprite.velocity:set(-math.random(0, 10), -math.random(140, 175))
@@ -119,7 +120,7 @@ function ComboPopups:showCombo(combo, skin, miss)
         sprite.animation:play(separatedCombo:charAt(digitCount - (i - 1)))
 
         local json = UISkin.get(skin) --- @type funkin.backend.data.UISkin?
-        sprite.scale:set(json.combo.scale * 0.95, json.combo.scale * 0.95)
+        sprite.scale:set(json.combo.scale, json.combo.scale)
 
         if json.combo.antialiasing ~= nil then
             sprite:setAntialiasing(json.combo.antialiasing)
@@ -128,6 +129,7 @@ function ComboPopups:showCombo(combo, skin, miss)
         end
         sprite.acceleration.y = math.random(200, 300)
         sprite.velocity:set(math.random(-5.0, 5.0), -math.random(140, 160))
+        sprite.scale:multiply(0.95, 0.95)
 
         if sprite._tween then
             sprite._tween:free()

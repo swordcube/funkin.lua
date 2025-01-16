@@ -14,7 +14,6 @@
     limitations under the License.
 ]]
 
-local dirs = {"left", "down", "up", "right"}
 local NoteSkin = require("funkin.backend.data.NoteSkin") --- @type funkin.backend.data.NoteSkin
 
 ---
@@ -51,13 +50,13 @@ function NoteSplash:constructor(x, y, lane, skin)
     self:setSkin(skin)
 end
 
-function NoteSplash:getLaneID()
+function NoteSplash:getLane()
     return self._lane
 end
 
-function NoteSplash:setLaneID(id)
+function NoteSplash:setLane(id)
     self._lane = id % 4
-    self.animation:play(dirs[self._lane + 1] .. " splash" .. math.random(1, self._totalAnims))
+    self.animation:play(Constants.NOTE_DIRECTIONS[self._lane + 1] .. " splash" .. math.random(1, self._totalAnims))
 end
 
 function NoteSplash:getSkin()
@@ -80,7 +79,7 @@ function NoteSplash:setSkin(skin)
             for j = 1, 4 do
                 local prefixes = animData.prefixes[j]
                 for k = 1, #prefixes do
-                    local animName = dirs[j] .. " splash" .. tostring(k) --- @type string
+                    local animName = Constants.NOTE_DIRECTIONS[j] .. " splash" .. tostring(k) --- @type string
                     if animData.indices and #animData.indices > 0 then
                         self.animation:addByIndices(animName, prefixes[k], animData.indices[j][k], animData.fps, animData.looped)
                     else
@@ -99,7 +98,7 @@ function NoteSplash:setSkin(skin)
         -- TODO
     end
     self.scale:set(json.splashes.scale, json.splashes.scale)
-    self:setLaneID(self:getLaneID())
+    self:setLane(self:getLane())
 
     self:setAlpha(json.splashes.alpha or 0.6)
 
@@ -122,7 +121,7 @@ end
 ---
 function NoteSplash:setup(strumLine, lane, skin)
     self:setSkin(skin)
-    self:setLaneID(lane)
+    self:setLane(lane)
 
     self:revive()
     self:setStrumLine(strumLine)
