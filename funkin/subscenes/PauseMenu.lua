@@ -58,6 +58,7 @@ function PauseMenu:constructor()
                 name = "Restart Song",
                 callback = function()
                     self:free()
+                    Engine.timeScale = 1.0
                     Engine.reloadScene()
                 end
             },
@@ -114,6 +115,8 @@ function PauseMenu:constructor()
                         CoolUtil.playMenuMusic()
 
                         self:free()
+                        Engine.timeScale = 1.0
+
                         Engine.switchScene(require("funkin.scenes.FreeplayMenu"):new())
                     end
                 end

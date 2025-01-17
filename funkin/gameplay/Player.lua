@@ -194,7 +194,9 @@ end
 function Player:hitNote(note)
     local songPos = note:getAttachedConductor():getTime()
     local judgement = Scoring.judgeNote(note, songPos)
-
+    if self:isCPU() then
+        judgement = Scoring.getJudgements()[1]
+    end
     --- @type funkin.backend.events.NoteHitEvent
     local event = NoteHitEvent:new(
         note, self, Scoring.breaksCombo(judgement), Scoring.scoreNote(note, songPos),

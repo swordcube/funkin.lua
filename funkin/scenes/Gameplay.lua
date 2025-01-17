@@ -493,12 +493,16 @@ function Gameplay:endSong()
     self:callOnScripts("onEndSong")
     self.endingSong = true
     
-    self.opponentStrumLine._forceSongPos = self.mainConductor:getTime()
+    self.opponentStrumLine._forceSongPos = BGM.audioPlayer:getStream():getDuration() * 1000.0
     self.opponentStrumLine.notes:forEach(function(note)
+        note._wasHit = false
+        note.missed = false
         note:updatePosition()
     end)
-    self.playerStrumLine._forceSongPos = self.mainConductor:getTime()
+    self.playerStrumLine._forceSongPos = BGM.audioPlayer:getStream():getDuration() * 1000.0
     self.playerStrumLine.notes:forEach(function(note)
+        note._wasHit = false
+        note.missed = false
         note:updatePosition()
     end)
     BGM.stop()

@@ -1,4 +1,5 @@
 speedTextTween = nil --- @type chip.tweens.Tween
+ohGod = false
 
 function onInitPost()
     speedText = Text:new(0, Engine.gameHeight * 0.75, 0, "Speed: 1", 24) --- @type chip.graphics.Text
@@ -11,9 +12,15 @@ function onInitPost()
     game.hudLayer:add(speedText)
 end
 
+function onUpdate(dt)
+    if ohGod then
+        game:setPlaybackRate(game:getPlaybackRate() - (dt * 0.25))
+    end
+end
+
 function setLeSpeed(speed)
-    game:setPlaybackRate(speed)
-    speedText:setContents("Speed: " .. math.truncate(game:getPlaybackRate(), 2))
+    game:setPlaybackRate(math.truncate(speed, 2))
+    speedText:setContents("Speed: " .. math.truncate(speed, 2))
     speedText:screenCenter("x")
 
     speedText:setAlpha(1.0)
@@ -32,5 +39,11 @@ function onInputReceived(_)
     end
     if Input.wasKeyJustPressed(KeyCode.PAGE_UP) then
         setLeSpeed(math.truncate(game:getPlaybackRate() + amount, 2))
+    end
+    if Input.wasKeyJustPressed(KeyCode.GRAVE_ACCENT) then
+        ohGod = not ohGod
+    end
+    if Input.wasKeyJustPressed(KeyCode.DELETE) then
+        game:setPlaybackRate(1.0)
     end
 end
