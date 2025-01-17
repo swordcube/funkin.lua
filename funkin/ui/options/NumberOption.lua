@@ -120,11 +120,11 @@ function NumberOption:increment(axis)
     Options[data.id] = value
 
     if value <= data.min then
-        self.valueText:setContents(" " .. tostring(value) .. " >")
+        self.valueText:setContents(" " .. self:stringifyValue() .. " >")
     elseif value >= data.max then
-        self.valueText:setContents("< " .. tostring(value))
+        self.valueText:setContents("< " .. self:stringifyValue())
     else
-        self.valueText:setContents("< " .. tostring(value) .. " >")
+        self.valueText:setContents("< " .. self:stringifyValue() .. " >")
     end
     Options.apply(data.id)
 end

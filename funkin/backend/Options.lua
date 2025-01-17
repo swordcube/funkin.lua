@@ -191,6 +191,44 @@ local Options = {
     _default_vsync = true, --- @protected
 
     ---
+    --- Controls whether or not the game will update separately
+    --- from the rendering, causing it to update more and render smoother.
+    --- 
+    --- Turn this off if this is causing issues!
+    ---
+    --- @type boolean
+    ---
+    parallelUpdating = nil,
+    _default_parallelUpdating = true, --- @protected
+
+    ---
+    --- Controls whether or not your FPS should be shown
+    --- at the top left corner of the screen.
+    ---
+    --- @type boolean
+    ---
+    showFPS = nil,
+    _default_showFPS = true, --- @protected
+
+    ---
+    --- Controls whether or not your memory usage should be shown
+    --- at the top left corner of the screen.
+    ---
+    --- @type boolean
+    ---
+    showMemory = nil,
+    _default_showMemory = true, --- @protected
+
+    ---
+    --- Controls whether or not cutscenes will play in freeplay
+    --- instead of only playing in story mode.
+    ---
+    --- @type boolean
+    ---
+    freeplayCutscenes = nil,
+    _default_freeplayCutscenes = false, --- @protected
+
+    ---
     --- Controls whether or not sustains should
     --- go below or above your receptors.
     ---
@@ -256,6 +294,9 @@ function Options.apply(option)
         end,
         vsync = function(v)
             Engine.vsync = v
+        end,
+        parallelUpdating = function(v)
+            Engine.parallelUpdating = v
         end,
         lowPowerMode = function(v)
             Engine.lowPowerMode = v

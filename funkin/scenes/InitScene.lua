@@ -77,6 +77,8 @@ function InitScene:init()
     Engine.postSceneSwitch:connect(function()
         Transition.init()
     end, nil, true)
+
+    MouseCursor.setVisibility(false)
     Engine.switchScene(require("funkin.scenes.TitleScreen"):new())
 end
 

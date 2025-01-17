@@ -598,6 +598,8 @@ function Gameplay:free()
         end
     end
     self:setPlaybackRate(1.0)
+    
+    MouseCursor.setVisibility(false)
     Gameplay.super.free(self)
 end
 

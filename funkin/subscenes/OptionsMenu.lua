@@ -39,6 +39,12 @@ function OptionsMenu:constructor()
     Engine.paused = true
     self:setUpdateMode("always")
 
+    ---
+    --- @protected
+    ---
+    self._cursorVisibility = MouseCursor.isVisible()
+    MouseCursor.setVisibility(true)
+
     self.pageList = {
         {
             name = "Game",
@@ -48,10 +54,10 @@ function OptionsMenu:constructor()
             name = "Visuals",
             page = require("funkin.ui.options.pages.VisualsPage")
         },
-        -- {
-        --     name = "Misc",
-        --     page = require("funkin.ui.options.pages.MiscPage")
-        -- },
+        {
+            name = "Misc",
+            page = require("funkin.ui.options.pages.MiscPage")
+        },
     }
     self.canInput = true
 
@@ -146,7 +152,10 @@ function OptionsMenu:input(e)
     end
     if Controls.justPressed.BACK then
         Timer:new():start(0.001, function(_)
+            self.canInput = false
             Engine.paused = false
+
+            MouseCursor.setVisibility(self._cursorVisibility)
 
             Options.save()
             Controls.save()
@@ -182,6 +191,12 @@ function OptionsMenu:input(e)
             end
         end
         ::skip::
+    end
+    if Input.wasKeyJustPressed(KeyCode.Q) then
+        self:openPage(wrap(self.curPage - 1, 1, #self.pageList))
+    end
+    if Input.wasKeyJustPressed(KeyCode.E) then
+        self:openPage(wrap(self.curPage + 1, 1, #self.pageList))
     end
 end
 

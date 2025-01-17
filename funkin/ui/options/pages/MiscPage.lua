@@ -29,51 +29,45 @@ local ControlOption = require("funkin.ui.options.ControlOption") --- @type funki
 local VisualsPage = Page:extend("VisualsPage", ...)
 
 function VisualsPage:init()
-    --- [ CHOICE OPTIONS ] ---
-    self:addOption(ChoiceOption:new({
-        name = "Sustain Layering",
-        description = "Controls whether or not sustains should go\nbelow or above your receptors.",
+    --- [ NUMBER OPTIONS ] ---
+    self:addOption(NumberOption:new({
+        name = "Target FPS",
+        description = "Controls the framerate the game should try to run at.\nIf set to 0, there is no limit. This only works if V-Sync is disabled.",
 
-        choices = {"Below", "Above"},
-        id = "sustainLayering"
+        min = 0,
+        max = 1000,
+
+        step = 4,
+        decimals = 0,
+
+        suffix = "fps",
+        id = "targetFPS"
     }))
 
     --- [ BOOLEAN OPTIONS ] ---
     self:addOption(BoolOption:new({
-        name = "Flashing Lights",
-        description = "Controls whether or not the game will display flashing lights in the menus or during gameplay.\nIf you are sensitive to this kind of content, it is recommended to leave this off!",
+        name = "Vertical Sync",
+        description = "Controls whether or not the game will run\nat an FPS matching your monitor refresh rate.",
 
-        id = "flashingLights"
+        id = "vsync"
     }))
     self:addOption(BoolOption:new({
-        name = "Show FPS",
-        description = "Controls whether or not your FPS should be shown\nat the top left corner of the screen.",
+        name = "Parallel Updating",
+        description = "Controls whether or not the game will update separately\nfrom the rendering, causing it to update more and render smoother.\n\nTurn this off if this is causing issues!",
 
-        id = "showFPS"
+        id = "parallelUpdating"
     }))
     self:addOption(BoolOption:new({
-        name = "Show Memory",
-        description = "Controls whether or not your memory usage should be shown\nat the top left corner of the screen.",
+        name = "Freeplay Cutscenes",
+        description = "Controls whether or not cutscenes will play in freeplay\ninstead of only playing in story mode.",
 
-        id = "showMemory"
+        id = "freeplayCutscenes"
     }))
     self:addOption(BoolOption:new({
-        name = "Combo Stacking",
-        description = "Controls whether or not your judgements\nand combo will visually stack.",
+        name = "Low Power Mode",
+        description = "Controls whether or not the game will run\nat a maximum of 1000 TPS, saving on CPU power.",
 
-        id = "comboStacking"
-    }))
-    self:addOption(BoolOption:new({
-        name = "Note Splashes",
-        description = "Controls whether or not a firework-like\neffect will be shown after hitting a note\nand getting a SiCK!! rating from it.",
-
-        id = "noteSplashes"
-    }))
-    self:addOption(BoolOption:new({
-        name = "Hold Covers",
-        description = "Controls whether or not a little animation\nplays on your receptors to indicate holding a sustain.",
-
-        id = "holdCovers"
+        id = "lowPowerMode"
     }))
 end
 

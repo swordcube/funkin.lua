@@ -53,21 +53,26 @@ local function draw()
     if cap > 0 and currentFPS < floor(cap * 0.5) then
         fpsColor = Color.RED
     end
-    local fpsText = tostring(currentFPS)
-    local smallFPSText = "FPS"
-    drawFPSText(10, 3, fpsText, fpsFonts.big, fpsColor, 1)
-
-    local smallFPSTextX = 10 + fpsFonts.big:getWidth(fpsText) + 5
-    drawFPSText(smallFPSTextX, 7, smallFPSText, fpsFonts.small, fpsColor, 1)
-
-    local smallTPSText = " / " .. currentTPS .. " TPS"
-    drawFPSText(smallFPSTextX + fpsFonts.small:getWidth(smallFPSText), 7, smallTPSText, fpsFonts.small, fpsColor, 0.5)
-
-    local memText = humanizeBytes(memUsage)
-    local memPeakText = " / " .. humanizeBytes(peakMemUsage)
-
-    drawFPSText(10, 22, memText, fpsFonts.small, fpsColor, 1)
-    drawFPSText(10 + fpsFonts.small:getWidth(memText), 22, memPeakText, fpsFonts.small, fpsColor, 0.5)
+    if Options.showFPS then
+        local fpsText = tostring(currentFPS)
+        local smallFPSText = "FPS"
+        drawFPSText(10, 3, fpsText, fpsFonts.big, fpsColor, 1)
+    
+        local smallFPSTextX = 10 + fpsFonts.big:getWidth(fpsText) + 5
+        drawFPSText(smallFPSTextX, 7, smallFPSText, fpsFonts.small, fpsColor, 1)
+        
+        if Engine.parallelUpdating then
+            local smallTPSText = " / " .. currentTPS .. " TPS"
+            drawFPSText(smallFPSTextX + fpsFonts.small:getWidth(smallFPSText), 7, smallTPSText, fpsFonts.small, fpsColor, 0.5)
+        end
+    end
+    if Options.showMemory then
+        local memText = humanizeBytes(memUsage)
+        local memPeakText = " / " .. humanizeBytes(peakMemUsage)
+    
+        drawFPSText(10, Options.showFPS and 22 or 3, memText, fpsFonts.small, fpsColor, 1)
+        drawFPSText(10 + fpsFonts.small:getWidth(memText), Options.showFPS and 22 or 3, memPeakText, fpsFonts.small, fpsColor, 0.5)
+    end
 end
 
 ---
