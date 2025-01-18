@@ -390,7 +390,7 @@ end
 --- @param  event  chip.input.InputEvent
 ---
 function Player:input(event)
-    if self:isCPU() then
+    if self:isCPU() or event:isRepeating() then
         return
     end
     local pressed = self._pressed --- @type table<boolean>

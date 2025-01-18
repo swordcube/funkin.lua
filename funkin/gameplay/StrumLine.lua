@@ -112,7 +112,6 @@ function StrumLine:constructor(x, y, downscroll, skin)
         
         local sustain = note:getSustain() --- @type funkin.gameplay.Sustain
         sustain:kill()
-        self.sustains:add(sustain)
     end
     for i = 1, 4 do
         local holdCover = HoldCover:new(0, 0, (i - 1) % 4, self._skin) --- @type funkin.gameplay.HoldCover

@@ -38,7 +38,10 @@ function onNoteHit(e)
     boing(strumLine, e:getLane())
 end
 
-function onInputReceived(_)
+function onInputReceived(e)
+    if e:isRepeating() then
+        return
+    end
     for i = 1, 4 do
         if controls[i]:check(InputState.JUST_PRESSED) then
             boing(game.playerStrumLine, i - 1)
