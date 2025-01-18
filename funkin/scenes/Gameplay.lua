@@ -547,7 +547,7 @@ end
 
 function Gameplay:stepHit(step)
     -- TODO: add script events for this function
-    self:callOnScripts("onStepHit", step)
+    self:callOnScripts("onStepHit", {step})
 end
 
 function Gameplay:beatHit(beat)
@@ -561,13 +561,13 @@ function Gameplay:beatHit(beat)
         self.camera:setZoom(self.camera:getZoom() + 0.015)
         self.hudLayer:setZoom(self.hudLayer:getZoom() + 0.03)
     end
-    self:callOnScripts("onBeatHit", beat)
+    self:callOnScripts("onBeatHit", {beat})
 end
 
 function Gameplay:measureHit(measure)
     -- TODO: add script events for this function
-    self:callOnScripts("onMeasureHit", measure)
-    self:callOnScripts("onSectionHit", measure)
+    self:callOnScripts("onMeasureHit", {measure})
+    self:callOnScripts("onSectionHit", {measure})
 end
 
 function Gameplay:getPlaybackRate()

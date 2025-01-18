@@ -22,9 +22,9 @@ function setLeSpeed(speed)
     game:setPlaybackRate(math.truncate(speed, 2))
     speedText:setContents("Speed: " .. math.truncate(speed, 2))
     speedText:screenCenter("x")
-
+    
     speedText:setAlpha(1.0)
-
+    
     if speedTextTween then
         speedTextTween:free()
     end
@@ -46,4 +46,12 @@ function onInputReceived(_)
     if Input.wasKeyJustPressed(KeyCode.DELETE) then
         game:setPlaybackRate(1.0)
     end
+end
+
+function onBeatHit(b)
+    local r = math.preciseRandom(0.500, 2.000)
+    local t = Tween:new() --- @type chip.tweens.Tween
+    t:tweenProperty(Engine, "timeScale", r, Conductor.instance:getCrotchet() / 1000):setEase(Ease.sineOut):setUpdateCallback(function(t)
+        game:setPlaybackRate(t:getValue())
+    end)
 end
