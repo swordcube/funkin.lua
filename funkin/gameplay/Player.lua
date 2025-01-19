@@ -85,14 +85,14 @@ function Player:constructor(cpu, type)
         self.onNoteMiss:connect(function(e) game:callOnScripts("onNoteMiss", {e}) end)
         self.onNoteMissPost:connect(function(e) game:callOnScripts("onNoteMissPost", {e}) end)
 
-        if game.playerStrumLine == self then
+        if self:getType() == "player" then
             self.onNoteHit:connect(function(e) game:callOnScripts("onPlayerNoteHit", {e}) end)
             self.onNoteHitPost:connect(function(e) game:callOnScripts("onPlayerNoteHitPost", {e}) end)
 
             self.onNoteMiss:connect(function(e) game:callOnScripts("onPlayerNoteMiss", {e}) end)
             self.onNoteMissPost:connect(function(e) game:callOnScripts("onPlayerNoteMissPost", {e}) end)
         
-        elseif game.opponentStrumLine == self then
+        elseif self:getType() == "opponent" then
             self.onNoteHit:connect(function(e) game:callOnScripts("onOpponentNoteHit", {e}) end)
             self.onNoteHitPost:connect(function(e) game:callOnScripts("onOpponentNoteHitPost", {e}) end)
 
@@ -154,6 +154,9 @@ function Player:missNote(note, increaseMisses)
 
     local stats = self.stats
     if event:breaksCombo() then
+        if stats.combo > 0 then
+            stats:increaseComboBreaks()
+        end
         stats:resetCombo()
     end
     if event:increaseMisses() then
@@ -187,7 +190,9 @@ function Player:missNote(note, increaseMisses)
     if event:showCombo() then
         game.comboPopups:showCombo(-self.stats.missCombo, note:getSkin(), true)
     end
-    game:updateScoreText()
+    if self:getType() == "player" then
+        game:updateScoreText()
+    end
     self.onNoteMissPost:emit(event)
 end
 
@@ -196,10 +201,11 @@ end
 ---
 function Player:hitNote(note)
     local songPos = note:getAttachedConductor():getTime()
-    local judgement = Scoring.judgeNote(note, songPos)
     if self:isCPU() then
-        judgement = Scoring.getJudgements()[1]
+        songPos = note:getTime()
     end
+    local judgement = Scoring.judgeNote(note, songPos)
+
     --- @type funkin.backend.events.NoteHitEvent
     local event = NoteHitEvent:new(
         note, self, Scoring.breaksCombo(judgement), Scoring.scoreNote(note, songPos),
@@ -213,6 +219,9 @@ function Player:hitNote(note)
     end
     local stats = self.stats
     if event:breaksCombo() then
+        if stats.combo > 0 then
+            stats:increaseComboBreaks()
+        end
         stats:resetCombo()
     else
         stats:resetMissCombo()
@@ -252,8 +261,9 @@ function Player:hitNote(note)
     if event:showCombo() then
         game.comboPopups:showCombo(self.stats.combo, note:getSkin())
     end
-    game:updateScoreText()
-
+    if self:getType() == "player" then
+        game:updateScoreText()
+    end
     if event:showNoteSplash() then
         local splashCount = strumLine.splashes:getLength()
         local splashMembers = strumLine.splashes:getMembers()
@@ -290,22 +300,12 @@ function Player:processOpponent(strumLine)
                 local receptor = receptors[note:getLane() + 1] --- @type funkin.gameplay.Receptor
                 receptor:press(true, max(length - stepCrotchet, stepCrotchet), true)
                 self:hitNote(note)
-
-                local game = Gameplay.instance --- @type funkin.scenes.Gameplay
-                if game then                    
-                    game:updateScoreText()
-                end
             end
             -- give score and health for sustains
             if wasHit and not wasMissed and length > 0 then
                 local dt = Engine.deltaTime
                 self.stats:increaseHealth(dt * 0.125)
                 self.stats:increaseScore(dt * 250.0)
-
-                local game = Gameplay.instance --- @type funkin.scenes.Gameplay
-                if game then
-                    game:updateScoreText()
-                end
             end
             -- kill note if it was held fully
             if wasHit and not wasMissed and time < songPos - (length - stepCrotchet) then

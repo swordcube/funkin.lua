@@ -38,7 +38,7 @@ local HealthIcon = TrackingSprite:extend("HealthIcon", ...)
 
 HealthIcon.WINNING_THRESHOLD = 0.8
 HealthIcon.LOSING_THRESHOLD = 0.2
-HealthIcon.ICON_SPEED = 0.25
+HealthIcon.ICON_SPEED = 0.15
 
 HealthIcon.HEALTH_ICON_SIZE = 150
 HealthIcon.PIXEL_ICON_SIZE = 32
@@ -146,7 +146,7 @@ function HealthIcon:bop()
         finalSize = HealthIcon.HEALTH_ICON_SIZE * self.size.y
     end
     self._bopTween = Tween:new() --- @type chip.tweens.Tween
-    self._bopTween:tweenProperty(self, "scale", Point:new(finalSize / self:getFrameWidth(), finalSize / self:getFrameHeight()), 0.15, Ease.sineOut)
+    self._bopTween:tweenProperty(self, "scale", Point:new(finalSize / self:getFrameWidth(), finalSize / self:getFrameHeight()), HealthIcon.ICON_SPEED, Ease.sineOut)
     self._bopTween:setCompletionCallback(function(_)
         self._bopTween = nil
     end)

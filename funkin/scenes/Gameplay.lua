@@ -35,7 +35,12 @@ local Character = require("funkin.gameplay.Character") --- @type funkin.gameplay
 local Countdown = require("funkin.gameplay.Countdown") --- @type funkin.gameplay.Countdown
 
 local CancellableEvent = require("funkin.backend.events.CancellableEvent") --- @type funkin.backend.events.CancellableEvent
-local NoteHitEvent = require("funkin.backend.events.NoteHitEvent") --- @type funkin.backend.events.NoteHitEvent
+
+local StepHitEvent = require("funkin.backend.events.StepHitEvent") --- @type funkin.backend.events.StepHitEvent
+local BeatHitEvent = require("funkin.backend.events.BeatHitEvent") --- @type funkin.backend.events.BeatHitEvent
+local MeasureHitEvent = require("funkin.backend.events.MeasureHitEvent") --- @type funkin.backend.events.MeasureHitEvent
+
+local PlaybackRateChangeEvent = require("funkin.backend.events.PlaybackRateChangeEvent") --- @type funkin.backend.events.PlaybackRateChangeEvent
 
 ---
 --- @class funkin.scenes.Gameplay : chip.core.Scene
@@ -474,16 +479,25 @@ function Gameplay:updateIconPositions()
 end
 
 function Gameplay:updateScoreText()
-    -- TODO: add script events for this function
+    local event = CancellableEvent:new() --- @type funkin.backend.events.CancellableEvent
+    self:callOnScripts("onUpdateScoreText", {event})
+    
+    if event:isCancelled() then
+        return
+    end
     if self.player:isCPU() then
         self.scoreText:setContents("Botplay Enabled")
         return
     end
     self.scoreText:setContents("Score: " .. math.formatMoney(self.player.stats:getScore(), false, true))
+
+    self:callOnScripts("onUpdateScoreTextPost", {event})
 end
 
 function Gameplay:startSong()
-    -- TODO: add script events for this function
+    self:callOnScripts("onSongStart")
+    self:callOnScripts("onStartSong")
+
     local pb = self:getPlaybackRate()
     self.startingSong = false
     
@@ -495,6 +509,9 @@ function Gameplay:startSong()
         value:play()
     end
     self.mainConductor.music = BGM.audioPlayer
+
+    self:callOnScripts("onSongStartPost")
+    self:callOnScripts("onStartSongPost")
 end
 
 function Gameplay:finishSong()
@@ -511,7 +528,6 @@ function Gameplay:endSong()
     if self.endingSong then
         return
     end
-    -- TODO: add script events for this function
     self:callOnScripts("onSongEnd")
     self:callOnScripts("onEndSong")
     self.endingSong = true
@@ -567,15 +583,27 @@ function Gameplay:endSong()
         self:setUpdateMode("inherit")
         Engine.switchScene(require("funkin.scenes.FreeplayMenu"):new())
     end
+    self:callOnScripts("onSongEndPost")
+    self:callOnScripts("onEndSongPost")
 end
 
 function Gameplay:stepHit(step)
-    -- TODO: add script events for this function
-    self:callOnScripts("onStepHit", {step})
+    local event = StepHitEvent:new(step) --- @type funkin.backend.events.StepHitEvent
+    self:callOnScripts("onStepHit", {event})
+
+    if event:isCancelled() then
+        return
+    end
+    self:callOnScripts("onStepHitPost", {event})
 end
 
 function Gameplay:beatHit(beat)
-    -- TODO: add script events for this function
+    local event = BeatHitEvent:new(beat) --- @type funkin.backend.events.BeatHitEvent
+    self:callOnScripts("onBeatHit", {event})
+
+    if event:isCancelled() then
+        return
+    end
     local iconP2, iconP1 = self.iconP2, self.iconP1
     iconP2:bop()
     iconP1:bop()
@@ -585,13 +613,19 @@ function Gameplay:beatHit(beat)
         self.camera:setZoom(self.camera:getZoom() + 0.015)
         self.hudLayer:setZoom(self.hudLayer:getZoom() + 0.03)
     end
-    self:callOnScripts("onBeatHit", {beat})
+    self:callOnScripts("onBeatHitPost", {beat})
 end
 
 function Gameplay:measureHit(measure)
-    -- TODO: add script events for this function
+    local event = MeasureHitEvent:new(measure) --- @type funkin.backend.events.MeasureHitEvent
     self:callOnScripts("onMeasureHit", {measure})
     self:callOnScripts("onSectionHit", {measure})
+
+    if event:isCancelled() then
+        return
+    end
+    self:callOnScripts("onMeasureHitPost", {event})
+    self:callOnScripts("onSectionHitPost", {event})
 end
 
 function Gameplay:getPlaybackRate()
@@ -600,14 +634,19 @@ end
 
 function Gameplay:setPlaybackRate(newRate)
     -- TODO: add script events for this function
+    local event = PlaybackRateChangeEvent:new(newRate) --- @type funkin.backend.events.PlaybackRateChangeEvent
     self:callOnScripts("onPlaybackRateChanged", {newRate})
 
+    if event:isCancelled() then
+        return
+    end
     Engine.timeScale = newRate
     BGM.audioPlayer:setPitch(newRate)
 
     for _, value in pairs(self.vocalTracks) do
         value:setPitch(newRate)
     end
+    self:callOnScripts("onPlaybackRateChangedPost", {event})
 end
 
 function Gameplay:free()

@@ -28,8 +28,9 @@ local ModLoader = {}
 
 ModLoader.modList = {}
 ModLoader.modDirectory = "mods"
-ModLoader.currentMod = "test"
 ModLoader.loadedMainScripts = {}
+
+ModLoader.modPaths = {} --- @type table<string, table<string, function>>
 
 ModLoader.onRefreshImports = Signal:new() --- @type chip.utils.Signal
 ModLoader.onReloadMainScripts = Signal:new() --- @type chip.utils.Signal
@@ -40,11 +41,12 @@ function ModLoader.init()
 
     local function callOnMainScripts(method, args)
         local oldMod = Paths.currentMod
-        Paths.currentMod = ModLoader.currentMod
-
         local loadedMainScripts = ModLoader.loadedMainScripts
         for i = 1, #loadedMainScripts do
-            script = loadedMainScripts[i] --- @type funkin.backend.Script
+            local mainScript = loadedMainScripts[i]
+            Paths.currentMod = mainScript.mod
+
+            local script = mainScript.script  --- @type funkin.backend.Script
             script:callMethod(method, args)
         end
         Paths.currentMod = oldMod
@@ -178,18 +180,23 @@ end
 function ModLoader.reloadMainScripts()
     local loadedMainScripts = ModLoader.loadedMainScripts
     for i = 1, #loadedMainScripts do
-        local script = loadedMainScripts[i] --- @type funkin.backend.Script
-        script:close()
+        local mainScript = loadedMainScripts[i]
+        mainScript.script:close()
     end
     ModLoader.loadedMainScripts = {}
+    ModLoader.modPaths = {}
     
     local oldMod = Paths.currentMod
     local modList = ModLoader.modList
     for i = 1, #modList do
-        Paths.currentMod = ModLoader.currentMod
+        Paths.currentMod = modList[i]
+        ModLoader.modPaths[modList[i]] = {}
+        
         local script = Script:new(ModLoader.modDirectory .. "/" .. modList[i] .. "/main.lua") --- @type funkin.backend.Script
         if not script:isClosed() then
-            tblInsert(ModLoader.loadedMainScripts, script)
+            tblInsert(ModLoader.loadedMainScripts, {script = script, mod = modList[i]})
+            script:setVariable("modID", modList[i])
+            script:setVariable("modPaths", ModLoader.modPaths[modList[i]])
             script:run()
             script:callMethod("init")
         end
@@ -198,7 +205,8 @@ function ModLoader.reloadMainScripts()
     
     local script = Script:new("assets/main.lua") --- @type funkin.backend.Script
     if not script:isClosed() then
-        tblInsert(ModLoader.loadedMainScripts, script)
+        tblInsert(ModLoader.loadedMainScripts, {script = script, mod = ""})
+        script:setVariable("modID", "")
         script:run()
         script:callMethod("init")
     end
