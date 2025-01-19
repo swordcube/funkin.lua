@@ -128,6 +128,8 @@ function SoundTray.show(up)
 end
 
 function SoundTray.update(dt)
+    dt = dt / Engine.timeScale -- let dt not be affected by timescale for the sound tray
+
     local curAnim = SoundTray.anims[SoundTray.curAnim]
     SoundTray.scale:set(
         curAnim.frames[SoundTray.curFrame].x,

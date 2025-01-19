@@ -24,6 +24,10 @@ local MainMenu = Scene:extend("MainMenu", ...)
 MainMenu.lastSelected = 1
 
 function MainMenu:init()
+    if not BGM.isPlaying() then
+        CoolUtil.playMenuMusic(0)
+        BGM.fade(0, 1, 4)
+    end
     self:setUpdateMode("always")
 
     self.bg = Sprite:new() --- @type chip.graphics.Sprite
@@ -69,6 +73,10 @@ function MainMenu:init()
         self:startExitScene(require("funkin.scenes.ModManagerMenu"):new())
     end)
     self.menuItems.onChange:connect(function(item)
+        Discord.changePresence({
+            state = "Selecting " .. item.rpcName,
+            details = "In the main menu"
+        })
         self.camera:setY(item:getY())
     end)
     self.menuItems.onAcceptPress:connect(function(item)

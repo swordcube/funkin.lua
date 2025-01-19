@@ -4,13 +4,43 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Debug Game",
+            "label": "Debug Game (Windows)",
             "type": "shell",
             "command": "./commands/debug.bat",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Debug Game (Unix)",
+            "type": "shell",
+            "command": "sh ./commands/debug.sh",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
                 "isDefault": true
+            }
+        },
+        {
+            "label": "Publish Game (Windows)",
+            "type": "shell",
+            "command": "./commands/publish.bat",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Publish Game (Unix)",
+            "type": "shell",
+            "command": "sh ./commands/publish.sh",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
             }
         }
     ]

@@ -91,6 +91,14 @@ function Paths.font(key, dir, mod)
     return Paths.getPath((dir or "fonts") .. "/" .. key, mod)
 end
 
+function Paths.frag(key, dir, mod)
+    return Paths.getPath((dir or "shaders") .. "/" .. key .. ".frag", mod)
+end
+
+function Paths.vert(key, dir, mod)
+    return Paths.getPath((dir or "shaders") .. "/" .. key .. ".vert", mod)
+end
+
 function Paths.getSparrowAtlas(key, dir, mod)
     local imgPath = Paths.image(key, (dir or "images"), mod)
     local xmlPath = Paths.xml(key, (dir or "images"), mod)

@@ -51,6 +51,8 @@ function PauseMenu:constructor()
                         end
                     end
                     game.paused = false
+                    game:updateDiscordRPC()
+
                     self:free()
                 end
             },
@@ -203,6 +205,11 @@ function PauseMenu:constructor()
             self._paused = false
         end
     end)
+
+    Discord.changePresence({
+        details = "(PAUSED) " .. game.currentChart.meta.title .. " (" .. game._params.difficulty:upper() .. ")",
+        state = game.player.stats:getScore() .. " (" .. math.truncate(game.player.stats:getAccuracy() * 100, 2) .. "%) - " .. game.player.stats.misses .. " miss" .. (game.player.stats.misses == 1 and "" or "es"),
+    })
 end
 
 function PauseMenu:update(_)

@@ -5,5 +5,5 @@ Chip.init({
     targetFPS = 144,
     initialScene = require("funkin.scenes.InitScene"):new(),
     showSplashScreen = true,
-    debugMode = true
+    debugMode = false
 })

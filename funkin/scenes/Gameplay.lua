@@ -75,8 +75,13 @@ function Gameplay:init()
     self:setUpdateMode("always")
     Paths.currentMod = self._params.currentMod
 
+    -- setup scripts
     self:setOnScripts("game", self)
-    self:callOnScripts("onInit")
+    for i = 1, #self.gameScripts do
+        local script = self.gameScripts[i] --- @type funkin.backend.Script
+        script:run()
+        script:callMethod("onInit")
+    end
 
     -- stop any playing music
     if BGM.isPlaying() then
@@ -165,6 +170,11 @@ function Gameplay:init()
     --- @protected
     ---
     self._validScore = true --- @type boolean
+
+    ---
+    --- @protected
+    ---
+    self._discordTimer = math.huge --- @type number
 
     local panEvents = self.currentChart.events
     table.filter(panEvents, function(e)
@@ -337,11 +347,24 @@ function Gameplay:callOnScripts(method, args)
     end
 end
 
+function Gameplay:updateDiscordRPC()
+    Discord.changePresence({
+        details = self.currentChart.meta.title .. " (" .. self._params.difficulty:upper() .. ")",
+        state = self.player.stats:getScore() .. " (" .. math.truncate(self.player.stats:getAccuracy() * 100, 2) .. "%) - " .. self.player.stats.misses .. " miss" .. (self.player.stats.misses == 1 and "" or "es"),
+    })
+end
+
 function Gameplay:update(dt)
     if not Transition.instance then
         self:setUpdateMode("inherit")
     end
     self:callOnScripts("onUpdate", {dt})
+
+    self._discordTimer = self._discordTimer + dt
+    if self._discordTimer >= 1.0 then
+        self:updateDiscordRPC()
+        self._discordTimer = 0.0
+    end
 
     local mainConductor = self.mainConductor
     if self.startingSong then
@@ -533,6 +556,7 @@ function Gameplay:endSong()
         })
         Highscore.save()
     end
+    Engine.timeScale = 1.0
 
     if self._params.gameMode == "story" then
         -- TODO: story mode in general lol!!

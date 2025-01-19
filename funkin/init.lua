@@ -27,6 +27,7 @@ Options = require("funkin.backend.Options")
 Highscore = require("funkin.backend.Highscore")
 Conductor = require("funkin.backend.Conductor")
 
+Discord = require("funkin.backend.api.Discord")
 ModLoader = require("funkin.backend.ModLoader")
 
 AtlasText = require("funkin.ui.AtlasText")

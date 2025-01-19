@@ -136,12 +136,13 @@ function Player:attachStrumLines(strumLines)
 end
 
 ---
---- @param  note  funkin.gameplay.Note
+--- @param  note             funkin.gameplay.Note
+--- @param  increaseMisses  boolean?
 ---
-function Player:missNote(note)
+function Player:missNote(note, increaseMisses)
     --- @type funkin.backend.events.NoteMissEvent
     local event = NoteMissEvent:new(
-        note, self, self:getType() == "player", 10, 0.0475 + math.min(note:getLength() * 0.001, 0.25),
+        note, self, self:getType() == "player", self:getType() == "player" and (increaseMisses ~= nil and increaseMisses or true), 10, 0.0475 + math.min(note:getLength() * 0.001, 0.25),
         self:getType() == "player", self:getType() == "player"
     )
     self.onNoteMiss:emit(event)
@@ -154,6 +155,8 @@ function Player:missNote(note)
     local stats = self.stats
     if event:breaksCombo() then
         stats:resetCombo()
+    end
+    if event:increaseMisses() then
         stats:increaseMissCombo()
         stats:increaseMisses()
     end
@@ -211,8 +214,6 @@ function Player:hitNote(note)
     local stats = self.stats
     if event:breaksCombo() then
         stats:resetCombo()
-        stats:increaseMissCombo()
-        stats:increaseMisses()
     else
         stats:resetMissCombo()
         stats:increaseCombo()

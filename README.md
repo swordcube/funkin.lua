@@ -18,6 +18,18 @@ Funkin' and the small framework ([chip.lua](https://github.com/swordcube/chip.lu
 
 Just give some crediting to me and I'll be perfectly okay with it!
 
+## 🖥️ Exporting the game
+In order to create an executable copy of funkin.lua, simply run either
+the [Windows export script](./commands/export.bat), or the [Unix export script](./commands/export.sh)
+
+For Linux systems, you may have to install the following packages
+if they aren't already:
+- `luajit` - For running the script
+- `7zip` - For packaging the game into a .love file
+
+Package names will vary on distro, so be sure to look those up
+if these are incorrect!
+
 ## 👋 Hey! Listen!
 If you're interested in this and *somehow* haven't heard of Funkin' itself already, go check it out on [GitHub](https://github.com/FunkinCrew/Funkin) or [itch.io](https://ninja-muffin24.itch.io/funkin)!
 

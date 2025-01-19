@@ -131,7 +131,7 @@ function PlayerStats:getAccuracy()
     if (self.totalNotesHit + self.misses) == 0 or self.accuracyScore == 0.0 then
         return 0.0
     end
-    return (self.totalNotesHit + self.misses) / self.accuracyScore
+    return self.accuracyScore / (self.totalNotesHit + self.misses)
 end
 
 ---

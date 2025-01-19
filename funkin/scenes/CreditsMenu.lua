@@ -49,6 +49,10 @@ function CreditsMenu:init()
 
     self.curSelected = 1
     self:changeSelection(0, true)
+
+    Discord.changePresence({
+        details = "In the credits menu"
+    })
 end
 
 function CreditsMenu:changeSelection(by, force)

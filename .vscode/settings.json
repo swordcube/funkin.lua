@@ -19,7 +19,8 @@
         "undefined-doc-param",
         "param-type-mismatch",
         "assign-type-mismatch",
-        "return-type-mismatch"
+        "return-type-mismatch",
+        "inject-field"
     ],
     "Lua.runtime.unicodeName": true
 }

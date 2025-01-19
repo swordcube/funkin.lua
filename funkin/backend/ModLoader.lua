@@ -190,6 +190,7 @@ function ModLoader.reloadMainScripts()
         local script = Script:new(ModLoader.modDirectory .. "/" .. modList[i] .. "/main.lua") --- @type funkin.backend.Script
         if not script:isClosed() then
             tblInsert(ModLoader.loadedMainScripts, script)
+            script:run()
             script:callMethod("init")
         end
     end
@@ -198,6 +199,7 @@ function ModLoader.reloadMainScripts()
     local script = Script:new("assets/main.lua") --- @type funkin.backend.Script
     if not script:isClosed() then
         tblInsert(ModLoader.loadedMainScripts, script)
+        script:run()
         script:callMethod("init")
     end
     ModLoader.onReloadMainScripts:emit()

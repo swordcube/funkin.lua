@@ -214,6 +214,11 @@ function FreeplayMenu:changeDifficulty(by, force)
     end
     self:positionHighscore()
     self.instTimer = 0.0
+
+    Discord.changePresence({
+        state = songMetas[self.curVariant].title .. " (" .. self.curDifficulty:upper() .. ")",
+        details = "In the freeplay menu"
+    })
 end
 
 function FreeplayMenu:update(dt)
@@ -263,6 +268,7 @@ end
 
 function FreeplayMenu:input(_)
     if Controls.justPressed.BACK then
+        BGM.stop()
         AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
         Engine.switchScene(require("funkin.scenes.MainMenu"):new())
     end

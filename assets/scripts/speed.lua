@@ -1,5 +1,9 @@
 speedTextTween = nil --- @type chip.tweens.Tween
+
 ohGod = false
+methMode = false
+
+methTween = nil --- @type chip.tweens.Tween
 
 function onInitPost()
     speedText = Text:new(0, Engine.gameHeight * 0.75, 0, "Speed: 1", 24) --- @type chip.graphics.Text
@@ -43,15 +47,29 @@ function onInputReceived(_)
     if Input.wasKeyJustPressed(KeyCode.GRAVE_ACCENT) then
         ohGod = not ohGod
     end
+    if Input.wasKeyJustPressed(KeyCode.BACKSLASH) then
+        methMode = not methMode
+        if not methMode and methTween then
+            methTween:free()
+            methTween = nil
+        end
+    end
     if Input.wasKeyJustPressed(KeyCode.DELETE) then
-        game:setPlaybackRate(1.0)
+        setLeSpeed(1.0)
     end
 end
 
 function onBeatHit(b)
-    local r = math.preciseRandom(0.500, 2.000)
-    local t = Tween:new() --- @type chip.tweens.Tween
-    t:tweenProperty(Engine, "timeScale", r, Conductor.instance:getCrotchet() / 1000):setEase(Ease.sineOut):setUpdateCallback(function(t)
-        game:setPlaybackRate(t:getValue())
-    end)
+    if methMode then
+        if methTween then
+            methTween:free()
+            methTween = nil
+        end
+        local r = math.preciseRandom(0.500, 2.000)
+        local t = Tween:new() --- @type chip.tweens.Tween
+        t:tweenProperty(Engine, "timeScale", r, Conductor.instance:getCrotchet() / 1000):setEase(Ease.sineOut):setUpdateCallback(function(t)
+            game:setPlaybackRate(t:getValue())
+        end)
+        methTween = t
+    end
 end

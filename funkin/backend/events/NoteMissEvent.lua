@@ -21,7 +21,7 @@ local CancellableEvent = require("funkin.backend.events.CancellableEvent") --- @
 ---
 local NoteMissEvent = CancellableEvent:extend("NoteMissEvent", ...)
 
-function NoteMissEvent:constructor(note, player, breaksCombo, score, healthLoss, showJudgement, showCombo)
+function NoteMissEvent:constructor(note, player, breaksCombo, increaseMisses, score, healthLoss, showJudgement, showCombo)
     NoteMissEvent.super.constructor(self)
 
     ---
@@ -38,6 +38,11 @@ function NoteMissEvent:constructor(note, player, breaksCombo, score, healthLoss,
     --- @protected
     ---
     self._breaksCombo = breaksCombo --- @type boolean
+
+    ---
+    --- @protected
+    ---
+    self._increaseMisses = increaseMisses --- @type boolean
 
     ---
     --- @protected
@@ -107,6 +112,10 @@ end
 
 function NoteMissEvent:breaksCombo()
     return self._breaksCombo
+end
+
+function NoteMissEvent:increaseMisses()
+    return self._increaseMisses
 end
 
 function NoteMissEvent:getScore()

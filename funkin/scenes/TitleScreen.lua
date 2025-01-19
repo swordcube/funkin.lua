@@ -132,6 +132,10 @@ function TitleScreen:init()
     self:add(self.flashSpr)
 
     self.flashTween = nil --- @type chip.tweens.Tween
+
+    Discord.changePresence({
+        details = "In the title screen"
+    })
 end
 
 function TitleScreen:deleteCoolText()

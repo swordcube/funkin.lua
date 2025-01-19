@@ -42,6 +42,10 @@ function ModManagerMenu:init()
 
     self.curSelected = 1
     self:changeSelection(0, true)
+
+    Discord.changePresence({
+        details = "In the mod manager menu"
+    })
 end
 
 function ModManagerMenu:changeSelection(by, force)

@@ -23,10 +23,7 @@ local monitorRefreshRate = 60.0
 local floor = math.floor
 local humanizeBytes = math.humanizeBytes
 
-local fpsFonts = {
-    big = gfx.newFont("assets/fonts/montserrat/semibold.ttf", 16, "light"),
-    small = gfx.newFont("assets/fonts/montserrat/semibold.ttf", 12, "light")
-}
+local fpsFonts = {big = nil, small = nil}
 
 local function drawFPSText(x, y, text, font, color, alpha)
     for i = 1, 4 do
@@ -84,6 +81,10 @@ function StatsDisplay.init()
     local _, _, wf = window.getMode()
     monitorRefreshRate = wf.refreshrate
 
+    fpsFonts = {
+        big = gfx.newFont("assets/fonts/montserrat/semibold.ttf", 16, "light"),
+        small = gfx.newFont("assets/fonts/montserrat/semibold.ttf", 12, "light")
+    }
     Engine.postDraw:connect(draw)
 end
 
