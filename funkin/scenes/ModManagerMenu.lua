@@ -36,7 +36,7 @@ function ModManagerMenu:init()
     self:setUpdateMode("always")
     
     self.bg = Sprite:new() --- @type chip.graphics.Sprite
-    self.bg:loadTexture(Paths.image("blue", "images/menus"))
+    self.bg:loadTexture(Paths.image("menus/blue"))
     self.bg:screenCenter("xy")
     self:add(self.bg)
 
@@ -52,12 +52,12 @@ function ModManagerMenu:changeSelection(by, force)
     if by == 0 and not force then
         return
     end
-    AudioPlayer.playSFX(Paths.sound("scroll", "sounds/menus"))
+    AudioPlayer.playSFX(Paths.sound("menus/scroll"))
 end
 
 function ModManagerMenu:input(_)
     if Controls.justPressed.BACK then
-        AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
+        AudioPlayer.playSFX(Paths.sound("menus/cancel"))
 
         self:setUpdateMode("inherit")
         Engine.switchScene(MainMenu:new())

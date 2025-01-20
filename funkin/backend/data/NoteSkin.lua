@@ -95,7 +95,7 @@ local NoteSkin = {
 ---
 function NoteSkin.get(noteSkin)
     if not Cache.noteSkinCache[noteSkin] then
-        Cache.noteSkinCache[noteSkin] = Json.parse(File.read(Paths.json(noteSkin, "data/noteskins")))
+        Cache.noteSkinCache[noteSkin] = Json.parse(File.read(Paths.noteSkin(noteSkin)))
     end
     return Cache.noteSkinCache[noteSkin]
 end

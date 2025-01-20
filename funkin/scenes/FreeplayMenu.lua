@@ -85,7 +85,7 @@ function FreeplayMenu:init()
     self._playingSong = nil --- @type string
 
     self.bg = Sprite:new() --- @type chip.graphics.Sprite
-    self.bg:loadTexture(Paths.image("desat", "images/menus"))
+    self.bg:loadTexture(Paths.image("menus/desat"))
     self.bg:screenCenter("xy")
     self:add(self.bg)
 
@@ -170,7 +170,7 @@ function FreeplayMenu:changeSelection(by, force)
         text:setAlpha((i == self.curSelected) and 1 or 0.6)
     end
     self:changeDifficulty(0, true)
-    AudioPlayer.playSFX(Paths.sound("scroll", "sounds/menus"))
+    AudioPlayer.playSFX(Paths.sound("menus/scroll"))
 end
 
 function FreeplayMenu:changeDifficulty(by, force)
@@ -243,7 +243,7 @@ function FreeplayMenu:update(dt)
         if not stream and not tblContains(self._loadedSongList, song) then
             thread.getChannel("fi1"):push({
                 song = song,
-                instPath = Paths.inst(song),
+                instPath = Paths.inst(song, self.songMods[self.curSelected]),
                 doBreak = false
             })
             tblInsert(self._loadedSongList, song)
@@ -269,7 +269,7 @@ end
 function FreeplayMenu:input(_)
     if Controls.justPressed.BACK then
         BGM.stop()
-        AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
+        AudioPlayer.playSFX(Paths.sound("menus/cancel"))
         Engine.switchScene(require("funkin.scenes.MainMenu"):new())
     end
     local wheel = -Input:getMouseWheelY()

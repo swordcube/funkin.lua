@@ -96,7 +96,7 @@ local UISkin = {
 ---
 function UISkin.get(uiSkin)
     if not Cache.uiSkinCache[uiSkin] then
-        Cache.uiSkinCache[uiSkin] = Json.parse(File.read(Paths.json(uiSkin, "data/uiskins")))
+        Cache.uiSkinCache[uiSkin] = Json.parse(File.read(Paths.uiSkin(uiSkin)))
     end
     return Cache.uiSkinCache[uiSkin]
 end

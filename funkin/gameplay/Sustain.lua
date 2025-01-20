@@ -77,8 +77,8 @@ function Sustain:setSkin(skin)
     local json = NoteSkin.get(skin) --- @type funkin.backend.data.NoteSkin?
 
     if json.sustains.atlasType == "sparrow" then
-        self._body:setFrames(Paths.getSparrowAtlas(json.sustains.texture, "images/" .. json.sustains.folder))
-        self._tail:setFrames(Paths.getSparrowAtlas(json.sustains.texture, "images/" .. json.sustains.folder))
+        self._body:setFrames(Paths.getSparrowAtlas(json.sustains.folder .. "/" .. json.sustains.texture))
+        self._tail:setFrames(Paths.getSparrowAtlas(json.sustains.folder .. "/" .. json.sustains.texture))
         
         for i = 1, #json.sustains.animations do
             local animData = json.sustains.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
@@ -94,8 +94,8 @@ function Sustain:setSkin(skin)
             end
         end
     elseif json.sustains.atlasType == "grid" then
-        self._body:loadTexture(Paths.image(json.sustains.texture, "images/" .. json.sustains.folder), true, json.sustains.gridSize.x, json.sustains.gridSize.y)
-        self._tail:loadTexture(Paths.image(json.sustains.texture, "images/" .. json.sustains.folder), true, json.sustains.gridSize.x, json.sustains.gridSize.y)
+        self._body:loadTexture(Paths.image(json.sustains.folder .. "/" .. json.sustains.texture), true, json.sustains.gridSize.x, json.sustains.gridSize.y)
+        self._tail:loadTexture(Paths.image(json.sustains.folder .. "/" .. json.sustains.texture), true, json.sustains.gridSize.x, json.sustains.gridSize.y)
         
         for i = 1, #json.sustains.animations do
             local animData = json.sustains.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData

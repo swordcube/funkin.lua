@@ -1,0 +1,29 @@
+{
+    "texture": "chiplet",
+    "name": "DORITO MAN",
+    "props": [
+        {
+            "asset": "story/props/bf",
+            "scale": 1,
+            "danceInterval": 1,
+            "danceSteps": ["idle"],
+            "offset": {"x": 80, "y": 80},
+            "animations": [
+                {
+                    "name": "idle",
+                    "prefix": "idle0",
+                    "fps": 24,
+                    "looped": false
+                },
+                {
+                    "name": "confirm",
+                    "prefix": "confirm0",
+                    "fps": 24,
+                    "looped": false
+                }
+            ]
+        }
+    ],
+    "color": "#F9CF51",
+    "songs": ["starburst"]
+}

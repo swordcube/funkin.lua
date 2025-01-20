@@ -31,14 +31,14 @@ function MainMenu:init()
     self:setUpdateMode("always")
 
     self.bg = Sprite:new() --- @type chip.graphics.Sprite
-    self.bg:loadTexture(Paths.image("yellow", "images/menus"))
+    self.bg:loadTexture(Paths.image("menus/yellow"))
     self.bg.scale:set(1.17, 1.17)
     self.bg:screenCenter("xy")
     self.bg.scrollFactor:set(1, 0.17)
     self:add(self.bg)
 
     self.magenta = Sprite:new() --- @type chip.graphics.Sprite
-    self.magenta:loadTexture(Paths.image("desat", "images/menus"))
+    self.magenta:loadTexture(Paths.image("menus/desat"))
     self.magenta.scale:set(1.17, 1.17)
     self.magenta:screenCenter("xy")
     self.magenta.scrollFactor:set(1, 0.17)
@@ -116,7 +116,7 @@ end
 
 function MainMenu:input(_)
     if Controls.justPressed.BACK then
-        AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
+        AudioPlayer.playSFX(Paths.sound("menus/cancel"))
         Engine.switchScene(require("funkin.scenes.TitleScreen"):new())
     end
     if Input.wasKeyJustPressed(KeyCode.SEVEN) then

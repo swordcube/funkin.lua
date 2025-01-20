@@ -105,7 +105,7 @@ function ControlOption:input(e)
                     keys[i]:setAlpha(0.45)
                 end
             end
-            AudioPlayer.playSFX(Paths.sound("scroll", "sounds/menus"))
+            AudioPlayer.playSFX(Paths.sound("menus/scroll"))
         end
     end
     if e:is(InputEventKey) then

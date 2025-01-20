@@ -75,7 +75,7 @@ function MainMenuList:input(_)
                 end
             else
                 self.busy = true
-                AudioPlayer.playSFX(Paths.sound("select", "sounds/menus"))
+                AudioPlayer.playSFX(Paths.sound("menus/select"))
                 FlickerEffect.flicker(item, 1, 0.06, true, false, function(_)
                     self.busy = false
                     if item.callback then
@@ -138,7 +138,7 @@ function MainMenuList:selectItem(index)
     newItem:playAnim("selected")
 
     self.selectedItem = index
-    AudioPlayer.playSFX(Paths.sound("scroll", "sounds/menus"))
+    AudioPlayer.playSFX(Paths.sound("menus/scroll"))
 
     self.onChange:emit(newItem)
 end

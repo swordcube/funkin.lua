@@ -95,11 +95,11 @@ local CharacterData = {
 --- @return funkin.backend.data.CharacterData?
 ---
 function CharacterData.get(character)
-    if not File.exists(Paths.json(character, "data/characters")) then
+    if not File.exists(Paths.character(character)) then
         Log.warn(nil, nil, nil, "Character data for " .. character .. " doesn't exist!")
         return nil
     end
-    return Json.parse(File.read(Paths.json(character, "data/characters")))
+    return Json.parse(File.read(Paths.character(character)))
 end
 
 return CharacterData

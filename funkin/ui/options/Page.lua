@@ -90,7 +90,7 @@ function Page:changeSelection(by, force)
             option:unselect()
         end
     end
-    AudioPlayer.playSFX(Paths.sound("scroll", "sounds/menus"))
+    AudioPlayer.playSFX(Paths.sound("menus/scroll"))
 end
 
 function Page:update(dt)

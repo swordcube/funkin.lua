@@ -32,15 +32,17 @@ function FreeplaySongList.get()
     local levelLists = {}
     tblInsert(levelLists, {
         data = Json.parse(File.read("assets/data/levelList.json")),
-        mod = nil,
+        mod = "",
         directory = "assets/data/levels"
     })
     local modList = ModLoader.modList
+    local modFolders = ModLoader.modFolders
+
     for i = 1, #modList do
         if not Options.enabledMods[modList[i]] then
             goto modContinue
         end
-        local modLevelListPath = ModLoader.modDirectory .. "/" .. modList[i] .. "/data/levelList.json"
+        local modLevelListPath = ModLoader.modDirectory .. "/" .. modFolders[modList[i]] .. "/data/levelList.json"
         if File.fileExists(modLevelListPath) then
             local leData = Json.parse(File.read(modLevelListPath))
             if leData.mode:lower() == "replace" then
@@ -49,7 +51,7 @@ function FreeplaySongList.get()
             tblInsert(levelLists, {
                 data = leData,
                 mod = modList[i],
-                directory = ModLoader.modDirectory .. "/" .. modList[i] .. "/data/levels"
+                directory = ModLoader.modDirectory .. "/" .. modFolders[modList[i]] .. "/data/levels"
             })
         end
         ::modContinue::
@@ -60,6 +62,10 @@ function FreeplaySongList.get()
             -- go through each level
             local levelData = LevelRegistry.instance:getEntry(levelList.data.levels[i], levelList.mod)
             if not levelData then
+                -- if it doesn't exist, try to load without mod
+                levelData = LevelRegistry.instance:getEntry(levelList.data.levels[i])
+            end
+            if not levelData then
                 -- if it doesn't exist, skip
                 goto levelContinue
             end
@@ -68,6 +74,10 @@ function FreeplaySongList.get()
                 local songID = levelData.songs[j] --- @type string
     
                 local songMeta = SongRegistry.instance:getEntry(songID, levelList.mod) --- @type funkin.backend.song.SongMetadata?
+                if not songMeta then
+                    -- if it doesn't exist, try to load without mod
+                    songMeta = SongRegistry.instance:getEntry(songID)
+                end
                 if not songMeta then
                     -- if it doesn't exist, skip
                     goto songContinue

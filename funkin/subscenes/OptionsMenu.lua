@@ -72,7 +72,7 @@ function OptionsMenu:constructor()
     self:add(self.uiLayer)
 
     self.containerBG = Sprite:new() --- @type chip.graphics.Sprite
-    self.containerBG:loadTexture(Paths.image("menuContainer", "images/menus/options"))
+    self.containerBG:loadTexture(Paths.image("menus/options/menuContainer"))
     self.containerBG:screenCenter("xy")
     self.containerBG:setY(self.containerBG:getY() + 20)
     self.uiLayer:add(self.containerBG)
@@ -110,7 +110,7 @@ function OptionsMenu:constructor()
     self.uiLayer:add(self.uiContainer)
 
     self.optionsThingie = Sprite:new(50, 20) --- @type chip.graphics.Sprite
-    self.optionsThingie:setFrames(Paths.getSparrowAtlas("buttons", "images/menus/main"))
+    self.optionsThingie:setFrames(Paths.getSparrowAtlas("menus/main/buttons"))
     self.optionsThingie.animation:addByPrefix("idle", "options selected", 24)
     self.optionsThingie.animation:play("idle")
     self.optionsThingie.scale:set(0.5, 0.5)
@@ -159,7 +159,7 @@ function OptionsMenu:input(e)
 
             Options.save()
             Controls.save()
-            AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
+            AudioPlayer.playSFX(Paths.sound("menus/cancel"))
 
             local t = Tween:new() --- @type chip.tweens.Tween
             t:tweenProperty(self.bg, "alpha", 0.0, 0.4):setEase(Ease.quartInOut):setStartDelay(0.25)

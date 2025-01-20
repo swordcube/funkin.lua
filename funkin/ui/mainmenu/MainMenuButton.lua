@@ -48,7 +48,7 @@ function MainMenuButton:constructor(name, rpcName, callback, fireImmediately)
     ---
     self.fireImmediately = fireImmediately and fireImmediately or false
 
-    self:setFrames(Paths.getSparrowAtlas("buttons", "images/menus/main"))
+    self:setFrames(Paths.getSparrowAtlas("menus/main/buttons"))
     self.animation:addByPrefix("idle", string.format("%s idle", self.name), 24)
     self.animation:addByPrefix("selected", string.format("%s selected", self.name), 24)
     self:playAnim("idle")

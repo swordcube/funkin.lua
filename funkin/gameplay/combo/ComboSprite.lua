@@ -34,7 +34,7 @@ end
 function ComboSprite:setJudgementSkin(skin)
     local json = UISkin.get(skin) --- @type funkin.backend.data.UISkin?
     if json.judgements.atlasType == "sparrow" then
-        self:setFrames(Paths.getSparrowAtlas(json.judgements.texture, "images/" .. json.judgements.folder))
+        self:setFrames(Paths.getSparrowAtlas(json.judgements.folder .. "/" .. json.judgements.texture))
         for i = 1, #json.judgements.animations do
             local animData = json.judgements.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             if animData.indices and #animData.indices > 0 then
@@ -44,7 +44,7 @@ function ComboSprite:setJudgementSkin(skin)
             end
         end
     elseif json.judgements.atlasType == "grid" then
-        self:loadTexture(Paths.image(json.judgements.texture, "images/" .. json.judgements.folder), true, json.judgements.gridSize.x, json.judgements.gridSize.y)
+        self:loadTexture(Paths.image(json.judgements.folder .. "/" .. json.judgements.texture), true, json.judgements.gridSize.x, json.judgements.gridSize.y)
         for i = 1, #json.judgements.animations do
             local animData = json.judgements.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             self.animation:add(animData.name, animData.indices, animData.fps, animData.looped)
@@ -63,7 +63,7 @@ end
 function ComboSprite:setComboSkin(skin)
     local json = UISkin.get(skin) --- @type funkin.backend.data.UISkin?
     if json.combo.atlasType == "sparrow" then
-        self:setFrames(Paths.getSparrowAtlas(json.combo.texture, "images/" .. json.combo.folder))
+        self:setFrames(Paths.getSparrowAtlas(json.combo.folder .. "/" .. json.combo.texture))
         for i = 1, #json.combo.animations do
             local animData = json.combo.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             if animData.indices and #animData.indices > 0 then
@@ -74,7 +74,7 @@ function ComboSprite:setComboSkin(skin)
         end
     
     elseif json.combo.atlasType == "grid" then
-        self:loadTexture(Paths.image(json.combo.texture, "images/" .. json.combo.folder), true, json.combo.gridSize.x, json.combo.gridSize.y)
+        self:loadTexture(Paths.image(json.combo.folder .. "/" .. json.combo.texture), true, json.combo.gridSize.x, json.combo.gridSize.y)
         for i = 1, #json.combo.animations do
             local animData = json.combo.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             self.animation:add(animData.name, animData.indices, animData.fps, animData.looped)

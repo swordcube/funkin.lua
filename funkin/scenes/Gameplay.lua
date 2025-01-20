@@ -98,27 +98,27 @@ function Gameplay:init()
 
     -- load inst
     BGM.audioPlayer:setVolume(1.0)
-    BGM.load(Paths.inst(self._params.song))
+    BGM.load(Paths.inst(self._params.song, self._params.currentMod))
 
     -- load vocal tracks
     local meta = self.currentChart.meta
     self.vocalTracks = {} --- @type table<string, chip.audio.AudioPlayer>
     
-    if File.exists(Paths.voices(self._params.song, meta.characters.spectator)) then
+    if File.exists(Paths.voices(self._params.song, meta.characters.spectator, self._params.currentMod)) then
         local spectatorVocals = AudioPlayer:new() --- @type chip.audio.AudioPlayer
-        spectatorVocals:load(Paths.voices(self._params.song, meta.characters.spectator))
+        spectatorVocals:load(Paths.voices(self._params.song, meta.characters.spectator, self._params.currentMod))
         self.vocalTracks[meta.characters.spectator] = spectatorVocals
         self:add(spectatorVocals)
     end
-    if File.exists(Paths.voices(self._params.song, meta.characters.opponent)) then
+    if File.exists(Paths.voices(self._params.song, meta.characters.opponent, self._params.currentMod)) then
         local opponentVocals = AudioPlayer:new() --- @type chip.audio.AudioPlayer
-        opponentVocals:load(Paths.voices(self._params.song, meta.characters.opponent))
+        opponentVocals:load(Paths.voices(self._params.song, meta.characters.opponent, self._params.currentMod))
         self.vocalTracks[meta.characters.opponent] = opponentVocals
         self:add(opponentVocals)
     end
-    if File.exists(Paths.voices(self._params.song, meta.characters.player)) then
+    if File.exists(Paths.voices(self._params.song, meta.characters.player, self._params.currentMod)) then
         local playerVocals = AudioPlayer:new() --- @type chip.audio.AudioPlayer
-        playerVocals:load(Paths.voices(self._params.song, meta.characters.player))
+        playerVocals:load(Paths.voices(self._params.song, meta.characters.player, self._params.currentMod))
         self.vocalTracks[meta.characters.player] = playerVocals
         self:add(playerVocals)
     end
@@ -253,7 +253,7 @@ function Gameplay:init()
     self.healthBarBG = Sprite:new(0, Options.downscroll and Engine.gameHeight * 0.1 or Engine.gameHeight * 0.9) --- @type chip.graphics.Sprite
     
     local json = UISkin.get(self.currentChart.meta.uiSkin) --- @type funkin.backend.data.UISkin?
-    self.healthBarBG:loadTexture(Paths.image(json.healthBar.texture, "images/" .. json.healthBar.folder))
+    self.healthBarBG:loadTexture(Paths.image(json.healthBar.folder .. "/" .. json.healthBar.texture))
     
     self.healthBarBG:screenCenter("x")
     self.healthBarBG.offset:set(json.healthBar.offset.x, json.healthBar.offset.y)

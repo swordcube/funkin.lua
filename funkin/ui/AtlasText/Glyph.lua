@@ -34,7 +34,7 @@ function Glyph:constructor(x, y, parent, character)
     if fontData.noLowerCase then
         character = character:upper()
     end
-    self:setFrames(Paths.getSparrowAtlas(p:getFont(), "images/fonts"))
+    self:setFrames(Paths.getSparrowAtlas("fonts/" .. p:getFont()))
 
     local prefix = character .. "0"
     if not fontData.noLowerCase and tblContains(Glyph.allLetters, character:upper()) then

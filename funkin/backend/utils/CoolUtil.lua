@@ -33,7 +33,7 @@ function CoolUtil.playMusic(name, volume, loop)
     BGM.play(Paths.music(name), loop)
     BGM.audioPlayer:setVolume(volume and volume or 1.0)
 
-    local json = Json.decode(File.read(Paths.json("meta", "music/" .. name)))
+    local json = Json.decode(File.read(Paths.musicMeta(name)))
     Conductor.instance:reset(json.bpm)
     Conductor.instance.music = BGM.audioPlayer
     Conductor.instance.timeSignature = Conductor.timeSignatureFromString(json.timeSignature)

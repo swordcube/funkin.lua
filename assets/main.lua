@@ -16,7 +16,7 @@ function registerSongs()
     end)
     for i = 1, #songList do
         local songID = songList[i] --- @type string
-        SongRegistry.instance:registerEntry(songID, Json.parse(File.read(getModDirectory() .. "/songs/" .. songID .. "/meta.json")))
+        SongRegistry.instance:registerEntry(songID, Json.parse(File.read(getModDirectory() .. "/songs/" .. songID .. "/meta.json")), modID)
     end
 end
 
@@ -26,7 +26,7 @@ function registerLevels()
     end)
     for i = 1, #levelList do
         local levelID = levelList[i] --- @type string
-        LevelRegistry.instance:registerEntry(levelID:sub(1, #levelID - 5), Json.parse(File.read(getModDirectory() .. "/data/levels/" .. levelID)))
+        LevelRegistry.instance:registerEntry(levelID:sub(1, #levelID - 5), Json.parse(File.read(getModDirectory() .. "/data/levels/" .. levelID)), modID)
     end
 end
 

@@ -24,7 +24,7 @@ function TestingScene:init()
     -- sprite:setFrames(Paths.getSparrowAtlas("notes", "images/game/noteskins/default"))
     -- sprite.animation:addByPrefix("chud", "down hold0", 24, false)
     -- sprite.animation:play("chud")
-    sprite:loadTexture(Paths.image("sustains", "images/game/noteskins/pixel"), true, 7, 6)
+    sprite:loadTexture(Paths.image("game/noteskins/pixel/sustains"), true, 7, 6)
     sprite.animation:add("chud", {1}, 24, false)
     sprite.animation:play("chud")
     sprite:setHorizontalLength(sprite:getWidth() * 3)
@@ -43,7 +43,7 @@ end
 
 function TestingScene:input(_)
     if Controls.justPressed.BACK then
-        AudioPlayer.playSFX(Paths.sound("cancel", "sounds/menus"))
+        AudioPlayer.playSFX(Paths.sound("menus/cancel"))
         Engine.switchScene(require("funkin.scenes.MainMenu"):new())
     end
 end

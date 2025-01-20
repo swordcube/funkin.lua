@@ -57,11 +57,11 @@ local StageData = {
 --- @return funkin.backend.data.StageData?
 ---
 function StageData.get(stage)
-    if not File.exists(Paths.json(stage, "data/stages")) then
+    if not File.exists(Paths.stage(stage)) then
         Log.warn(nil, nil, nil, "Stage data for " .. stage .. " doesn't exist!")
         return nil
     end
-    return Json.parse(File.read(Paths.json(stage, "data/stages")))
+    return Json.parse(File.read(Paths.stage(stage)))
 end
 
 return StageData

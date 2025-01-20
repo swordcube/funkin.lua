@@ -1,0 +1,10 @@
+{
+    "levels": [
+        "sword",
+        "chiplet",
+        "bip",
+        "misc",
+        "funny"
+    ],
+    "mode": "append"
+}

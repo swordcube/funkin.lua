@@ -37,7 +37,7 @@ function GradientSwipe:enterTransition()
     self:add(blackScreen)
 
     local gradientSpr = Sprite:new() --- @type chip.graphics.Sprite
-    gradientSpr:loadTexture(Paths.image("transitionSpr", "images/menus"))
+    gradientSpr:loadTexture(Paths.image("menus/transitionSpr"))
     gradientSpr:setGraphicSize(Engine.gameWidth, Engine.gameHeight)
     gradientSpr:screenCenter("xy")
     gradientSpr:setY(gradientSpr:getY() - gradientSpr:getHeight())
@@ -66,7 +66,7 @@ function GradientSwipe:exitTransition()
     self:add(blackScreen)
     
     local gradientSpr = Sprite:new() --- @type chip.graphics.Sprite
-    gradientSpr:loadTexture(Paths.image("transitionSpr", "images/menus"))
+    gradientSpr:loadTexture(Paths.image("menus/transitionSpr"))
     gradientSpr:setGraphicSize(Engine.gameWidth, Engine.gameHeight)
     gradientSpr:screenCenter("xy")
     gradientSpr.flipY = true

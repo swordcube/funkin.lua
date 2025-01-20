@@ -49,7 +49,7 @@ function SoundTray.init()
     SoundTray._volumeDownKeys = {KeyCode.MINUS, KeyCode.NUMPAD_MINUS}
     SoundTray._muteKeys = {KeyCode.ZERO, KeyCode.NUMPAD_ZERO}
 
-    SoundTray.box = love.graphics.newImage(Paths.image("volumebox", "images/volume"))
+    SoundTray.box = love.graphics.newImage(Paths.image("volume/volumebox"))
     SoundTray.box:setFilter("linear", "linear")
     
     SoundTray.alpha = 0.0
@@ -71,16 +71,16 @@ function SoundTray.init()
     SoundTray._shakeMult = 0.0
 
     SoundTray.bars = {
-        love.graphics.newImage(Paths.image("bars_1", "images/volume")),
-        love.graphics.newImage(Paths.image("bars_2", "images/volume")),
-        love.graphics.newImage(Paths.image("bars_3", "images/volume")),
-        love.graphics.newImage(Paths.image("bars_4", "images/volume")),
-        love.graphics.newImage(Paths.image("bars_5", "images/volume")),
-        love.graphics.newImage(Paths.image("bars_6", "images/volume")),
-        love.graphics.newImage(Paths.image("bars_7", "images/volume")),
-        love.graphics.newImage(Paths.image("bars_8", "images/volume")),
-        love.graphics.newImage(Paths.image("bars_9", "images/volume")),
-        love.graphics.newImage(Paths.image("bars_10", "images/volume")),
+        love.graphics.newImage(Paths.image("volume/bars_1")),
+        love.graphics.newImage(Paths.image("volume/bars_2")),
+        love.graphics.newImage(Paths.image("volume/bars_3")),
+        love.graphics.newImage(Paths.image("volume/bars_4")),
+        love.graphics.newImage(Paths.image("volume/bars_5")),
+        love.graphics.newImage(Paths.image("volume/bars_6")),
+        love.graphics.newImage(Paths.image("volume/bars_7")),
+        love.graphics.newImage(Paths.image("volume/bars_8")),
+        love.graphics.newImage(Paths.image("volume/bars_9")),
+        love.graphics.newImage(Paths.image("volume/bars_10")),
     }
     for i = 1, #SoundTray.bars do
         ---

@@ -1,0 +1,29 @@
+{
+    "id": "swords-cubical-saturday",
+    
+    "title": "Sword's Cubical Saturday",
+    "description": "several battles with my many characters\nwho just want to have fun with a blue haired idiot",
+
+    "authors": [
+        {
+            "name": "swordcube",
+            "roles": ["Creator", "Artist", "Programmer"],
+            
+            "icon": "swordcube",
+            "url": "https://github.com/swordcube"
+        },
+        {
+            "name": "caffie",
+            "roles": ["Creator", "Artist", "Programmer"],
+            
+            "icon": "caffie",
+            "url": "https://example.com"
+        }
+    ],
+    "dependencies": [],
+
+    "versions": {
+        "api": "0.1.0",
+        "mod": "1.0.0"
+    }
+}

@@ -63,7 +63,6 @@ function Stage:constructor(stageID)
     --- @param  object  funkin.backend.data.StageObjectData
     ---
     local function spectatorCase(object)
-        print("adding spectator,,")
         tblInsert(addedChars, "spectator")
         
         local spectator = nil --- @type funkin.gameplay.Character
@@ -93,7 +92,6 @@ function Stage:constructor(stageID)
     --- @param  object  funkin.backend.data.StageObjectData
     ---
     local function opponentCase(object)
-        print("adding opponent,,")
         tblInsert(addedChars, "opponent")
 
         local opponent = nil --- @type funkin.gameplay.Character
@@ -114,7 +112,6 @@ function Stage:constructor(stageID)
     --- @param  object  funkin.backend.data.StageObjectData
     ---
     local function playerCase(object)
-        print("adding player,,")
         tblInsert(addedChars, "player")
 
         local player = nil --- @type funkin.gameplay.Character
@@ -140,9 +137,9 @@ function Stage:constructor(stageID)
             if object.properties.texture then
                 local gridSize = object.properties.gridSize --- @type {x: number, y: number}?
                 if gridSize then
-                    sprite:loadTexture(Paths.image(object.properties.texture, "images/" .. self.folder), true, gridSize.x, gridSize.y)
+                    sprite:loadTexture(Paths.image(self.folder .. "/" .. object.properties.texture), true, gridSize.x, gridSize.y)
                 else
-                    sprite:loadTexture(Paths.image(object.properties.texture, "images/" .. self.folder))
+                    sprite:loadTexture(Paths.image(self.folder .. "/" .. object.properties.texture))
                 end
             end
             local scale = object.properties.scale --- @type {x: number, y: number}?

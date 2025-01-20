@@ -27,9 +27,12 @@ local Script = require("funkin.backend.Script") --- @type funkin.backend.Script
 local ModLoader = {}
 
 ModLoader.modList = {}
+ModLoader.modFolders = {}
+
 ModLoader.modDirectory = "mods"
 ModLoader.loadedMainScripts = {}
 
+ModLoader.modMetas = {}
 ModLoader.modPaths = {} --- @type table<string, table<string, function>>
 
 ModLoader.onRefreshImports = Signal:new() --- @type chip.utils.Signal
@@ -96,11 +99,22 @@ function ModLoader.init()
 end
 
 ---
+--- Returns the metadata of a mod.
+--- 
+--- @param  modID  string  The ID of the mod to get the metadata of.
+---
+function ModLoader.getModMeta(modID)
+    return ModLoader.modMetas[ModLoader.modFolders[modID]]
+end
+
+---
 --- Updates the mod list with every available mod.
 ---
 function ModLoader.updateModList()
     local newModsDetected = 0
     ModLoader.modList = Options.savedMods
+    ModLoader.modFolders = {}
+    ModLoader.modMetas = {}
 
     local list = ModLoader.modList
     local directory = ModLoader.modDirectory
@@ -111,12 +125,16 @@ function ModLoader.updateModList()
         for i = 1, #dirItems do
             local item = dirItems[i]
             if fs.getInfo(directory .. "/" .. item, "directory") then
-                if not tblContains(list, item) then
+                local meta = Json.parse(File.read(ModLoader.modDirectory .. "/" .. item .. "/meta.json"))
+                ModLoader.modMetas[item] = meta
+
+                if not tblContains(list, meta.id) then
                     newModsDetected = newModsDetected + 1
-                    Options.enabledMods[item] = true
-                    tblInsert(list, item)
+                    Options.enabledMods[meta.id] = true
+                    tblInsert(list, meta.id)
                 end
-                tblInsert(scannedList, item)
+                tblInsert(scannedList, meta.id)
+                ModLoader.modFolders[meta.id] = item
             end
         end
     end
@@ -187,15 +205,19 @@ function ModLoader.reloadMainScripts()
     ModLoader.modPaths = {}
     
     local oldMod = Paths.currentMod
+
     local modList = ModLoader.modList
+    local modFolders = ModLoader.modFolders
+
     for i = 1, #modList do
         Paths.currentMod = modList[i]
         ModLoader.modPaths[modList[i]] = {}
         
-        local script = Script:new(ModLoader.modDirectory .. "/" .. modList[i] .. "/main.lua") --- @type funkin.backend.Script
+        local script = Script:new(ModLoader.modDirectory .. "/" .. modFolders[modList[i]] .. "/main.lua") --- @type funkin.backend.Script
         if not script:isClosed() then
             tblInsert(ModLoader.loadedMainScripts, {script = script, mod = modList[i]})
             script:setVariable("modID", modList[i])
+            script:setVariable("modFolderID", modFolders[modList[i]])
             script:setVariable("modPaths", ModLoader.modPaths[modList[i]])
             script:run()
             script:callMethod("init")
@@ -206,7 +228,8 @@ function ModLoader.reloadMainScripts()
     local script = Script:new("assets/main.lua") --- @type funkin.backend.Script
     if not script:isClosed() then
         tblInsert(ModLoader.loadedMainScripts, {script = script, mod = ""})
-        script:setVariable("modID", "")
+        script:setVariable("modID", nil)
+        script:setVariable("modFolderID", nil)
         script:run()
         script:callMethod("init")
     end

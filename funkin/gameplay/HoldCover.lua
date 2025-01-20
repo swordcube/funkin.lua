@@ -73,7 +73,7 @@ function HoldCover:setSkin(skin)
     local json = NoteSkin.get(skin) --- @type funkin.backend.data.NoteSkin?
 
     if json.holdCovers.atlasType == "sparrow" then
-        self:setFrames(Paths.getSparrowAtlas(json.holdCovers.texture, "images/" .. json.holdCovers.folder))
+        self:setFrames(Paths.getSparrowAtlas(json.holdCovers.folder .. "/" .. json.holdCovers.texture))
         for i = 1, #json.holdCovers.animations do
             local animData = json.holdCovers.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             for j = 1, 4 do

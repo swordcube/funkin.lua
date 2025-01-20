@@ -46,7 +46,7 @@ function Character:constructor(x, y, characterID, isPlayer)
     self._curDanceStep = 1
 
     if json.atlasType == "sparrow" then
-        self:setFrames(Paths.getSparrowAtlas(json.atlasPath, "images/game/characters"))
+        self:setFrames(Paths.getSparrowAtlas(json.atlasPath))
         for i = 1, #json.animations do
             local animData = json.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             if animData.indices and #animData.indices > 0 then
@@ -56,7 +56,7 @@ function Character:constructor(x, y, characterID, isPlayer)
             end
         end
     elseif json.atlasType == "grid" then
-        self:loadTexture(Paths.image(json.atlasPath, "images/game/characters"), true, json.gridSize.x, json.gridSize.y)
+        self:loadTexture(Paths.image(json.atlasPath), true, json.gridSize.x, json.gridSize.y)
         for i = 1, #json.animations do
             local animData = json.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             self.animation:add(animData.name, animData.indices, animData.fps, animData.looped)

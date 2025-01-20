@@ -19,6 +19,21 @@
 ---
 local HealthIconData = {
     ---
+    --- @type string
+    ---
+    atlasPath = nil,
+
+    ---
+    --- @type funkin.backend.enums.AtlasType
+    ---
+    atlasType = nil,
+
+    ---
+    --- @type {x: number, y: number}?
+    ---
+    gridSize = nil,
+
+    ---
     --- @type boolean?
     ---
     isPixel = nil,

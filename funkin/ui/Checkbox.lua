@@ -22,7 +22,7 @@ local Checkbox = Sprite:extend("Checkbox", ...)
 function Checkbox:constructor(x, y)
     Checkbox.super.constructor(self, x, y)
 
-    self:setFrames(Paths.getSparrowAtlas("checkbox", "images/menus/options"))
+    self:setFrames(Paths.getSparrowAtlas("menus/options/checkbox"))
     self.animation:addByPrefix("unselected", "unselected", 24, false)
     self.animation:setOffset("unselected", 8, 8)
 

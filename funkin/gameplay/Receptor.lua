@@ -78,7 +78,7 @@ function Receptor:setSkin(skin)
     local json = NoteSkin.get(skin) --- @type funkin.backend.data.NoteSkin?
 
     if json.receptors.atlasType == "sparrow" then
-        self:setFrames(Paths.getSparrowAtlas(json.receptors.texture, "images/" .. json.receptors.folder))
+        self:setFrames(Paths.getSparrowAtlas(json.receptors.folder .. "/" .. json.receptors.texture))
         for i = 1, #json.receptors.animations do
             local animData = json.receptors.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             for j = 1, 4 do
@@ -95,7 +95,7 @@ function Receptor:setSkin(skin)
         end
     
     elseif json.receptors.atlasType == "grid" then
-        self:loadTexture(Paths.image(json.receptors.texture, "images/" .. json.receptors.folder), true, json.receptors.gridSize.x, json.receptors.gridSize.y)
+        self:loadTexture(Paths.image(json.receptors.folder .. "/" .. json.receptors.texture), true, json.receptors.gridSize.x, json.receptors.gridSize.y)
         for i = 1, #json.receptors.animations do
             local animData = json.receptors.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             for j = 1, 4 do

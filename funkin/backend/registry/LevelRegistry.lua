@@ -44,7 +44,7 @@ end
 --- @param  data  funkin.backend.data.LevelData  Data of the new entry.
 --- @param  mod   string?                        Mod of the new entry.
 ---
-function LevelRegistry:registerEntry(id, data)
+function LevelRegistry:registerEntry(id, data, mod)
     if not mod then
         mod = Paths.currentMod
     end

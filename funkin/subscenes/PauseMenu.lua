@@ -262,7 +262,7 @@ function PauseMenu:changeSelection(by, force)
         text.targetY = i - self.curSelected
         text:setAlpha((i == self.curSelected) and 1 or 0.6)
     end
-    AudioPlayer.playSFX(Paths.sound("scroll", "sounds/menus"))
+    AudioPlayer.playSFX(Paths.sound("menus/scroll"))
 end
 
 function PauseMenu:free()

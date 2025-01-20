@@ -73,7 +73,7 @@ function NoteSplash:setSkin(skin)
     local json = NoteSkin.get(skin) --- @type funkin.backend.data.NoteSkin?
 
     if json.splashes.atlasType == "sparrow" then
-        self:setFrames(Paths.getSparrowAtlas(json.splashes.texture, "images/" .. json.splashes.folder))
+        self:setFrames(Paths.getSparrowAtlas(json.splashes.folder .. "/" .. json.splashes.texture))
         for i = 1, #json.splashes.animations do
             local animData = json.splashes.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
             for j = 1, 4 do

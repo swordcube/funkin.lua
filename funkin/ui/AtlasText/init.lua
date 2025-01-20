@@ -26,7 +26,7 @@ local Glyph = require("funkin.ui.AtlasText.Glyph") --- @type funkin.ui.AtlasText
 local AtlasText = CanvasLayer:extend("AtlasText", ...)
 
 function AtlasText.loadFontData(name)
-    local jsonPath = Paths.json(name, "data/fonts")
+    local jsonPath = Paths.json("data/fonts/" .. name)
     return Json.decode(File.read(jsonPath)) --- @type funkin.ui.AtlasText.AtlasFont
 end
 

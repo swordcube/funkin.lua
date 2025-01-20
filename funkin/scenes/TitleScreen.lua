@@ -70,7 +70,7 @@ function TitleScreen:init()
     self.introLength = 16
     self.danced = false
 
-    local lines = CoolUtil.parseCSV(File.read(Paths.csv("introText")))
+    local lines = CoolUtil.parseCSV(File.read(Paths.csv("data/introText")))
     self.introTexts = lines[math.random(1, #lines)]
 
     if not BGM.isPlaying() then
@@ -83,20 +83,20 @@ function TitleScreen:init()
     self:add(self.titleGroup)
 
     self.logoBl = Sprite:new(-150, -100) --- @type chip.graphics.Sprite
-    self.logoBl:setFrames(Paths.getSparrowAtlas("logo", "images/menus/title"))
+    self.logoBl:setFrames(Paths.getSparrowAtlas("menus/title/logo"))
     self.logoBl.animation:addByPrefix("idle", "logo bumpin", 24, false)
     self.logoBl.animation:play("idle")
     self.titleGroup:add(self.logoBl)
 
     self.gfDance = Sprite:new(Engine.gameWidth * 0.4, Engine.gameHeight * 0.07) --- @type chip.graphics.Sprite
-    self.gfDance:setFrames(Paths.getSparrowAtlas("gf", "images/menus/title"))
+    self.gfDance:setFrames(Paths.getSparrowAtlas("menus/title/gf"))
     self.gfDance.animation:addByIndices("danceLeft", "gfDance", {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15}, 24, false)
     self.gfDance.animation:addByIndices("danceRight", "gfDance", {16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 28, 29, 30}, 24, false)
     self.gfDance.animation:play("danceLeft")
     self.titleGroup:add(self.gfDance)
 
     self.titleText = Sprite:new(100, Engine.gameHeight * 0.8) --- @type chip.graphics.Sprite
-    self.titleText:setFrames(Paths.getSparrowAtlas("enter", "images/menus/title"))
+    self.titleText:setFrames(Paths.getSparrowAtlas("menus/title/enter"))
     self.titleText.animation:addByPrefix("idle", "Press Enter to Begin", 24)
     self.titleText.animation:addByPrefix("press", "ENTER PRESSED", 24, false)
     self.titleText.animation:play("idle")
@@ -109,16 +109,16 @@ function TitleScreen:init()
     self.ngSpr = Sprite:new(0, Engine.gameHeight * 0.52) --- @type chip.graphics.Sprite
     
     if math.random(1.0, 100.0) < 1 then
-        self.ngSpr:loadTexture(Paths.image('newgrounds_classic', "images/menus/title"))
+        self.ngSpr:loadTexture(Paths.image('menus/title/newgrounds_classic'))
     
     elseif math.random(1.0, 100.0) < 30 then
-        self.ngSpr:loadTexture(Paths.image('newgrounds_animated', "images/menus/title"), true, 600)
+        self.ngSpr:loadTexture(Paths.image('menus/title/newgrounds_animated'), true, 600)
         self.ngSpr.animation:add('idle', {1, 2}, 8)
         self.ngSpr.animation:play('idle')
         self.ngSpr.scale:set(0.55, 0.55)
         self.ngSpr:setY(self.ngSpr:getY() + 15)
     else
-        self.ngSpr:loadTexture(Paths.image('newgrounds', "images/menus/title"))
+        self.ngSpr:loadTexture(Paths.image('menus/title/newgrounds'))
         self.ngSpr.scale:set(0.8, 0.8)
     end
     self.ngSpr:kill()
@@ -204,7 +204,7 @@ function TitleScreen:input(_)
                     Engine.switchScene(require("funkin.scenes.MainMenu"):new())
                 end)
                 self.titleText.animation:play("press")
-                AudioPlayer.playSFX(Paths.sound("select", "sounds/menus"))
+                AudioPlayer.playSFX(Paths.sound("menus/select"))
             else
                 if self._acceptTimer then
                     self._acceptTimer:free()

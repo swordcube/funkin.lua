@@ -52,4 +52,9 @@ Constants.COMMIT_HASH = nil
 ---
 Constants.NOTE_DIRECTIONS = {"left", "down", "up", "right"}
 
+---
+--- Whether or not this copy of funkin.lua is running from source.
+---
+Constants.RUNNING_FROM_SOURCE = true
+
 return Constants

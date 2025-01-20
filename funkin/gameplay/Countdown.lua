@@ -39,7 +39,7 @@ function Countdown.start(uiSkin, conductor, callback)
     local soundIDs = json.countdown.sounds
     for i = 1, #soundIDs do
         local sound = AudioPlayer:new() --- @type chip.audio.AudioPlayer
-        sound:load(Paths.sound(soundIDs[i], "sounds/" .. json.countdown.soundFolder))
+        sound:load(Paths.sound(json.countdown.soundFolder .. "/" .. soundIDs[i]))
         table.insert(sounds, sound)
     end
     local swagCounter = 1
@@ -50,7 +50,7 @@ function Countdown.start(uiSkin, conductor, callback)
     Countdown.timer:start(conductor:getCrotchet() / 1000, function(tmr)
         local sprite = Sprite:new() --- @type chip.graphics.Sprite
         if json.countdown.atlasType == "sparrow" then
-            sprite:setFrames(Paths.getSparrowAtlas(json.countdown.texture, "images/" .. json.countdown.textureFolder))
+            sprite:setFrames(Paths.getSparrowAtlas(json.countdown.textureFolder .. "/" .. json.countdown.texture))
             for i = 1, #json.countdown.animations do
                 local animData = json.countdown.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
                 if animData.indices and #animData.indices > 0 then
@@ -60,7 +60,7 @@ function Countdown.start(uiSkin, conductor, callback)
                 end
             end
         elseif json.countdown.atlasType == "grid" then
-            sprite:loadTexture(Paths.image(json.countdown.texture, "images/" .. json.countdown.textureFolder), true, json.countdown.gridSize.x, json.countdown.gridSize.y)
+            sprite:loadTexture(Paths.image(json.countdown.textureFolder .. "/" .. json.countdown.texture), true, json.countdown.gridSize.x, json.countdown.gridSize.y)
             for i = 1, #json.countdown.animations do
                 local animData = json.countdown.animations[i] --- @type funkin.backend.data.NoteSkinAnimationData
                 sprite.animation:add(animData.name, animData.indices, animData.fps, animData.looped)

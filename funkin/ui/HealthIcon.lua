@@ -158,26 +158,27 @@ end
 
 ---
 --- @protected
---- @param  characterID  string
+--- @param  charData     funkin.backend.data.CharacterData
 ---
-function HealthIcon:_isNewSpritesheet(characterID)
-    -- TODO: support mods
-    return File.exists(Paths.xml(characterID, "images/game/icons"))
+function HealthIcon:_isNewSpritesheet(charData)
+    return charData and File.exists(Paths.xml("images/" .. charData.healthIcon.atlasPath))
 end
 
 ---
 --- @protected
 --- @param  characterID  string
+--- @param  charData     funkin.backend.data.CharacterData
 ---
-function HealthIcon:_correctCharacterID(characterID)
+function HealthIcon:_correctCharacterID(characterID, charData)
     -- TODO: support mods
     if not characterID then
         characterID = Constants.DEFAULT_HEALTH_ICON
     end
-    if characterID:contains("-") and not File.exists(Paths.image(characterID, "images/game/icons")) then
+    if characterID:contains("-") and (not File.exists(Paths.image("game/icons/" .. characterID)) and (charData and not File.exists(Paths.image(charData.healthIcon.atlasPath)))) then
         characterID = characterID:sub(1, characterID:indexOf("-"))
+        charData = CharacterData.get(characterID)
     end
-    if not File.exists(Paths.image(characterID, "images/game/icons")) then
+    if not File.exists(Paths.image("game/icons/" .. characterID)) and (charData and not File.exists(Paths.image(charData.healthIcon.atlasPath))) then
         Log.warn(nil, nil, nil, "Health icon for " .. characterID .. " doesn't exist!")
         return Constants.DEFAULT_HEALTH_ICON
     end
@@ -264,18 +265,23 @@ end
 --- @param  characterID  string
 ---
 function HealthIcon:_loadCharacter(characterID)
-    characterID = self:_correctCharacterID(characterID)
     local charData = CharacterData.get(characterID)
+    characterID = self:_correctCharacterID(characterID, charData)
 
     isPixel = (charData and charData.healthIcon) and charData.healthIcon.isPixel or false
-    isLegacyStyle = not self:_isNewSpritesheet(characterID)
+    isLegacyStyle = not self:_isNewSpritesheet(charData)
 
     if not isLegacyStyle then
-        self.frames = Paths.getSparrowAtlas(characterID, "images/game/icons")
+        self.frames = Paths.getSparrowAtlas(charData.healthIcon.atlasPath)
         self:_loadAnimationNew()
     else
-        local size = isPixel and HealthIcon.PIXEL_ICON_SIZE or HealthIcon.HEALTH_ICON_SIZE
-        self:loadTexture(Paths.image(characterID, "images/game/icons"), true, size, size)
+        local sizeX = (charData and charData.healthIcon.gridSize and charData.healthIcon.gridSize.x) and charData.healthIcon.gridSize.x or (isPixel and HealthIcon.PIXEL_ICON_SIZE or HealthIcon.ICON_SIZE)
+        local sizeY = (charData and charData.healthIcon.gridSize and charData.healthIcon.gridSize.y) and charData.healthIcon.gridSize.y or (isPixel and HealthIcon.PIXEL_ICON_SIZE or HealthIcon.ICON_SIZE)
+
+        local fallbackCharPath = "game/icons/" .. characterID
+        local fallbackFacePath = "game/icons/face"
+
+        self:loadTexture(Paths.image(charData and charData.healthIcon.atlasPath or (File.fileExists(Paths.image(fallbackCharPath)) and fallbackCharPath or fallbackFacePath)), true, sizeX, sizeY)
         self:_loadAnimationOld()
     end
     self:setAntialiasing(not isPixel)

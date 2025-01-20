@@ -28,14 +28,6 @@ local InitScene = Scene:extend("InitScene", ...)
 
 function InitScene:init()
     Sprite.defaultAntialiasing = true
-    
-    if (love.filesystem.isFused() or not love.filesystem.getInfo("assets")) and love.filesystem.mountFullPath then
-        local sourceBaseDir = os.getenv("OWD") -- use OWD for linux app image support
-        if not sourceBaseDir then
-            sourceBaseDir = love.filesystem.getSourceBaseDirectory()
-        end
-        love.filesystem.mountFullPath(sourceBaseDir, "")
-    end
 
     local gitCmd = "git rev-parse --short HEAD"
     if love.system.getOS() == "Windows" then
@@ -74,11 +66,21 @@ function InitScene:init()
         local skey = key:sub(#_default_ + 1)
         Options.apply(skey)
     end
+    Discord.init()
+
+    if (love.filesystem.isFused() or not love.filesystem.getInfo("assets")) and love.filesystem.mountFullPath then
+        local sourceBaseDir = os.getenv("OWD") -- use OWD for linux app image support
+        if not sourceBaseDir then
+            sourceBaseDir = love.filesystem.getSourceBaseDirectory()
+        end
+        Constants.RUNNING_FROM_SOURCE = false
+        love.filesystem.mountFullPath(sourceBaseDir, "")
+    end
+
     SoundTray.init()
     StatsDisplay.init()
 
-    Discord.init()
-    MouseCursor.loadTexture(Paths.image("default", "images/cursors"))
+    MouseCursor.loadTexture(Paths.image("cursors/default"))
 
     Engine.preSceneSwitch:connect(function()
         Cache.clear()
