@@ -28,6 +28,7 @@ local ModLoader = {}
 
 ModLoader.modList = {}
 ModLoader.modFolders = {}
+ModLoader.modGlobals = {}
 
 ModLoader.modDirectory = "mods"
 ModLoader.loadedMainScripts = {}
@@ -203,6 +204,7 @@ function ModLoader.reloadMainScripts()
     end
     ModLoader.loadedMainScripts = {}
     ModLoader.modPaths = {}
+    ModLoader.modGlobals = {}
     
     local oldMod = Paths.currentMod
 
@@ -212,6 +214,7 @@ function ModLoader.reloadMainScripts()
     for i = 1, #modList do
         Paths.currentMod = modList[i]
         ModLoader.modPaths[modList[i]] = {}
+        ModLoader.modGlobals[modList[i]] = {}
         
         local script = Script:new(ModLoader.modDirectory .. "/" .. modFolders[modList[i]] .. "/main.lua") --- @type funkin.backend.Script
         if not script:isClosed() then
@@ -219,6 +222,7 @@ function ModLoader.reloadMainScripts()
             script:setVariable("modID", modList[i])
             script:setVariable("modFolderID", modFolders[modList[i]])
             script:setVariable("modPaths", ModLoader.modPaths[modList[i]])
+            script:setVariable("modGlobals", ModLoader.modGlobals[modList[i]])
             script:run()
             script:callMethod("init")
         end
@@ -227,9 +231,13 @@ function ModLoader.reloadMainScripts()
     
     local script = Script:new("assets/main.lua") --- @type funkin.backend.Script
     if not script:isClosed() then
+        ModLoader.modGlobals[""] = {}
         tblInsert(ModLoader.loadedMainScripts, {script = script, mod = ""})
+
         script:setVariable("modID", nil)
         script:setVariable("modFolderID", nil)
+        script:setVariable("modGlobals", ModLoader.modGlobals[""])
+
         script:run()
         script:callMethod("init")
     end
