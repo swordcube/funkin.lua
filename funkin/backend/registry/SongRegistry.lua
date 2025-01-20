@@ -34,7 +34,7 @@ function SongRegistry:getEntry(id, mod)
     if not mod then
         mod = Paths.currentMod
     end
-    if mod then
+    if mod and #mod ~= 0 then
         return self._entries[id .. "-" .. mod]
     end
     return self._entries[id]
@@ -49,7 +49,7 @@ function SongRegistry:registerEntry(id, data, mod)
     if not tblContains(data.variants, "default") then
         tblInsert(data.variants, 1, "default")
     end
-    if not mod then
+    if not mod or #mod == 0 then
         mod = Paths.currentMod
     end
     if mod then
