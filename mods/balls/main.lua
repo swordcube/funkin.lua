@@ -36,19 +36,19 @@ function onSceneInit(scene)
 
         -- scripts that run in any song
         local globalScripts = table.filter(fs.getDirectoryItems(getModDirectory() .. "/scripts"), function(script)
-            return fs.getInfo(getModDirectory() .. "scripts/" .. script, "file")
+            return fs.getInfo(getModDirectory() .. "/scripts/" .. script, "file")
         end)
         for i = 1, #globalScripts do
-            local script = Script:new(getModDirectory() .. "scripts/" .. globalScripts[i]) --- @type funkin.backend.Script
+            local script = Script:new(getModDirectory() .. "/scripts/" .. globalScripts[i]) --- @type funkin.backend.Script
             table.insert(game.gameScripts, script)
         end
         
         -- scripts that run only for the current song
-        local songScripts = table.filter(fs.getDirectoryItems(getModDirectory() .. "scripts/songs/" .. game._params.song), function(script)
-            return fs.getInfo(getModDirectory() .. "scripts/songs/" .. game._params.song .. "/" .. script, "file")
+        local songScripts = table.filter(fs.getDirectoryItems(getModDirectory() .. "/scripts/songs/" .. game._params.song), function(script)
+            return fs.getInfo(getModDirectory() .. "/scripts/songs/" .. game._params.song .. "/" .. script, "file")
         end)
         for i = 1, #songScripts do
-            local script = Script:new(getModDirectory() .. "scripts/songs/" .. game._params.song .. "/" .. songScripts[i]) --- @type funkin.backend.Script
+            local script = Script:new(getModDirectory() .. "/scripts/songs/" .. game._params.song .. "/" .. songScripts[i]) --- @type funkin.backend.Script
             table.insert(game.gameScripts, script)
         end
     end
