@@ -4,7 +4,6 @@ function love.conf(t)
     t.console = false
 
     t.graphics.gammacorrect = false
-    t.graphics.renderers = {"metal", "opengl"} -- NOTE: vulkan instantly crashes, so do NOT use it!!
 
     t.highdpi = false
     t.usedpiscale = false

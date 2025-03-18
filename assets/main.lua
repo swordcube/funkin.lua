@@ -76,8 +76,12 @@ function onSceneInit(scene)
             return fs.getInfo(getModDirectory() .. "/scripts/" .. script, "file")
         end)
         for i = 1, #globalScripts do
+            if not globalScripts[i]:endsWith(".lua") then
+                goto continue
+            end
             local script = Script:new(getModDirectory() .. "/scripts/" .. globalScripts[i]) --- @type funkin.backend.Script
             table.insert(game.gameScripts, script)
+            ::continue::
         end
         
         -- scripts that run only for the current song
@@ -85,8 +89,12 @@ function onSceneInit(scene)
             return fs.getInfo(getModDirectory() .. "/scripts/songs/" .. game._params.song .. "/" .. script, "file")
         end)
         for i = 1, #songScripts do
+            if not songScripts[i]:endsWith(".lua") then
+                goto continue
+            end
             local script = Script:new(getModDirectory() .. "/scripts/songs/" .. game._params.song .. "/" .. songScripts[i]) --- @type funkin.backend.Script
             table.insert(game.gameScripts, script)
+            ::continue::
         end
     end
 end
